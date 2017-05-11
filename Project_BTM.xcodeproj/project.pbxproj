@@ -9,11 +9,11 @@
 /* Begin PBXBuildFile section */
 		292124B71EC47A0A00D5C526 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 292124B61EC47A0A00D5C526 /* main.m */; };
 		292124BA1EC47A0A00D5C526 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 292124B91EC47A0A00D5C526 /* AppDelegate.m */; };
-		292124BD1EC47A0A00D5C526 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292124BC1EC47A0A00D5C526 /* ViewController.m */; };
 		292124C01EC47A0A00D5C526 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 292124BE1EC47A0A00D5C526 /* Main.storyboard */; };
 		292124C31EC47A0A00D5C526 /* Project_BTM.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 292124C11EC47A0A00D5C526 /* Project_BTM.xcdatamodeld */; };
 		292124C51EC47A0A00D5C526 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 292124C41EC47A0A00D5C526 /* Assets.xcassets */; };
 		292124C81EC47A0A00D5C526 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 292124C61EC47A0A00D5C526 /* LaunchScreen.storyboard */; };
+		292124D11EC47BCD00D5C526 /* FavoriteViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292124D01EC47BCD00D5C526 /* FavoriteViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -21,13 +21,13 @@
 		292124B61EC47A0A00D5C526 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		292124B81EC47A0A00D5C526 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		292124B91EC47A0A00D5C526 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		292124BB1EC47A0A00D5C526 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		292124BC1EC47A0A00D5C526 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		292124BF1EC47A0A00D5C526 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		292124C21EC47A0A00D5C526 /* Project_BTM.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Project_BTM.xcdatamodel; sourceTree = "<group>"; };
 		292124C41EC47A0A00D5C526 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		292124C71EC47A0A00D5C526 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		292124C91EC47A0A00D5C526 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		292124CF1EC47BCD00D5C526 /* FavoriteViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FavoriteViewController.h; sourceTree = "<group>"; };
+		292124D01EC47BCD00D5C526 /* FavoriteViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FavoriteViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,8 +62,8 @@
 			children = (
 				292124B81EC47A0A00D5C526 /* AppDelegate.h */,
 				292124B91EC47A0A00D5C526 /* AppDelegate.m */,
-				292124BB1EC47A0A00D5C526 /* ViewController.h */,
-				292124BC1EC47A0A00D5C526 /* ViewController.m */,
+				292124CF1EC47BCD00D5C526 /* FavoriteViewController.h */,
+				292124D01EC47BCD00D5C526 /* FavoriteViewController.m */,
 				292124BE1EC47A0A00D5C526 /* Main.storyboard */,
 				292124C41EC47A0A00D5C526 /* Assets.xcassets */,
 				292124C61EC47A0A00D5C526 /* LaunchScreen.storyboard */,
@@ -153,9 +153,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				292124BD1EC47A0A00D5C526 /* ViewController.m in Sources */,
 				292124C31EC47A0A00D5C526 /* Project_BTM.xcdatamodeld in Sources */,
 				292124BA1EC47A0A00D5C526 /* AppDelegate.m in Sources */,
+				292124D11EC47BCD00D5C526 /* FavoriteViewController.m in Sources */,
 				292124B71EC47A0A00D5C526 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
