@@ -1,5 +1,5 @@
 //
-//  FavoriteViewController.h
+//  FavoritesViewController.h
 //  Project_BTM
 //
 //  Created by user36 on 2017/5/11.
@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface FavoriteViewController : UIViewController
+@interface FavoritesViewController : UIViewController
 
 @end

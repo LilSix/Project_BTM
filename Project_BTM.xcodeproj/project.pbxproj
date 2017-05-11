@@ -13,7 +13,9 @@
 		292124C31EC47A0A00D5C526 /* Project_BTM.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 292124C11EC47A0A00D5C526 /* Project_BTM.xcdatamodeld */; };
 		292124C51EC47A0A00D5C526 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 292124C41EC47A0A00D5C526 /* Assets.xcassets */; };
 		292124C81EC47A0A00D5C526 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 292124C61EC47A0A00D5C526 /* LaunchScreen.storyboard */; };
-		292124D11EC47BCD00D5C526 /* FavoriteViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292124D01EC47BCD00D5C526 /* FavoriteViewController.m */; };
+		292124D71EC487CB00D5C526 /* FavoritesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292124D61EC487CB00D5C526 /* FavoritesViewController.m */; };
+		292124DA1EC48BDD00D5C526 /* SearchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292124D91EC48BDD00D5C526 /* SearchViewController.m */; };
+		292124DC1EC48E4F00D5C526 /* search.png in Resources */ = {isa = PBXBuildFile; fileRef = 292124DB1EC48E4F00D5C526 /* search.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,8 +28,11 @@
 		292124C41EC47A0A00D5C526 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		292124C71EC47A0A00D5C526 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		292124C91EC47A0A00D5C526 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		292124CF1EC47BCD00D5C526 /* FavoriteViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FavoriteViewController.h; sourceTree = "<group>"; };
-		292124D01EC47BCD00D5C526 /* FavoriteViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FavoriteViewController.m; sourceTree = "<group>"; };
+		292124D51EC487CB00D5C526 /* FavoritesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FavoritesViewController.h; sourceTree = "<group>"; };
+		292124D61EC487CB00D5C526 /* FavoritesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FavoritesViewController.m; sourceTree = "<group>"; };
+		292124D81EC48BDD00D5C526 /* SearchViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchViewController.h; sourceTree = "<group>"; };
+		292124D91EC48BDD00D5C526 /* SearchViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchViewController.m; sourceTree = "<group>"; };
+		292124DB1EC48E4F00D5C526 /* search.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = search.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,16 +65,19 @@
 		292124B41EC47A0A00D5C526 /* Project_BTM */ = {
 			isa = PBXGroup;
 			children = (
+				292124DB1EC48E4F00D5C526 /* search.png */,
 				292124B81EC47A0A00D5C526 /* AppDelegate.h */,
 				292124B91EC47A0A00D5C526 /* AppDelegate.m */,
-				292124CF1EC47BCD00D5C526 /* FavoriteViewController.h */,
-				292124D01EC47BCD00D5C526 /* FavoriteViewController.m */,
+				292124D51EC487CB00D5C526 /* FavoritesViewController.h */,
+				292124D61EC487CB00D5C526 /* FavoritesViewController.m */,
 				292124BE1EC47A0A00D5C526 /* Main.storyboard */,
 				292124C41EC47A0A00D5C526 /* Assets.xcassets */,
 				292124C61EC47A0A00D5C526 /* LaunchScreen.storyboard */,
 				292124C91EC47A0A00D5C526 /* Info.plist */,
 				292124C11EC47A0A00D5C526 /* Project_BTM.xcdatamodeld */,
 				292124B51EC47A0A00D5C526 /* Supporting Files */,
+				292124D81EC48BDD00D5C526 /* SearchViewController.h */,
+				292124D91EC48BDD00D5C526 /* SearchViewController.m */,
 			);
 			path = Project_BTM;
 			sourceTree = "<group>";
@@ -113,6 +121,7 @@
 				TargetAttributes = {
 					292124B11EC47A0A00D5C526 = {
 						CreatedOnToolsVersion = 8.3.1;
+						DevelopmentTeam = 848UQ955TT;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -141,6 +150,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				292124C81EC47A0A00D5C526 /* LaunchScreen.storyboard in Resources */,
+				292124DC1EC48E4F00D5C526 /* search.png in Resources */,
 				292124C51EC47A0A00D5C526 /* Assets.xcassets in Resources */,
 				292124C01EC47A0A00D5C526 /* Main.storyboard in Resources */,
 			);
@@ -153,9 +163,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				292124D71EC487CB00D5C526 /* FavoritesViewController.m in Sources */,
 				292124C31EC47A0A00D5C526 /* Project_BTM.xcdatamodeld in Sources */,
+				292124DA1EC48BDD00D5C526 /* SearchViewController.m in Sources */,
 				292124BA1EC47A0A00D5C526 /* AppDelegate.m in Sources */,
-				292124D11EC47BCD00D5C526 /* FavoriteViewController.m in Sources */,
 				292124B71EC47A0A00D5C526 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -278,10 +289,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = 848UQ955TT;
 				INFOPLIST_FILE = Project_BTM/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.iiiedu.Project-BTM";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -289,10 +303,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = 848UQ955TT;
 				INFOPLIST_FILE = Project_BTM/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.iiiedu.Project-BTM";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
