@@ -4,7 +4,6 @@
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12086"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -44,7 +43,7 @@
         <!--Search-->
         <scene sceneID="EQc-H0-TOh">
             <objects>
-                <viewController id="1UL-uh-T2R" sceneMemberID="viewController">
+                <viewController id="1UL-uh-T2R" customClass="SearchViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="8GE-gJ-fFZ"/>
                         <viewControllerLayoutGuide type="bottom" id="fOZ-x9-F3D"/>
@@ -53,39 +52,23 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <searchBar contentMode="redraw" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0hr-xR-rUE">
+                            <searchBar contentMode="redraw" fixedFrame="YES" showsCancelButton="YES" translatesAutoresizingMaskIntoConstraints="NO" id="FDc-va-hYp">
                                 <rect key="frame" x="0.0" y="64" width="375" height="44"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                                 <textInputTraits key="textInputTraits"/>
-                                <connections>
-                                    <outlet property="delegate" destination="1UL-uh-T2R" id="rll-gF-fQi"/>
-                                </connections>
                             </searchBar>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" title="Search" id="Utv-9h-oyR"/>
-                    <connections>
-                        <outlet property="searchDisplayController" destination="mZf-pm-FqN" id="fEm-Op-qxF"/>
-                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5cv-iF-OgN" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <searchDisplayController id="mZf-pm-FqN">
-                    <connections>
-                        <outlet property="delegate" destination="1UL-uh-T2R" id="hd5-Bc-P31"/>
-                        <outlet property="searchBar" destination="0hr-xR-rUE" id="eMZ-BG-5NI"/>
-                        <outlet property="searchContentsController" destination="1UL-uh-T2R" id="UFf-6x-4aY"/>
-                        <outlet property="searchResultsDataSource" destination="1UL-uh-T2R" id="1K0-IH-Ayr"/>
-                        <outlet property="searchResultsDelegate" destination="1UL-uh-T2R" id="kjj-GW-who"/>
-                    </connections>
-                </searchDisplayController>
             </objects>
             <point key="canvasLocation" x="2045.5999999999999" y="1568.3658170914543"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="P4y-Kh-TrK">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="NSU-87-Wp2" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="0Kh-LO-vBN" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" systemItem="favorites" id="Dv4-N0-9Ad"/>
                     <toolbarItems/>
@@ -98,6 +81,7 @@
                         <segue destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController" id="BVc-7n-eGV"/>
                     </connections>
                 </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="NSU-87-Wp2" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1096.8" y="791.15442278860576"/>
         </scene>
@@ -107,6 +91,7 @@
                 <tabBarController automaticallyAdjustsScrollViewInsets="NO" id="YTh-jV-EwL" sceneMemberID="viewController">
                     <toolbarItems/>
                     <tabBar key="tabBar" contentMode="scaleToFill" id="GSh-ZA-qXg">
+                        <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     </tabBar>
