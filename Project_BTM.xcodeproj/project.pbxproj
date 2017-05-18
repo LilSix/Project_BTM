@@ -15,6 +15,7 @@
 		292124C81EC47A0A00D5C526 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 292124C61EC47A0A00D5C526 /* LaunchScreen.storyboard */; };
 		292124D71EC487CB00D5C526 /* FavoritesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292124D61EC487CB00D5C526 /* FavoritesViewController.m */; };
 		294459CB1EC55FF600883264 /* SearchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 294459CA1EC55FF600883264 /* SearchViewController.m */; };
+		29E8D4B71ECD994E001D0645 /* CityBus.m in Sources */ = {isa = PBXBuildFile; fileRef = 29E8D4B61ECD994E001D0645 /* CityBus.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,6 +32,8 @@
 		292124D61EC487CB00D5C526 /* FavoritesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FavoritesViewController.m; sourceTree = "<group>"; };
 		294459C91EC55FF600883264 /* SearchViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchViewController.h; sourceTree = "<group>"; };
 		294459CA1EC55FF600883264 /* SearchViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchViewController.m; sourceTree = "<group>"; };
+		29E8D4B51ECD994E001D0645 /* CityBus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CityBus.h; sourceTree = "<group>"; };
+		29E8D4B61ECD994E001D0645 /* CityBus.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CityBus.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -83,6 +86,8 @@
 			isa = PBXGroup;
 			children = (
 				292124B61EC47A0A00D5C526 /* main.m */,
+				29E8D4B51ECD994E001D0645 /* CityBus.h */,
+				29E8D4B61ECD994E001D0645 /* CityBus.m */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -160,6 +165,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				292124D71EC487CB00D5C526 /* FavoritesViewController.m in Sources */,
+				29E8D4B71ECD994E001D0645 /* CityBus.m in Sources */,
 				292124C31EC47A0A00D5C526 /* Project_BTM.xcdatamodeld in Sources */,
 				294459CB1EC55FF600883264 /* SearchViewController.m in Sources */,
 				292124BA1EC47A0A00D5C526 /* AppDelegate.m in Sources */,
