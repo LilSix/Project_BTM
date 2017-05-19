@@ -11,6 +11,8 @@
 
 @interface SearchViewController ()<UITableViewDataSource, UITableViewDelegate, UISearchResultsUpdating, UISearchBarDelegate> {
     NSMutableArray *mutableArrayCityBus;
+    NSMutableArray *mutableArrayDepartureStopName;
+    NSMutableArray *mutableArrayDestinationStopName;
     NSArray *arraySearchResult;
     NSString *stringURL;
     UISearchController *mySearchController;
@@ -47,7 +49,9 @@
     if (self) {
         
         mutableArrayCityBus = [NSMutableArray array];
-//        mutableArraySearchResult = [NSMutableArray array];
+        mutableArrayDepartureStopName = [NSMutableArray array];
+        mutableArrayDestinationStopName = [NSMutableArray array];
+
         
         // http://ptx.transportdata.tw/MOTC/Swagger/#!/CityBusApi/CityBusApi_Route_0
         // /v2/Bus/Route/City/{City}/{RouteName}    取得指定[縣市],[路線名稱]的路線資料
@@ -62,7 +66,12 @@
             NSDictionary *routeName = [jsonDictionary objectForKey:@"RouteName"];
             NSString *zhTW = [routeName objectForKey:@"Zh_tw"];
 
+            NSString *departureStopNameZh = [jsonDictionary objectForKey:@"DepartureStopNameZh"];
+            NSString *destinationStopNameZh = [jsonDictionary objectForKey:@"DestinationStopNameZh"];
+            
             [mutableArrayCityBus addObject:zhTW];
+            [mutableArrayDepartureStopName addObject:departureStopNameZh];
+            [mutableArrayDestinationStopName addObject:destinationStopNameZh];
             
         }
 //        NSLog(@"results: %@", mutableArrayCityBus);
@@ -82,11 +91,15 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *tableViewCell = [tableView dequeueReusableCellWithIdentifier:@"Basic Cell"
+    UITableViewCell *tableViewCell = [tableView dequeueReusableCellWithIdentifier:@"Subtitle Cell"
                                                                      forIndexPath:indexPath];
     
     if (arraySearchResult == nil) {
         [[tableViewCell textLabel] setText:[mutableArrayCityBus objectAtIndex:[indexPath row]]];
+        NSString *stringDepartureStopName = [mutableArrayDepartureStopName objectAtIndex:[indexPath row]];
+        NSString *stringDestinationStopName = [mutableArrayDestinationStopName objectAtIndex:[indexPath row]];
+        NSString *stringDetailTextLabel = [NSString stringWithFormat:@"%@ － %@", stringDepartureStopName, stringDestinationStopName];
+        [[tableViewCell detailTextLabel] setText:stringDetailTextLabel];
     } else {
         [[tableViewCell textLabel] setText:[arraySearchResult objectAtIndex:[indexPath row]]];
     }
@@ -114,7 +127,7 @@
     [_tableViewSearchResult reloadData];
 }
 
-#pragma mark - UIBarPositioningDelegate Method
+#pragma mark - UISearchBarDelegate Method
 
 - (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar {
     NSString *string = [searchBar text];
