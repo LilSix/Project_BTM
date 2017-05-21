@@ -108,6 +108,7 @@
                     <navigationItem key="navigationItem" title="Search" id="Utv-9h-oyR"/>
                     <connections>
                         <outlet property="searchBar" destination="gW8-gr-ZAx" id="DLs-MJ-Jq8"/>
+                        <outlet property="searchDisplayController" destination="mvM-JV-55x" id="ggq-rA-hBC"/>
                         <outlet property="tableViewSearchResult" destination="38Q-Kr-qY6" id="v3c-j9-0wm"/>
                     </connections>
                 </viewController>
@@ -208,11 +209,11 @@
             </objects>
             <point key="canvasLocation" x="148" y="790"/>
         </scene>
-        <!--Navigation Controller-->
+        <!--Alarm-->
         <scene sceneID="vbc-XV-iid">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="EA6-PR-0VP" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" systemItem="mostRecent" id="tal-8w-qKU"/>
+                    <tabBarItem key="tabBarItem" title="Alarm" image="Tab_Bar_Item_AlarmClock" id="tal-8w-qKU"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="iBZ-EW-G7L">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
@@ -247,4 +248,7 @@
             <point key="canvasLocation" x="1097" y="3209"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="Tab_Bar_Item_AlarmClock" width="25" height="25"/>
+    </resources>
 </document>

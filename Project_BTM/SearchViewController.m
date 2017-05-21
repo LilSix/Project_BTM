@@ -9,7 +9,7 @@
 #import "SearchViewController.h"
 #import "CityBus.h"
 
-@interface SearchViewController ()<UITableViewDataSource, UITableViewDelegate, UISearchResultsUpdating, UISearchBarDelegate> {
+@interface SearchViewController ()<UITableViewDataSource, UITableViewDelegate, UISearchResultsUpdating, UISearchBarDelegate, UISearchDisplayDelegate> {
     NSMutableArray *mutableArrayCityBus;
     NSMutableArray *mutableArrayDepartureStopName;
     NSMutableArray *mutableArrayDestinationStopName;
@@ -22,11 +22,15 @@
 //@property (weak, nonatomic) IBOutlet UISearchBar *searchBar;
 @property (weak, nonatomic) IBOutlet UISearchBar *searchBar;
 
+@property (strong, nonatomic) IBOutlet UISearchController *searchDisplayController;
+
+
 @end
 
-@implementation SearchViewController
 
-#pragma mark - View Methods
+#pragma mark -
+
+@implementation SearchViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -42,7 +46,8 @@
     // Dispose of any resources that can be recreated.
 }
 
-#pragma mark - Init Method
+
+#pragma mark - Init
 
 - (instancetype)initWithCoder:(NSCoder *)coder {
     self = [super initWithCoder:coder];
@@ -79,7 +84,8 @@
     return self;
 }
 
-#pragma mark - UITableViewDataSource Methods
+
+#pragma mark - UITableViewDataSource
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     
@@ -108,7 +114,8 @@
     return tableViewCell;
 }
 
-#pragma mark - UISearchResultsUpdating Method
+
+#pragma mark - UISearchResultsUpdating
 
 - (void)updateSearchResultsForSearchController:(UISearchController *)searchController {
     if ([searchController isActive]) {
@@ -126,6 +133,7 @@
     
     [_tableViewSearchResult reloadData];
 }
+
 
 #pragma mark - UISearchBarDelegate Method
 
