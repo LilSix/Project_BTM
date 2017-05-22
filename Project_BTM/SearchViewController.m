@@ -2,23 +2,20 @@
 //  SearchViewController.m
 //  Project_BTM
 //
-//  Created by user36 on 2017/5/12.
-//  Copyright © 2017年 user36. All rights reserved.
-//
 
 #import "SearchViewController.h"
 #import "CityBus.h"
 
 @interface SearchViewController ()<UITableViewDataSource, UITableViewDelegate, UISearchResultsUpdating, UISearchBarDelegate, UISearchDisplayDelegate> {
-    NSMutableArray *mutableArrayCityBus;
-    NSMutableArray *mutableArrayDepartureStopName;
-    NSMutableArray *mutableArrayDestinationStopName;
-    NSArray *arraySearchResult;
+    NSMutableArray *cityBusList;
+    NSMutableArray *departureStopName;
+    NSMutableArray *destinationStopName;
+    NSArray *searchResults;
     NSString *stringURL;
-    UISearchController *mySearchController;
+    UISearchController *searchController;
 }
 
-@property (weak, nonatomic) IBOutlet UITableView *tableViewSearchResult;
+@property (weak, nonatomic) IBOutlet UITableView *searchResultsList;
 //@property (weak, nonatomic) IBOutlet UISearchBar *searchBar;
 @property (weak, nonatomic) IBOutlet UISearchBar *searchBar;
 
@@ -36,9 +33,9 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
-    [_tableViewSearchResult setDataSource:self];
-    [_tableViewSearchResult setDelegate:self];
-    [mySearchController setSearchResultsUpdater:self];
+    [_searchResultsList setDataSource:self];
+    [_searchResultsList setDelegate:self];
+    [searchController setSearchResultsUpdater:self];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -53,30 +50,47 @@
     self = [super initWithCoder:coder];
     if (self) {
         
-        mutableArrayCityBus = [NSMutableArray array];
-        mutableArrayDepartureStopName = [NSMutableArray array];
-        mutableArrayDestinationStopName = [NSMutableArray array];
+        cityBusList = [NSMutableArray array];
+        departureStopName = [NSMutableArray array];
+        destinationStopName = [NSMutableArray array];
 
         
         // http://ptx.transportdata.tw/MOTC/Swagger/#!/CityBusApi/CityBusApi_Route_0
         // /v2/Bus/Route/City/{City}/{RouteName}    取得指定[縣市],[路線名稱]的路線資料
 //        NSURL *url = [NSURL URLWithString:@"http://ptx.transportdata.tw/MOTC/v2/Bus/Route/City/Taipei/232?$format=JSON"];
-        NSURL *url = [NSURL URLWithString:@"http://ptx.transportdata.tw/MOTC/v2/Bus/Route/City/Taipei?$format=JSON"];
-        NSData *data = [NSData dataWithContentsOfURL:url];
+        NSURL *taipeiURL = [NSURL URLWithString:@"http://ptx.transportdata.tw/MOTC/v2/Bus/Route/City/Taipei?$format=JSON"];
+        NSURL *newTaipeiURL = [NSURL URLWithString:@"http://ptx.transportdata.tw/MOTC/v2/Bus/Route/City/NewTaipei?$format=JSON"];
+        NSData *taipeiData = [NSData dataWithContentsOfURL:taipeiURL];
+        NSData *newTaipeiData = [NSData dataWithContentsOfURL:newTaipeiURL];
         NSError *error;
-        NSArray *jsonArray = [NSJSONSerialization JSONObjectWithData:data
+        NSArray *taipeiCityBus = [NSJSONSerialization JSONObjectWithData:taipeiData
                                                              options:NSJSONReadingMutableContainers
                                                                error:&error];
-        for (NSDictionary *jsonDictionary in jsonArray) {
-            NSDictionary *routeName = [jsonDictionary objectForKey:@"RouteName"];
+        NSArray *newTaipeiCityBus = [NSJSONSerialization JSONObjectWithData:newTaipeiData
+                                                                    options:NSJSONReadingMutableContainers
+                                                                      error:&error];
+        
+        for (NSDictionary *dictionary in taipeiCityBus) {
+            NSDictionary *routeName = [dictionary objectForKey:@"RouteName"];
             NSString *zhTW = [routeName objectForKey:@"Zh_tw"];
-
-            NSString *departureStopNameZh = [jsonDictionary objectForKey:@"DepartureStopNameZh"];
-            NSString *destinationStopNameZh = [jsonDictionary objectForKey:@"DestinationStopNameZh"];
+            NSString *departureStopNameZh = [dictionary objectForKey:@"DepartureStopNameZh"];
+            NSString *destinationStopNameZh = [dictionary objectForKey:@"DestinationStopNameZh"];
             
-            [mutableArrayCityBus addObject:zhTW];
-            [mutableArrayDepartureStopName addObject:departureStopNameZh];
-            [mutableArrayDestinationStopName addObject:destinationStopNameZh];
+            [cityBusList addObject:zhTW];
+            [departureStopName addObject:departureStopNameZh];
+            [destinationStopName addObject:destinationStopNameZh];
+            
+        }
+        
+        for (NSDictionary *dictionary in newTaipeiCityBus) {
+            NSDictionary *routeName = [dictionary objectForKey:@"RouteName"];
+            NSString *zhTW = [routeName objectForKey:@"Zh_tw"];
+            NSString *departureStopNameZh = [dictionary objectForKey:@"DepartureStopNameZh"];
+            NSString *destinationStopNameZh = [dictionary objectForKey:@"DestinationStopNameZh"];
+            
+            [cityBusList addObject:zhTW];
+            [departureStopName addObject:departureStopNameZh];
+            [destinationStopName addObject:destinationStopNameZh];
             
         }
 //        NSLog(@"results: %@", mutableArrayCityBus);
@@ -89,25 +103,25 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     
-    if (arraySearchResult != nil) {
-        return [arraySearchResult count];
+    if (searchResults != nil) {
+        return [searchResults count];
     }
-    NSLog(@"[arraySearchResult count]: %ld", [arraySearchResult count]);
-    return [mutableArrayCityBus count];
+    NSLog(@"[arraySearchResult count]: %ld", [searchResults count]);
+    return [cityBusList count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *tableViewCell = [tableView dequeueReusableCellWithIdentifier:@"Subtitle Cell"
                                                                      forIndexPath:indexPath];
     
-    if (arraySearchResult == nil) {
-        [[tableViewCell textLabel] setText:[mutableArrayCityBus objectAtIndex:[indexPath row]]];
-        NSString *stringDepartureStopName = [mutableArrayDepartureStopName objectAtIndex:[indexPath row]];
-        NSString *stringDestinationStopName = [mutableArrayDestinationStopName objectAtIndex:[indexPath row]];
-        NSString *stringDetailTextLabel = [NSString stringWithFormat:@"%@ － %@", stringDepartureStopName, stringDestinationStopName];
+    if (searchResults == nil) {
+        [[tableViewCell textLabel] setText:[cityBusList objectAtIndex:[indexPath row]]];
+        NSString *stringDepartureStopName = [departureStopName objectAtIndex:[indexPath row]];
+        NSString *stringDestinationStopName = [destinationStopName objectAtIndex:[indexPath row]];
+        NSString *stringDetailTextLabel = [NSString stringWithFormat:@"%@－%@", stringDepartureStopName, stringDestinationStopName];
         [[tableViewCell detailTextLabel] setText:stringDetailTextLabel];
     } else {
-        [[tableViewCell textLabel] setText:[arraySearchResult objectAtIndex:[indexPath row]]];
+        [[tableViewCell textLabel] setText:[searchResults objectAtIndex:[indexPath row]]];
     }
     
     
@@ -123,28 +137,28 @@
         NSLog(@"string: %@", string);
         if ([string length] > 0) {
             NSPredicate *predicate = [NSPredicate predicateWithFormat:string];
-            arraySearchResult = [mutableArrayCityBus filteredArrayUsingPredicate:predicate];
+            searchResults = [cityBusList filteredArrayUsingPredicate:predicate];
         } else {
-            arraySearchResult = nil;
+            searchResults = nil;
         }
     } else {
-        arraySearchResult = nil;
+        searchResults = nil;
     }
     
-    [_tableViewSearchResult reloadData];
+    [_searchResultsList reloadData];
 }
 
 
-#pragma mark - UISearchBarDelegate Method
+#pragma mark - UISearchBarDelegate
 
 - (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar {
     NSString *string = [searchBar text];
     NSLog(@"string: %@", string);
     if ([string length] > 0) {
         NSPredicate *predicate = [NSPredicate predicateWithFormat:string];
-        arraySearchResult = [mutableArrayCityBus filteredArrayUsingPredicate:predicate];
+        searchResults = [cityBusList filteredArrayUsingPredicate:predicate];
     } else {
-        arraySearchResult = nil;
+        searchResults = nil;
     }
 
 }
