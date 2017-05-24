@@ -5,6 +5,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface SearchViewController : UIViewController
+@interface SearchBusViewController : UIViewController
 
 @end

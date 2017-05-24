@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		290D64081ED577D7009E81E3 /* SearchSubwayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 290D64071ED577D7009E81E3 /* SearchSubwayViewController.m */; };
 		292124B71EC47A0A00D5C526 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 292124B61EC47A0A00D5C526 /* main.m */; };
 		292124BA1EC47A0A00D5C526 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 292124B91EC47A0A00D5C526 /* AppDelegate.m */; };
 		292124C01EC47A0A00D5C526 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 292124BE1EC47A0A00D5C526 /* Main.storyboard */; };
@@ -14,11 +15,13 @@
 		292124C51EC47A0A00D5C526 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 292124C41EC47A0A00D5C526 /* Assets.xcassets */; };
 		292124C81EC47A0A00D5C526 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 292124C61EC47A0A00D5C526 /* LaunchScreen.storyboard */; };
 		292124D71EC487CB00D5C526 /* FavoritesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292124D61EC487CB00D5C526 /* FavoritesViewController.m */; };
-		294459CB1EC55FF600883264 /* SearchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 294459CA1EC55FF600883264 /* SearchViewController.m */; };
+		294459CB1EC55FF600883264 /* SearchBusViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 294459CA1EC55FF600883264 /* SearchBusViewController.m */; };
 		29E8D4B71ECD994E001D0645 /* CityBus.m in Sources */ = {isa = PBXBuildFile; fileRef = 29E8D4B61ECD994E001D0645 /* CityBus.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		290D64061ED577D7009E81E3 /* SearchSubwayViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchSubwayViewController.h; sourceTree = "<group>"; };
+		290D64071ED577D7009E81E3 /* SearchSubwayViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchSubwayViewController.m; sourceTree = "<group>"; };
 		292124B21EC47A0A00D5C526 /* Project_BTM.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Project_BTM.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		292124B61EC47A0A00D5C526 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		292124B81EC47A0A00D5C526 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -30,8 +33,8 @@
 		292124C91EC47A0A00D5C526 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		292124D51EC487CB00D5C526 /* FavoritesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FavoritesViewController.h; sourceTree = "<group>"; };
 		292124D61EC487CB00D5C526 /* FavoritesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FavoritesViewController.m; sourceTree = "<group>"; };
-		294459C91EC55FF600883264 /* SearchViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchViewController.h; sourceTree = "<group>"; };
-		294459CA1EC55FF600883264 /* SearchViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchViewController.m; sourceTree = "<group>"; };
+		294459C91EC55FF600883264 /* SearchBusViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchBusViewController.h; sourceTree = "<group>"; };
+		294459CA1EC55FF600883264 /* SearchBusViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchBusViewController.m; sourceTree = "<group>"; };
 		29E8D4B51ECD994E001D0645 /* CityBus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CityBus.h; sourceTree = "<group>"; };
 		29E8D4B61ECD994E001D0645 /* CityBus.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CityBus.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -70,11 +73,13 @@
 				292124B91EC47A0A00D5C526 /* AppDelegate.m */,
 				292124D51EC487CB00D5C526 /* FavoritesViewController.h */,
 				292124D61EC487CB00D5C526 /* FavoritesViewController.m */,
-				294459C91EC55FF600883264 /* SearchViewController.h */,
-				294459CA1EC55FF600883264 /* SearchViewController.m */,
-				292124BE1EC47A0A00D5C526 /* Main.storyboard */,
+				294459C91EC55FF600883264 /* SearchBusViewController.h */,
+				294459CA1EC55FF600883264 /* SearchBusViewController.m */,
+				290D64061ED577D7009E81E3 /* SearchSubwayViewController.h */,
+				290D64071ED577D7009E81E3 /* SearchSubwayViewController.m */,
 				292124C41EC47A0A00D5C526 /* Assets.xcassets */,
 				292124C61EC47A0A00D5C526 /* LaunchScreen.storyboard */,
+				292124BE1EC47A0A00D5C526 /* Main.storyboard */,
 				292124C91EC47A0A00D5C526 /* Info.plist */,
 				292124C11EC47A0A00D5C526 /* Project_BTM.xcdatamodeld */,
 				292124B51EC47A0A00D5C526 /* Supporting Files */,
@@ -167,8 +172,9 @@
 				292124D71EC487CB00D5C526 /* FavoritesViewController.m in Sources */,
 				29E8D4B71ECD994E001D0645 /* CityBus.m in Sources */,
 				292124C31EC47A0A00D5C526 /* Project_BTM.xcdatamodeld in Sources */,
-				294459CB1EC55FF600883264 /* SearchViewController.m in Sources */,
+				294459CB1EC55FF600883264 /* SearchBusViewController.m in Sources */,
 				292124BA1EC47A0A00D5C526 /* AppDelegate.m in Sources */,
+				290D64081ED577D7009E81E3 /* SearchSubwayViewController.m in Sources */,
 				292124B71EC47A0A00D5C526 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
