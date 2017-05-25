@@ -6,6 +6,9 @@
 #import "SearchBusViewController.h"
 #import "CityBus.h"
 
+// Framework
+@import SystemConfiguration;
+
 
 @interface SearchBusViewController ()<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIPickerViewDelegate, UIPickerViewDataSource> {
     
@@ -18,6 +21,8 @@
     NSArray *searchResults;
     NSArray *routeNameList;
     
+    
+    
 //    UIPickerView *routeNamePicker;
 }
 
@@ -27,6 +32,7 @@
 //@property (weak, nonatomic) IBOutlet UISearchBar *searchBar;
 //@property (strong, nonatomic) IBOutlet UISearchController *searchDisplayController;
 
+@property (weak, nonatomic) IBOutlet UIButton *buttonSearch;
 @property (weak, nonatomic) IBOutlet UITextField *routeNameTextField;
 @property (weak, nonatomic) IBOutlet UITextField *routeNumberTextField;
 @property (weak, nonatomic) IBOutlet UIPickerView *routeNamePicker;
@@ -44,6 +50,9 @@
     // Do any additional setup after loading the view.
 
     [_routeNameTextField setDelegate:self];
+//    [_routeNumberTextField setDelegate:self];
+    [_routeNumberTextField setTag:6];
+    
     
     [_searchResultsList setDelegate:self];
     [_searchResultsList setDataSource:self];
@@ -70,11 +79,12 @@
         destinationStopName = [NSMutableArray array];
         busStopStartToEnd = [NSMutableArray array];
         
-        routeNameList =@[@"", @"F", @"藍", @"紅", @"棕",
-                         @"綠", @"橘", @"內科", @"幹線", @"先導",
-                         @"南軟", @"夜間", @"活動", @"市民", @"跳蛙",
-                         @"其他", @"臺北觀光巴士"];
+        routeNameList = @[@"", @"藍", @"紅", @"棕", @"綠",
+                          @"橘", @"F", @"內科", @"幹線", @"先導",
+                          @"南軟", @"夜間", @"活動", @"市民", @"跳蛙",
+                          @"其他", @"臺北觀光巴士"];
     }
+    
     return self;
 }
 
@@ -84,10 +94,6 @@
 - (NSInteger)tableView:(UITableView *)tableView
  numberOfRowsInSection:(NSInteger)section {
     
-    if (searchResults != nil) {
-        return [searchResults count];
-    }
-    
     return [cityBusList count];
 }
 
@@ -96,17 +102,9 @@
     
     UITableViewCell *tableViewCell = [tableView dequeueReusableCellWithIdentifier:@"Subtitle Cell"
                                                                      forIndexPath:indexPath];
-    
-    if (searchResults == nil) {
-        [[tableViewCell textLabel] setText:[cityBusList objectAtIndex:[indexPath row]]];
-//        NSString *stringDepartureStopName = [departureStopName objectAtIndex:[indexPath row]];
-//        NSString *stringDestinationStopName = [destinationStopName objectAtIndex:[indexPath row]];
-        NSString *stringDetailTextLabel = [busStopStartToEnd objectAtIndex:[indexPath row]];
-        [[tableViewCell detailTextLabel] setText:stringDetailTextLabel];
-        [[tableViewCell detailTextLabel] setTextColor:[UIColor grayColor]];
-    } else {
-        [[tableViewCell textLabel] setText:[searchResults objectAtIndex:[indexPath row]]];
-    }
+    [[tableViewCell textLabel] setText:[cityBusList objectAtIndex:[indexPath row]]];
+    [[tableViewCell detailTextLabel] setText:[busStopStartToEnd objectAtIndex:[indexPath row]]];
+    [[tableViewCell detailTextLabel] setTextColor:[UIColor grayColor]];
     
     return tableViewCell;
 }
@@ -115,27 +113,28 @@
 #pragma mark - UITextFieldDelegate
 
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField {
-    NSLog(@"%@", routeNameList);
+//    NSLog(@"%@", routeNameList);
     
-    [_routeNamePicker setDelegate:self];
-    [_routeNamePicker setDataSource:self];
+//    [_routeNamePicker setDelegate:self];
+//    [_routeNamePicker setDataSource:self];
     [_routeNamePicker setHidden:NO];
-    
+
     return false;
 }
 
 
 - (void)textFieldDidEndEditing:(UITextField *)textField {
-    [_routeNamePicker setDelegate:self];
-    [_routeNamePicker setDataSource:self];
+//    [_routeNamePicker setDelegate:self];
+//    [_routeNamePicker setDataSource:self];
+    
     [_routeNamePicker setHidden:YES];
 }
 
-- (BOOL)textFieldShouldReturn:(UITextField *)textField {
-    [textField resignFirstResponder];
-    
-    return YES;
-}
+//- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+////    [textField resignFirstResponder];
+////    [_routeNamePicker setHidden:YES];
+//    return YES;
+//}
 
 
 #pragma mark - UIPickerViewDataSource
@@ -177,83 +176,123 @@ numberOfRowsInComponent:(NSInteger)component {
 
 - (IBAction)buttonSearchTouch:(UIButton *)sender {
     
-    // http://ptx.transportdata.tw/MOTC/Swagger/#!/CityBusApi/CityBusApi_Route_0
-    // /v2/Bus/Route/City/{City}/{RouteName}    取得指定[縣市],[路線名稱]的路線資料
-    //        NSURL *url = [NSURL URLWithString:@"http://ptx.transportdata.tw/MOTC/v2/Bus/Route/City/Taipei/232?$format=JSON"];
-    NSURL *taipeiURL = [NSURL URLWithString:@"http://ptx.transportdata.tw/MOTC/v2/Bus/Route/City/Taipei?$format=JSON"];
-    NSURL *newTaipeiURL = [NSURL URLWithString:@"http://data.ntpc.gov.tw/od/data/api/28D44B55-F429-4D59-A480-418CFB0E561E?$format=json"];
+    [_routeNamePicker setHidden:YES];
     
-    NSData *taipeiData = [NSData dataWithContentsOfURL:taipeiURL];
-    NSData *newTaipeiData = [NSData dataWithContentsOfURL:newTaipeiURL];
+    /*  http://ptx.transportdata.tw/MOTC/Swagger/#!/CityBusApi/CityBusApi_Route_0
+        /v2/Bus/Route/City/{City}/{RouteName}    取得指定[縣市],[路線名稱]的路線資料   */
     
-    NSError *error;
-    NSArray *taipeiCityBus = [NSJSONSerialization JSONObjectWithData:taipeiData
-                                                             options:NSJSONReadingMutableContainers
-                                                               error:&error];
-    NSArray *newTaipeiCityBus = [NSJSONSerialization JSONObjectWithData:newTaipeiData
-                                                                options:NSJSONReadingMutableContainers
-                                                                  error:&error];
     
-    for (NSDictionary *dictionary in taipeiCityBus) {
-        NSDictionary *routeName = [dictionary objectForKey:@"RouteName"];
-        NSString *zhTW = [routeName objectForKey:@"Zh_tw"];
-        NSString *editLeftParenthesiszhTW = [zhTW stringByReplacingOccurrencesOfString:@"("
-                                                                            withString:@"（"];
-        NSString *editRightParenthesiszhTW = [editLeftParenthesiszhTW stringByReplacingOccurrencesOfString:@")"
-                                                                                                withString:@"）"];
-        NSString *editDashzhTW = [editRightParenthesiszhTW stringByReplacingOccurrencesOfString:@"-"
-                                                                                     withString:@"－"];
+    NSString *stringName = [_routeNameTextField text];
+    NSString *stringNumber = [_routeNumberTextField text];
+    
+    NSString *combineString = [NSString stringWithFormat:@"%@%@", stringName, stringNumber];
+    
+    if ([combineString isEqualToString:@""]) {
+        
+        // Alert view.
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Alert"
+                                                                                 message:@"Please input route number."
+                                                                          preferredStyle:UIAlertControllerStyleAlert];
+        
+        UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"OK"
+                                                              style:UIAlertActionStyleDefault
+                                                            handler:nil];
+        [alertController addAction:alertAction];
+        [self presentViewController:alertController animated:YES completion:nil];
+    } else {
+        
+        // Remove objects from mutablearray before search.
+        [cityBusList removeAllObjects];
+        [busStopStartToEnd removeAllObjects];
+
         
         
         
-        NSString *departureStopNameZh = [dictionary objectForKey:@"DepartureStopNameZh"];
-        NSString *editLeftParenthesisDepartureStopNameZh = [departureStopNameZh stringByReplacingOccurrencesOfString:@"("
-                                                                                                          withString:@"（"];
-        NSString *editFinishDepartureStopNameZh = [editLeftParenthesisDepartureStopNameZh
-                                                        stringByReplacingOccurrencesOfString:@")"
-                                                                                  withString:@"）"];
+        
+        NSString *stringTaipeiURL = [NSString stringWithFormat:@"http://ptx.transportdata.tw/MOTC/v2/Bus/Route/City/Taipei/%@?$format=JSON", combineString];
+        
+        // Fix URL encoding. http://blog.csdn.net/andanlan/article/details/53368727
+        NSString *stringNewTaipeiURL = [NSString stringWithFormat:@"http://data.ntpc.gov.tw/od/data/api/67BB3C2B-E7D1-43A7-B872-61B2F082E11B?$format=json&$filter=nameZh eq %@", combineString];
+        NSCharacterSet *characterSet = [NSCharacterSet URLQueryAllowedCharacterSet];
+        NSString *encodingNewTaipeiURL = [stringNewTaipeiURL stringByAddingPercentEncodingWithAllowedCharacters:characterSet];
+        NSString *encodingTaipeiURL = [stringTaipeiURL stringByAddingPercentEncodingWithAllowedCharacters:characterSet];
+        
+        NSURL *taipeiURL = [NSURL URLWithString:encodingTaipeiURL];
+        NSURL *newTaipeiURL = [NSURL URLWithString:encodingNewTaipeiURL];
+        
+        NSData *taipeiData = [NSData dataWithContentsOfURL:taipeiURL];
+        NSData *newTaipeiData = [NSData dataWithContentsOfURL:newTaipeiURL];
+        
+        NSError *error;
+        NSArray *taipeiCityBus = [NSJSONSerialization JSONObjectWithData:taipeiData
+                                                                 options:NSJSONReadingMutableContainers
+                                                                   error:&error];
+        NSArray *newTaipeiCityBus = [NSJSONSerialization JSONObjectWithData:newTaipeiData
+                                                                    options:NSJSONReadingMutableContainers
+                                                                      error:&error];
+        
+        if (taipeiCityBus != nil) {
+            
+            for (NSDictionary *dictionary in taipeiCityBus) {
+                NSDictionary *routeName = [dictionary objectForKey:@"RouteName"];
+                NSString *zhTW = [routeName objectForKey:@"Zh_tw"];
+                NSString *departureStopNameZh = [dictionary objectForKey:@"DepartureStopNameZh"];
+                NSString *destinationStopNameZh = [dictionary objectForKey:@"DestinationStopNameZh"];
+                
+                NSString *editedString = [self editStringFromHalfWidthToFullWidth:zhTW];
+                NSString *editedDepartureStopNameZh = [self editStringFromHalfWidthToFullWidth:departureStopNameZh];
+                NSString *editedDestinationStopNameZh = [self editStringFromHalfWidthToFullWidth:destinationStopNameZh];
+
+                NSString *startEnd = [NSString stringWithFormat:@"%@－%@", editedDepartureStopNameZh, editedDestinationStopNameZh];
+                
+                [cityBusList addObject:editedString];
+                [busStopStartToEnd addObject:startEnd];
+            }
+        }
         
         
-        NSString *destinationStopNameZh = [dictionary objectForKey:@"DestinationStopNameZh"];
-        NSString *editLeftParenthesisDestinationStopNameZh = [destinationStopNameZh stringByReplacingOccurrencesOfString:@"("
-                                                                                                          withString:@"（"];
-        NSString *editFinishDestinationStopNameZh = [editLeftParenthesisDestinationStopNameZh
-                                                        stringByReplacingOccurrencesOfString:@")"
-                                                                                  withString:@"）"];
-        
-        NSString *startEnd = [NSString stringWithFormat:@"%@－%@", editFinishDepartureStopNameZh, editFinishDestinationStopNameZh];
-        
-        [cityBusList addObject:editDashzhTW];
-        [busStopStartToEnd addObject:startEnd];
-        
+        if (newTaipeiCityBus != nil) {
+    
+            for (NSDictionary *dictionary in newTaipeiCityBus) {
+                
+                NSString *nameZh = [dictionary objectForKey:@"nameZh"];
+                NSString *departureZh = [dictionary objectForKey:@"departureZh"];
+                NSString *destinationZh = [dictionary objectForKey:@"destinationZh"];
+                
+                NSString *editedString = [self editStringFromHalfWidthToFullWidth:nameZh];
+                NSString *editedDepartureZh = [self editStringFromHalfWidthToFullWidth:departureZh];
+                NSString *editedDestinationZh = [self editStringFromHalfWidthToFullWidth:destinationZh];
+                
+                NSString *startEnd = [NSString stringWithFormat:@"%@－%@", editedDepartureZh, editedDestinationZh];
+                
+                [cityBusList addObject:editedString];
+                [busStopStartToEnd addObject:startEnd];
+                
+            }
+        }
     }
-    
-    for (NSDictionary *dictionary in newTaipeiCityBus) {
-        NSString *routeName = [dictionary objectForKey:@"RouteName"];
-        NSString *editLeftParenthesisRouteName = [routeName stringByReplacingOccurrencesOfString:@"("
-                                                                       withString:@"（"];
-        NSString *editRightParenthesisRouteName = [editLeftParenthesisRouteName stringByReplacingOccurrencesOfString:@")"
-                                                                       withString:@"）"];
-        NSString *editFinishRouteName = [editRightParenthesisRouteName stringByReplacingOccurrencesOfString:@"–"
-                                                                             withString:@"－"];
-        
-        NSString *startEnd = [dictionary objectForKey:@"startend"];
-        NSString *editDashStartEnd = [startEnd stringByReplacingOccurrencesOfString:@"-"
-                                                                     withString:@"－"];
-        NSString *editDashStartEnd2 = [editDashStartEnd stringByReplacingOccurrencesOfString:@"–"
-                                                                          withString:@"－"];
-        NSString *editLeftParenthesisStartEnd = [editDashStartEnd2 stringByReplacingOccurrencesOfString:@"(" withString:@"（"];
-        NSString *editFinishStartEnd = [editLeftParenthesisStartEnd stringByReplacingOccurrencesOfString:@")" withString:@"）"];
-        
-        
-        [cityBusList addObject:editFinishRouteName];
-        [busStopStartToEnd addObject:editFinishStartEnd];
-        
-    }
-    
+
     [_searchResultsList reloadData];
 }
 
+
+#pragma mark - Edit String
+
+- (NSString *)editStringFromHalfWidthToFullWidth:(NSString *)string {
+    
+    NSString *editingString = [string stringByReplacingOccurrencesOfString:@"("
+                                                                withString:@"（"];
+    NSString *editingString2 = [editingString stringByReplacingOccurrencesOfString:@")"
+                                                                        withString:@"）"];
+    NSString *editingString3 = [editingString2 stringByReplacingOccurrencesOfString:@"-"
+                                                                         withString:@"－"];
+    NSString *editingString4 = [editingString3 stringByReplacingOccurrencesOfString:@"–"
+                                                                         withString:@"－"];
+    NSString *finishString = [editingString4 stringByReplacingOccurrencesOfString:@"/"
+                                                                       withString:@"／"];
+    
+    return finishString;
+}
 
 /*
 #pragma mark - Navigation
