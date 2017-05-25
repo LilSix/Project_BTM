@@ -28,33 +28,6 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated {
-    
-    // Remove objects from mutable array before search.
-    [subwayLists removeAllObjects];
-    [destinationLists removeAllObjects];
-    
-    NSURL *URL = [NSURL URLWithString:@"http://data.taipei/opendata/datalist/apiAccess?scope=resourceAquire&rid=55ec6d6e-dc5c-4268-a725-d04cc262172b"];
-    NSData *data = [NSData dataWithContentsOfURL:URL];
-    NSError *error;
-    NSDictionary *subwayListsJSON = [NSJSONSerialization JSONObjectWithData:data
-                                                                    options:NSJSONReadingMutableContainers
-                                                                      error:&error];
-    NSDictionary *result = [subwayListsJSON objectForKey:@"result"];
-    NSArray *results = [result objectForKey:@"results"];
-    
-    for (NSDictionary *dictionary in results) {
-        NSString *station = [dictionary objectForKey:@"Station"];
-        NSString *tempDestination = [dictionary objectForKey:@"Destination"];
-        NSString *destination = [NSString stringWithFormat:@"目的地：%@", tempDestination];
-        
-        NSString *editedStation = [self editStringFromHalfWidthToFullWidth:station];
-        NSString *editedDestination = [self editStringFromHalfWidthToFullWidth:destination];
-        
-        [subwayLists addObject:editedStation];
-        [destinationLists addObject:editedDestination];
-    }
-    
-    [_searchResultsList reloadData];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -113,6 +86,53 @@
                                                                        withString:@"／"];
     
     return finishString;
+}
+
+
+#pragma mark - IBAction
+
+- (IBAction)barButtonItemRefreshTouch:(UIBarButtonItem *)sender {
+    
+    // Remove objects from mutable array before search.
+    [subwayLists removeAllObjects];
+    [destinationLists removeAllObjects];
+    
+    NSURL *URL = [NSURL URLWithString:@"http://data.taipei/opendata/datalist/apiAccess?scope=resourceAquire&rid=55ec6d6e-dc5c-4268-a725-d04cc262172b"];
+    NSData *data = [NSData dataWithContentsOfURL:URL];
+    NSError *error;
+    
+    if (data != nil) {
+
+        NSDictionary *subwayListsJSON = [NSJSONSerialization JSONObjectWithData:data
+                                                                        options:NSJSONReadingMutableContainers
+                                                                          error:&error];
+        NSDictionary *result = [subwayListsJSON objectForKey:@"result"];
+        NSArray *results = [result objectForKey:@"results"];
+        
+        for (NSDictionary *dictionary in results) {
+            NSString *station = [dictionary objectForKey:@"Station"];
+            NSString *tempDestination = [dictionary objectForKey:@"Destination"];
+            NSString *destination = [NSString stringWithFormat:@"目的地：%@", tempDestination];
+            
+            NSString *editedStation = [self editStringFromHalfWidthToFullWidth:station];
+            NSString *editedDestination = [self editStringFromHalfWidthToFullWidth:destination];
+            
+            [subwayLists addObject:editedStation];
+            [destinationLists addObject:editedDestination];
+        }
+        
+        [_searchResultsList reloadData];
+    } else {
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Alert"
+                                                                                 message:@"No data to display."
+                                                                          preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"OK"
+                                                              style:UIAlertActionStyleDefault
+                                                            handler:nil];
+        
+        [alertController addAction:alertAction];
+        [self presentViewController:alertController animated:YES completion:nil];
+    }
 }
 
 /*

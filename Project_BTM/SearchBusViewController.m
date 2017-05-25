@@ -50,12 +50,14 @@
     // Do any additional setup after loading the view.
 
     [_routeNameTextField setDelegate:self];
-//    [_routeNumberTextField setDelegate:self];
+    [_routeNamePicker setShowsSelectionIndicator:YES];
+    [_routeNameTextField setInputView:_routeNamePicker];
     [_routeNumberTextField setTag:6];
     
     
     [_searchResultsList setDelegate:self];
     [_searchResultsList setDataSource:self];
+    
     
     [_routeNamePicker setDelegate:self];
     [_routeNamePicker setDataSource:self];
@@ -126,15 +128,21 @@
 - (void)textFieldDidEndEditing:(UITextField *)textField {
 //    [_routeNamePicker setDelegate:self];
 //    [_routeNamePicker setDataSource:self];
-    
+    [textField resignFirstResponder];
     [_routeNamePicker setHidden:YES];
 }
 
-//- (BOOL)textFieldShouldReturn:(UITextField *)textField {
-////    [textField resignFirstResponder];
-////    [_routeNamePicker setHidden:YES];
-//    return YES;
-//}
+- (BOOL)textFieldShouldEndEditing:(UITextField *)textField {
+    [_routeNamePicker setHidden:YES];
+    
+    return YES;
+}
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+
+    [_routeNamePicker setHidden:YES];
+    return YES;
+}
 
 
 #pragma mark - UIPickerViewDataSource
@@ -204,10 +212,6 @@ numberOfRowsInComponent:(NSInteger)component {
         // Remove objects from mutablearray before search.
         [cityBusList removeAllObjects];
         [busStopStartToEnd removeAllObjects];
-
-        
-        
-        
         
         NSString *stringTaipeiURL = [NSString stringWithFormat:@"http://ptx.transportdata.tw/MOTC/v2/Bus/Route/City/Taipei/%@?$format=JSON", combineString];
         
