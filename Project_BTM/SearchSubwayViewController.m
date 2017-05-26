@@ -112,7 +112,7 @@
         for (NSDictionary *dictionary in results) {
             NSString *station = [dictionary objectForKey:@"Station"];
             NSString *tempDestination = [dictionary objectForKey:@"Destination"];
-            NSString *destination = [NSString stringWithFormat:@"目的地：%@", tempDestination];
+            NSString *destination = [NSString stringWithFormat:@"終點站：%@", tempDestination];
             
             NSString *editedStation = [self editStringFromHalfWidthToFullWidth:station];
             NSString *editedDestination = [self editStringFromHalfWidthToFullWidth:destination];

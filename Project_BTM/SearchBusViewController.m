@@ -6,7 +6,7 @@
 #import "SearchBusViewController.h"
 #import "CityBus.h"
 
-// Framework
+// Frameworks
 @import SystemConfiguration;
 
 
@@ -20,6 +20,8 @@
     
     NSArray *searchResults;
     NSArray *routeNameList;
+    
+    UIPickerView *routeNamePicker;
     
     
     
@@ -35,8 +37,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *buttonSearch;
 @property (weak, nonatomic) IBOutlet UITextField *routeNameTextField;
 @property (weak, nonatomic) IBOutlet UITextField *routeNumberTextField;
-@property (weak, nonatomic) IBOutlet UIPickerView *routeNamePicker;
-
+//@property (weak, nonatomic) IBOutlet UIPickerView *routeNamePicker;
 
 @end
 
@@ -49,19 +50,59 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
 
+
+    
+    // Picker view.
+//    [[self view] addSubview:_routeNamePicker];
+    routeNamePicker = [[UIPickerView alloc] init];
+    
+    [routeNamePicker setDelegate:self];
+    [routeNamePicker setDataSource:self];
+//    [routeNamePicker setHidden:YES];
+    [routeNamePicker setTag:11];
+    
+
+    
+    
+    
+    
+    
+//    UIBarButtonItem *barButtonItemSearch = [[UIBarButtonItem alloc] initWithTitle:@"Search"
+//                                                                            style:UIBarButtonItemStyleDone
+//                                                                           target:nil
+//                                                                           action:nil];
+    
     [_routeNameTextField setDelegate:self];
-    [_routeNamePicker setShowsSelectionIndicator:YES];
-    [_routeNameTextField setInputView:_routeNamePicker];
+    //    [_routeNumberTextField setDelegate:self];
+    [routeNamePicker setShowsSelectionIndicator:YES];
+    [_routeNameTextField setInputView:routeNamePicker];
     [_routeNumberTextField setTag:6];
     
-    
+    // Table view.
     [_searchResultsList setDelegate:self];
     [_searchResultsList setDataSource:self];
     
+    UIToolbar* toolBar = [[UIToolbar alloc] init];
+    [toolBar setBarStyle:UIBarStyleDefault];
     
-    [_routeNamePicker setDelegate:self];
-    [_routeNamePicker setDataSource:self];
-    [_routeNamePicker setHidden:YES];
+    UIBarButtonItem *barButtonItemCancel = [[UIBarButtonItem alloc] initWithTitle:@"Cancel"
+                                                                            style:UIBarButtonItemStylePlain
+                                                                           target:self
+                                                                           action:@selector(barButtonItemCancelTouch)];
+    UIBarButtonItem *barButtonItemFixedSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
+    UIBarButtonItem *barButtonItemSearch = [[UIBarButtonItem alloc] initWithTitle:@"Done"
+                                                                            style:UIBarButtonItemStylePlain
+                                                                           target:self
+                                                                           action:@selector(barButtonItemDoneTouch)];
+    
+    NSArray *arrayToolBarButtonItem = @[barButtonItemCancel, barButtonItemFixedSpace, barButtonItemSearch];
+    
+    
+    [toolBar sizeToFit];
+    [toolBar setItems:arrayToolBarButtonItem];
+    [_routeNameTextField setInputAccessoryView:toolBar];
+    [_routeNumberTextField setInputAccessoryView:toolBar];
+    
 }
 
 - (void)didReceiveMemoryWarning {
@@ -70,17 +111,35 @@
 }
 
 
+#pragma mark - UIBarButtonItem Action
+
+- (void)barButtonItemCancelTouch {
+    [_routeNameTextField endEditing:YES];
+    [_routeNumberTextField endEditing:YES];
+    
+}
+
+- (void)barButtonItemDoneTouch {
+    [_routeNameTextField endEditing:YES];
+    [_routeNumberTextField endEditing:YES];
+}
+
+
 #pragma mark - Init
 
 - (instancetype)initWithCoder:(NSCoder *)coder {
+    
     self = [super initWithCoder:coder];
+    
     if (self) {
         
+        // Init mutable array.
         cityBusList = [NSMutableArray array];
         departureStopName = [NSMutableArray array];
         destinationStopName = [NSMutableArray array];
         busStopStartToEnd = [NSMutableArray array];
         
+        // Bus route name data in picker view.
         routeNameList = @[@"", @"藍", @"紅", @"棕", @"綠",
                           @"橘", @"F", @"內科", @"幹線", @"先導",
                           @"南軟", @"夜間", @"活動", @"市民", @"跳蛙",
@@ -119,9 +178,22 @@
     
 //    [_routeNamePicker setDelegate:self];
 //    [_routeNamePicker setDataSource:self];
-    [_routeNamePicker setHidden:NO];
-
-    return false;
+    
+    NSLog(@"textFieldShouldBeginEditing");
+    
+//    [routeNamePicker setHidden:NO];
+    
+//    if ([_routeNameTextField ]) {
+//        
+////        UIPickerView *tempPickerView = [[self view] viewWithTag:11];
+////        [tempPickerView setHidden:YES];
+//        NSLog(@"[_routeNameTextField isEditing]");
+//        [_routeNamePicker setHidden:NO];
+//    } else if ([_routeNumberTextField isTouchInside]){
+//        [_routeNamePicker setHidden:YES];
+//    }
+    
+    return YES;
 }
 
 
@@ -129,18 +201,18 @@
 //    [_routeNamePicker setDelegate:self];
 //    [_routeNamePicker setDataSource:self];
     [textField resignFirstResponder];
-    [_routeNamePicker setHidden:YES];
+    
 }
 
 - (BOOL)textFieldShouldEndEditing:(UITextField *)textField {
-    [_routeNamePicker setHidden:YES];
+//    [routeNamePicker setHidden:YES];
     
     return YES;
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
 
-    [_routeNamePicker setHidden:YES];
+//    [routeNamePicker setHidden:YES];
     return YES;
 }
 
@@ -184,7 +256,8 @@ numberOfRowsInComponent:(NSInteger)component {
 
 - (IBAction)buttonSearchTouch:(UIButton *)sender {
     
-    [_routeNamePicker setHidden:YES];
+    [routeNamePicker setHidden:YES];
+    [[self view] endEditing:YES];
     
     /*  http://ptx.transportdata.tw/MOTC/Swagger/#!/CityBusApi/CityBusApi_Route_0
         /v2/Bus/Route/City/{City}/{RouteName}    取得指定[縣市],[路線名稱]的路線資料   */
@@ -195,7 +268,13 @@ numberOfRowsInComponent:(NSInteger)component {
     
     NSString *combineString = [NSString stringWithFormat:@"%@%@", stringName, stringNumber];
     
+    [_searchResultsList reloadData];
+    
     if ([combineString isEqualToString:@""]) {
+        
+        // Remove objects if text field is empty.
+        [cityBusList removeAllObjects];
+        [busStopStartToEnd removeAllObjects];
         
         // Alert view.
         UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Alert"
@@ -228,6 +307,7 @@ numberOfRowsInComponent:(NSInteger)component {
         NSData *newTaipeiData = [NSData dataWithContentsOfURL:newTaipeiURL];
         
         NSError *error;
+        
         NSArray *taipeiCityBus = [NSJSONSerialization JSONObjectWithData:taipeiData
                                                                  options:NSJSONReadingMutableContainers
                                                                    error:&error];
@@ -279,6 +359,17 @@ numberOfRowsInComponent:(NSInteger)component {
     [_searchResultsList reloadData];
 }
 
+- (IBAction)barButtonItemStopTouch:(UIBarButtonItem *)sender {
+    
+    [_routeNameTextField setText:@""];
+    [_routeNumberTextField setText:@""];
+    
+    [cityBusList removeAllObjects];
+    [busStopStartToEnd removeAllObjects];
+    [_searchResultsList reloadData];
+}
+
+
 
 #pragma mark - Edit String
 
@@ -296,6 +387,15 @@ numberOfRowsInComponent:(NSInteger)component {
                                                                        withString:@"／"];
     
     return finishString;
+}
+
+
+#pragma mark - Touch Event
+
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    [[self view] endEditing:YES];
+    
+    [routeNamePicker setHidden:YES];
 }
 
 /*
