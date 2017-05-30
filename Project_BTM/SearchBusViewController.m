@@ -28,15 +28,15 @@
 //    UIPickerView *routeNamePicker;
 }
 
-@property (weak, nonatomic) IBOutlet UITableView *searchResultsList;
+@property (weak, nonatomic) IBOutlet UITableView *searchBusList;
 
 //@property (weak, nonatomic) IBOutlet UISearchBar *searchBar;
 //@property (weak, nonatomic) IBOutlet UISearchBar *searchBar;
 //@property (strong, nonatomic) IBOutlet UISearchController *searchDisplayController;
 
 @property (weak, nonatomic) IBOutlet UIButton *buttonSearch;
-@property (weak, nonatomic) IBOutlet UITextField *routeNameTextField;
-@property (weak, nonatomic) IBOutlet UITextField *routeNumberTextField;
+@property (weak, nonatomic) IBOutlet UITextField *routeName;
+@property (weak, nonatomic) IBOutlet UITextField *routeNumber;
 //@property (weak, nonatomic) IBOutlet UIPickerView *routeNamePicker;
 
 @end
@@ -57,12 +57,12 @@
     [routeNamePicker setShowsSelectionIndicator:YES];
     
     // Route name text field.
-    [_routeNameTextField setDelegate:self];
-    [_routeNameTextField setInputView:routeNamePicker];
+    [_routeName setDelegate:self];
+    [_routeName setInputView:routeNamePicker];
 
     // Table view.
-    [_searchResultsList setDelegate:self];
-    [_searchResultsList setDataSource:self];
+    [_searchBusList setDelegate:self];
+    [_searchBusList setDataSource:self];
     
     UIToolbar* toolBar = [[UIToolbar alloc] init];
     [toolBar setBarStyle:UIBarStyleDefault];
@@ -91,8 +91,8 @@
     // Setting about toolbar.
     [toolBar sizeToFit];
     [toolBar setItems:arrayToolBarButtonItem];
-    [_routeNameTextField setInputAccessoryView:toolBar];
-    [_routeNumberTextField setInputAccessoryView:toolBar];
+    [_routeName setInputAccessoryView:toolBar];
+    [_routeNumber setInputAccessoryView:toolBar];
     
 }
 
@@ -107,14 +107,14 @@
 #pragma mark - UIBarButtonItem Action
 
 - (void)barButtonItemCancelTouch {
-    [_routeNameTextField endEditing:YES];
-    [_routeNumberTextField endEditing:YES];
+    [_routeName endEditing:YES];
+    [_routeNumber endEditing:YES];
     
 }
 
 - (void)barButtonItemDoneTouch {
-    [_routeNameTextField endEditing:YES];
-    [_routeNumberTextField endEditing:YES];
+    [_routeName endEditing:YES];
+    [_routeNumber endEditing:YES];
 }
 
 
@@ -241,7 +241,7 @@ numberOfRowsInComponent:(NSInteger)component {
       didSelectRow:(NSInteger)row
        inComponent:(NSInteger)component {
     
-    [_routeNameTextField setText:routeNameList[row]];
+    [_routeName setText:routeNameList[row]];
 }
 
 
@@ -285,8 +285,8 @@ numberOfRowsInComponent:(NSInteger)component {
 //    http:ptx.transportdata.tw/MOTC/Swagger/#!/CityBusApi/CityBusApi_Route_0
 //    /v2/Bus/Route/City/{City}/{RouteName}    取得指定[縣市],[路線名稱]的路線資料
     
-    NSString *stringName = [_routeNameTextField text];
-    NSString *stringNumber = [_routeNumberTextField text];
+    NSString *stringName = [_routeName text];
+    NSString *stringNumber = [_routeNumber text];
     
     if (![stringName isEqualToString:@""] || ![stringNumber isEqualToString:@""]) {
             
@@ -313,12 +313,12 @@ numberOfRowsInComponent:(NSInteger)component {
         
         NSCharacterSet *characterSet = [NSCharacterSet URLQueryAllowedCharacterSet];
         
-        NSString *stringTaipei = [NSString stringWithFormat:@"http://ptx.transportdata.tw/MOTC/v2/Bus/Route/City/Taipei/%@%@?$format=JSON", stringName, stringNumber];
+        NSString *stringTaipei = [NSString stringWithFormat:@"http://ptx.transportdata.tw/MOTC/v2/Bus/Route/City/Taipei/%@%@?$orderby=RouteID asc&$format=JSON", stringName, stringNumber];
         NSString *encodingStringTaipei = [stringTaipei stringByAddingPercentEncodingWithAllowedCharacters:characterSet];
         NSURL *URLTaipei = [NSURL URLWithString:encodingStringTaipei];
         NSURLSessionDownloadTask *taipeiDownloadTask = [session downloadTaskWithURL:URLTaipei];
         
-        NSString *stringNewTaipei = [NSString stringWithFormat:@"http://ptx.transportdata.tw/MOTC/v2/Bus/Route/City/NewTaipei/%@%@?$format=JSON", stringName, stringNumber];
+        NSString *stringNewTaipei = [NSString stringWithFormat:@"http://ptx.transportdata.tw/MOTC/v2/Bus/Route/City/NewTaipei/%@%@?$orderby=RouteID asc&$format=JSON", stringName, stringNumber];
         NSString *encodingStringNewTaipei = [stringNewTaipei stringByAddingPercentEncodingWithAllowedCharacters:characterSet];
         NSURL *URLNewTiapei = [NSURL URLWithString:encodingStringNewTaipei];
         NSURLSessionDownloadTask *newTaipeiDownloadtask = [session downloadTaskWithURL:URLNewTiapei];
@@ -346,7 +346,7 @@ numberOfRowsInComponent:(NSInteger)component {
         
         [cityBusList removeAllObjects];
         [busStopStartToEnd removeAllObjects];
-        [_searchResultsList reloadData];
+        [_searchBusList reloadData];
     }
     
     
@@ -454,12 +454,12 @@ numberOfRowsInComponent:(NSInteger)component {
 
 - (IBAction)barButtonItemStopTouch:(UIBarButtonItem *)sender {
     
-    [_routeNameTextField setText:@""];
-    [_routeNumberTextField setText:@""];
+    [_routeName setText:@""];
+    [_routeNumber setText:@""];
     
     [cityBusList removeAllObjects];
     [busStopStartToEnd removeAllObjects];
-    [_searchResultsList reloadData];
+    [_searchBusList reloadData];
 }
 
 
@@ -531,7 +531,7 @@ didFinishDownloadingToURL:(NSURL *)location {
         
         [session finishTasksAndInvalidate];
         [downloadTask cancel];
-        [_searchResultsList reloadData];
+        [_searchBusList reloadData];
     }
 
     
