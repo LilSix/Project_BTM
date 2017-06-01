@@ -2,9 +2,6 @@
 //  SearchBusDetailViewController.m
 //  Project_BTM
 //
-//  Created by user36 on 2017/6/1.
-//  Copyright © 2017年 user36. All rights reserved.
-//
 
 #import "SearchBusDetailViewController.h"
 
@@ -26,9 +23,8 @@
     [_searchBusDetailList setDelegate:self];
     [_searchBusDetailList setDataSource:self];
     
-    
     NSCharacterSet *characterSet = [NSCharacterSet URLQueryAllowedCharacterSet];
-    NSString *string = [NSString stringWithFormat:@"http://ptx.transportdata.tw/MOTC/v2/Bus/StopOfRoute/City/Taipei/14?$filter=Direction eq '0'&$format=JSON"];
+    NSString *string = [NSString stringWithFormat:@"http://ptx.transportdata.tw/MOTC/v2/Bus/StopOfRoute/City/Taipei/14?$filter=RouteUID eq 'TPE10891'and KeyPattern eq true and Direction eq '0'&$format=JSON"];
     NSString *encodingString = [string stringByAddingPercentEncodingWithAllowedCharacters:characterSet];
     NSURL *URL = [NSURL URLWithString:encodingString];
     NSData *data = [NSData dataWithContentsOfURL:URL];
@@ -36,19 +32,18 @@
                                                      options:NSJSONReadingMutableContainers
                                                        error:nil];
     for (NSDictionary *dictionary in array) {
+        
         NSArray *stops = [dictionary objectForKey:@"Stops"];
-        for (NSDictionary *stopName in stops) {
-            NSString *zhTW = [stopName objectForKey:@"Zh_tw"];
-            [mutableArray addObject:zhTW];
-            NSLog(@"%@", zhTW);
+        
+        for (NSDictionary *StopName in stops) {
+        
+            NSDictionary *zhTW = [StopName objectForKey:@"StopName"];
+            NSString *string = [zhTW objectForKey:@"Zh_tw"];
+            NSString *editedString = [self editStringFromHalfWidthToFullWidth:string];
+            [mutableArray addObject:editedString];
+            NSLog(@"%@", editedString);
         }
-    };
-}
-
-- (void)viewWillAppear:(BOOL)animated {
-    
-    NSLog(@"[_searchBusDetailList reloadData]");
-    [_searchBusDetailList reloadData];
+    }
 }
 
 - (void)didReceiveMemoryWarning {
@@ -88,8 +83,25 @@
     [[tableViewCell textLabel] setText:[mutableArray objectAtIndex:[indexPath row]]];
     
     
-    NSLog(@"Cell");
     return tableViewCell;
+}
+
+#pragma mark - Edit String
+
+- (NSString *)editStringFromHalfWidthToFullWidth:(NSString *)string {
+    
+    NSString *editingString = [string stringByReplacingOccurrencesOfString:@"("
+                                                                withString:@"（"];
+    NSString *editingString2 = [editingString stringByReplacingOccurrencesOfString:@")"
+                                                                        withString:@"）"];
+    NSString *editingString3 = [editingString2 stringByReplacingOccurrencesOfString:@"-"
+                                                                         withString:@"－"];
+    NSString *editingString4 = [editingString3 stringByReplacingOccurrencesOfString:@"–"
+                                                                         withString:@"－"];
+    NSString *finishString = [editingString4 stringByReplacingOccurrencesOfString:@"/"
+                                                                       withString:@"／"];
+    
+    return finishString;
 }
 
 /*
