@@ -68,7 +68,7 @@
     [toolBar setBarStyle:UIBarStyleDefault];
     
     // Create toolbar cancel bar button item.
-    UIBarButtonItem *barButtonItemCancel = [[UIBarButtonItem alloc] initWithTitle:@"Cancel"
+    UIBarButtonItem *barButtonItemCancel = [[UIBarButtonItem alloc] initWithTitle:@"取消"
                                                                             style:UIBarButtonItemStylePlain
                                                                            target:self
                                                                            action:@selector(barButtonItemCancelTouch)];
@@ -79,7 +79,7 @@
                                                                          target:self
                                                                          action:nil];
     // Create toolbar done bar button item.
-    UIBarButtonItem *barButtonItemSearch = [[UIBarButtonItem alloc] initWithTitle:@"Done"
+    UIBarButtonItem *barButtonItemSearch = [[UIBarButtonItem alloc] initWithTitle:@"確認"
                                                                             style:UIBarButtonItemStylePlain
                                                                            target:self
                                                                            action:@selector(barButtonItemDoneTouch)];
@@ -107,12 +107,14 @@
 #pragma mark - UIBarButtonItem Action
 
 - (void)barButtonItemCancelTouch {
+    
     [_routeName endEditing:YES];
     [_routeNumber endEditing:YES];
     
 }
 
 - (void)barButtonItemDoneTouch {
+    
     [_routeName endEditing:YES];
     [_routeNumber endEditing:YES];
 }
@@ -125,7 +127,7 @@
     self = [super initWithCoder:coder];
     if (self) {
         
-        // Init mutable array.
+        // Initial mutable array.
         cityBusList = [NSMutableArray array];
         departureStopName = [NSMutableArray array];
         destinationStopName = [NSMutableArray array];
@@ -310,14 +312,16 @@ numberOfRowsInComponent:(NSInteger)component {
 //        NSURL *taipeiURL = [NSURL URLWithString:encodingTaipeiURL];
 //        NSURL *newTaipeiURL = [NSURL URLWithString:encodingNewTaipeiURL];
         
-        
+        // Encoding special characters in URL.
         NSCharacterSet *characterSet = [NSCharacterSet URLQueryAllowedCharacterSet];
-        
+
+        // Prepare for download Taipei City bus JSON file.
         NSString *stringTaipei = [NSString stringWithFormat:@"http://ptx.transportdata.tw/MOTC/v2/Bus/Route/City/Taipei/%@%@?$orderby=RouteID asc&$format=JSON", stringName, stringNumber];
         NSString *encodingStringTaipei = [stringTaipei stringByAddingPercentEncodingWithAllowedCharacters:characterSet];
         NSURL *URLTaipei = [NSURL URLWithString:encodingStringTaipei];
         NSURLSessionDownloadTask *taipeiDownloadTask = [session downloadTaskWithURL:URLTaipei];
-        
+
+        // Prepare for download New Taipei City bus JSON file.
         NSString *stringNewTaipei = [NSString stringWithFormat:@"http://ptx.transportdata.tw/MOTC/v2/Bus/Route/City/NewTaipei/%@%@?$orderby=RouteID asc&$format=JSON", stringName, stringNumber];
         NSString *encodingStringNewTaipei = [stringNewTaipei stringByAddingPercentEncodingWithAllowedCharacters:characterSet];
         NSURL *URLNewTiapei = [NSURL URLWithString:encodingStringNewTaipei];
@@ -334,11 +338,11 @@ numberOfRowsInComponent:(NSInteger)component {
         [busStopStartToEnd removeAllObjects];
         
         // Alert view.
-        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Alert"
-                                                                                 message:@"Please input route number."
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"警告"
+                                                                                 message:@"請輸入路線或號碼後再做搜尋。"
                                                                           preferredStyle:UIAlertControllerStyleAlert];
         
-        UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"OK"
+        UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"確認"
                                                               style:UIAlertActionStyleDefault
                                                             handler:nil];
         [alertController addAction:alertAction];
@@ -533,16 +537,10 @@ didFinishDownloadingToURL:(NSURL *)location {
         [downloadTask cancel];
         [_searchBusList reloadData];
     }
-
-    
-
-    
-
-    
 }
 
 
-/*
+
 #pragma mark - Navigation
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation
@@ -550,6 +548,6 @@ didFinishDownloadingToURL:(NSURL *)location {
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.
 }
-*/
+
 
 @end
