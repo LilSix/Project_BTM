@@ -70,22 +70,27 @@
 }
 
 
-#pragma mark - Edit String
+#pragma mark - Half-Width To Full-Width
 
 - (NSString *)editStringFromHalfWidthToFullWidth:(NSString *)string {
     
-    NSString *editingString = [string stringByReplacingOccurrencesOfString:@"("
-                                                                withString:@"（"];
-    NSString *editingString2 = [editingString stringByReplacingOccurrencesOfString:@")"
-                                                                        withString:@"）"];
-    NSString *editingString3 = [editingString2 stringByReplacingOccurrencesOfString:@"-"
-                                                                         withString:@"－"];
-    NSString *editingString4 = [editingString3 stringByReplacingOccurrencesOfString:@"–"
-                                                                       withString:@"－"];
-    NSString *finishString = [editingString4 stringByReplacingOccurrencesOfString:@"/"
-                                                                       withString:@"／"];
+    for (int i = 0; i <= [string length]; i++) {
+        
+        string = [string stringByReplacingOccurrencesOfString:@"("
+                                                   withString:@"（"];
+        string = [string stringByReplacingOccurrencesOfString:@")"
+                                                   withString:@"）"];
+        string = [string stringByReplacingOccurrencesOfString:@"-"
+                                                   withString:@"－"];
+        string = [string stringByReplacingOccurrencesOfString:@"–"
+                                                   withString:@"－"];
+        string = [string stringByReplacingOccurrencesOfString:@"/"
+                                                   withString:@"／"];
+        string = [string stringByReplacingOccurrencesOfString:@"~"
+                                                   withString:@"～"];
+    }
     
-    return finishString;
+    return string;
 }
 
 

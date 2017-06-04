@@ -7,9 +7,16 @@
 
 @interface CityBus : NSObject
 
-@property (strong, nonatomic) NSString *routeUID;
-@property (strong, nonatomic) NSString *routeName;
+@property (strong, nonatomic) NSMutableArray<NSString *> *authorityID;
+@property (strong, nonatomic) NSMutableArray<NSString *> *routeUID;
+@property (strong, nonatomic) NSMutableArray<NSString *> *routeName;
+@property (strong, nonatomic) NSMutableArray<NSString *> *keyPattern;
 @property (strong, nonatomic) NSString *direction;
+@property (strong, nonatomic) NSMutableArray<NSString *> *departureStopName;
+@property (strong, nonatomic) NSMutableArray<NSString *> *destinationStopName;
+@property (strong, nonatomic) NSMutableArray<NSString *> *stopUID;
+@property (strong, nonatomic) NSMutableArray<NSString *> *stopName;
 @property (strong, nonatomic) NSString *estimateTime;
+@property (strong, nonatomic) NSMutableArray<NSString *> *stopStatus;
 
 @end
