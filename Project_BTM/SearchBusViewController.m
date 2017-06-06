@@ -65,7 +65,7 @@
     [routeNamePicker setDataSource:self];
     [routeNamePicker setShowsSelectionIndicator:YES];
     
-///FIXME: Picker selection sometime dismiss.
+///FIXME: Picker selection dismiss.
     // Bus route name data in picker view.
     routeNameList = @[@"", @"藍", @"紅", @"棕", @"綠",
                       @"橘", @"F", @"內科", @"幹線", @"先導",

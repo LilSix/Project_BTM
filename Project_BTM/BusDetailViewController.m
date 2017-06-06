@@ -309,13 +309,23 @@ didFinishDownloadingToURL:(NSURL *)location {
     for (NSDictionary *dictionary in array) {
         
         NSNumber *estimateTime = [dictionary objectForKey:@"EstimateTime"];
+        NSNumber *stopStatus = [dictionary objectForKey:@"StopStatus"];
         if (estimateTime != nil) {
             
             NSString *string = [estimateTime stringValue];
             time = string;
-        } else {
+        } else if ([stopStatus isEqualToNumber:@1]) {
             
             time = @"尚未發車";
+        } else if ([stopStatus isEqualToNumber:@2]) {
+            
+            time = @"交管不停靠";
+        } else if ([stopStatus isEqualToNumber:@3]) {
+            
+            time = @"末班車已過";
+        } else if ([stopStatus isEqualToNumber:@4]) {
+            
+            time = @"今日未營運";
         }
     }
     
