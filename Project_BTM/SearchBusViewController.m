@@ -57,7 +57,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
-    NSLog(@"viewDidLoad");
+//    NSLog(@"viewDidLoad");
     
     // Picker view.
     routeNamePicker = [[UIPickerView alloc] init];
@@ -65,6 +65,12 @@
     [routeNamePicker setDataSource:self];
     [routeNamePicker setShowsSelectionIndicator:YES];
     
+///FIXME: Picker selection sometime dismiss.
+    // Bus route name data in picker view.
+    routeNameList = @[@"", @"藍", @"紅", @"棕", @"綠",
+                      @"橘", @"F", @"內科", @"幹線", @"先導",
+                      @"南軟", @"夜間", @"活動", @"市民", @"跳蛙",
+                      @"其他", @"臺北觀光巴士"];
     
     // Route name text field.
     [_routeName setDelegate:self];
@@ -143,12 +149,6 @@
         destinationStopName = [NSMutableArray array];
         busStopStartToEnd = [NSMutableArray array];
         
-///FIXME: Picker selection sometime dismiss.
-        // Bus route name data in picker view.
-        routeNameList = @[@"", @"藍", @"紅", @"棕", @"綠",
-                          @"橘", @"F", @"內科", @"幹線", @"先導",
-                          @"南軟", @"夜間", @"活動", @"市民", @"跳蛙",
-                          @"其他", @"臺北觀光巴士"];
         
         cityBus = [[CityBus alloc] init];
         [cityBus setAuthorityID:[NSMutableArray array]];
@@ -156,7 +156,7 @@
         [cityBus setRouteName:[NSMutableArray array]];
         
         
-        NSLog(@"initWithCoder");
+//        NSLog(@"initWithCoder");
     }
     
     return self;
@@ -168,7 +168,7 @@
 - (NSInteger)tableView:(UITableView *)tableView
  numberOfRowsInSection:(NSInteger)section {
     
-    NSLog(@"[[cityBus routeName] count]: %ld", [[cityBus routeName] count]);
+//    NSLog(@"[[cityBus routeName] count]: %ld", [[cityBus routeName] count]);
     return [[cityBus routeName] count];
 }
 

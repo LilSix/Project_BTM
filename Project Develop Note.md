@@ -87,7 +87,6 @@ didFinishDownloadingToURL:(NSURL *)location {
 @end
 ```
 
-
 ### 使用 Segue 傳遞參數
 
 ```
@@ -109,3 +108,22 @@ didFinishDownloadingToURL:(NSURL *)location {
     }
 }
 ```
+
+### JSON
+
+`[{Key: Value}]`
+
+> 若 Value 為 `BOOL` 或是數字，則回傳進 Objective-C 會被讀取為 `NSNumber`。
+
+### Thread 1: signal SIGABRT
+
+[Xcode error - Thread 1: signal SIGABRT [closed]](https://stackoverflow.com/questions/9750224/xcode-error-thread-1-signal-sigabrt)
+
+SIGABRT is, as stated in other answers, a general uncaught exception. You should definitely learn a little bit more about Objective-C. The problem is probably in your UITableViewDelegate method didSelectRowAtIndexPath.
+
+```
+- (void)tableView:(UITableView *)tableView
+didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
+```
+
+I can't tell you much more until you show us something of the code where you handle the table data source and delegate methods.

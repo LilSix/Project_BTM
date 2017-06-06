@@ -16,7 +16,7 @@
 @property (strong, nonatomic) NSMutableArray<NSString *> *destinationStopName;
 @property (strong, nonatomic) NSMutableArray<NSString *> *stopUID;
 @property (strong, nonatomic) NSMutableArray<NSString *> *stopName;
-@property (strong, nonatomic) NSString *estimateTime;
-@property (strong, nonatomic) NSMutableArray<NSString *> *stopStatus;
+@property (strong, nonatomic) NSMutableArray<NSString *> *estimateTime;
+@property (strong, nonatomic) NSMutableArray *stopStatus;
 
 @end
