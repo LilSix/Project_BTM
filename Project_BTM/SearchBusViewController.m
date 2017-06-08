@@ -325,6 +325,14 @@ numberOfRowsInComponent:(NSInteger)component {
     
     NSString *stringName = [_routeName text];
     NSString *stringNumber = [_routeNumber text];
+    [[cityBus authorityID] removeAllObjects];
+    [[cityBus routeUID] removeAllObjects];
+    [[cityBus routeName] removeAllObjects];
+    [busStopStartToEnd removeAllObjects];
+    [_searchBusList reloadData];
+    
+    
+    
     
     if (![stringName isEqualToString:@""] || ![stringNumber isEqualToString:@""]) {
         
@@ -364,12 +372,13 @@ numberOfRowsInComponent:(NSInteger)component {
             
         NSLog(@"Start download JSON data...");
     } else {
-        
+
         // Remove objects if text field is empty.
         [[cityBus authorityID] removeAllObjects];
         [[cityBus routeUID] removeAllObjects];
         [[cityBus routeName] removeAllObjects];
         [busStopStartToEnd removeAllObjects];
+        [_searchBusList reloadData];
         
         
         // Alert view.
@@ -542,13 +551,6 @@ numberOfRowsInComponent:(NSInteger)component {
 - (void)URLSession:(NSURLSession *)session
       downloadTask:(NSURLSessionDownloadTask *)downloadTask
 didFinishDownloadingToURL:(NSURL *)location {
-    
-    // Remove objects if text field is empty.
-    [[cityBus authorityID] removeAllObjects];
-    [[cityBus routeUID] removeAllObjects];
-    [[cityBus routeName] removeAllObjects];
-    [busStopStartToEnd removeAllObjects];
-    [_searchBusList reloadData];
 
     @try {
         

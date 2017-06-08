@@ -315,7 +315,7 @@ didFinishDownloadingToURL:(NSURL *)location {
     NSString *time;
     
     NSString *string = [NSString stringWithFormat:@"http://ptx.transportdata.tw/MOTC/v2/Bus/EstimatedTimeOfArrival/City/%@/%@?$filter=RouteUID eq '%@' and StopUID eq '%@'&$format=JSON", authorityID, routeName, routeID, stopUID];
-    NSLog(@"fetchEstimateTime URL: %@", string);
+//    NSLog(@"fetchEstimateTime URL: %@", string);
     NSCharacterSet *characterSet = [NSCharacterSet URLQueryAllowedCharacterSet];
     NSString *encodingURL = [string stringByAddingPercentEncodingWithAllowedCharacters:characterSet];
     NSURL *URL = [NSURL URLWithString:encodingURL];
@@ -330,8 +330,37 @@ didFinishDownloadingToURL:(NSURL *)location {
         NSNumber *stopStatus = [dictionary objectForKey:@"StopStatus"];
         if (estimateTime != nil) {
             
-            NSString *string = [estimateTime stringValue];
-            time = string;
+            int intTime = [estimateTime intValue];
+            int minutes = intTime / 60;
+            int seconds = intTime % 60;
+//            NSLog(@"%@，到站時間：%d:%d", nameZhTW, minutes, seconds);
+            if (minutes <= 1) {
+                
+                time = @"進站中";
+                
+                return time;
+            } else if ((minutes >= 1 && seconds >= 30) || minutes <= 2) {
+                
+                time = @"即將到站";
+                
+                return time;
+            } else {
+            
+                if (seconds <= 20) {
+                    
+                    NSNumber *numberMinutes = [NSNumber numberWithInt:minutes];
+                    NSString *string = [numberMinutes stringValue];
+                    NSString *stringEstimateTime = [NSString stringWithFormat:@"約 %@ 分", string];
+                    time = stringEstimateTime;
+                    
+                } else {
+                    
+                    NSNumber *numberMinutes = [NSNumber numberWithInt:minutes + 1];
+                    NSString *string = [numberMinutes stringValue];
+                    NSString *stringEstimateTime = [NSString stringWithFormat:@"約 %@ 分", string];
+                    time = stringEstimateTime;
+                }
+            }
         } else if ([stopStatus isEqualToNumber:@1]) {
             
             time = @"尚未發車";
