@@ -327,12 +327,6 @@ numberOfRowsInComponent:(NSInteger)component {
     NSString *stringNumber = [_routeNumber text];
     
     if (![stringName isEqualToString:@""] || ![stringNumber isEqualToString:@""]) {
-            
-        // Remove objects if text field is empty.
-        [[cityBus authorityID] removeAllObjects];
-        [[cityBus routeUID] removeAllObjects];
-        [[cityBus routeName] removeAllObjects];
-        [busStopStartToEnd removeAllObjects];
         
         // Use NSOperationQueue to background download JSON data.
         NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
@@ -376,6 +370,7 @@ numberOfRowsInComponent:(NSInteger)component {
         [[cityBus routeUID] removeAllObjects];
         [[cityBus routeName] removeAllObjects];
         [busStopStartToEnd removeAllObjects];
+        
         
         // Alert view.
         UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"警告"
@@ -547,6 +542,13 @@ numberOfRowsInComponent:(NSInteger)component {
 - (void)URLSession:(NSURLSession *)session
       downloadTask:(NSURLSessionDownloadTask *)downloadTask
 didFinishDownloadingToURL:(NSURL *)location {
+    
+    // Remove objects if text field is empty.
+    [[cityBus authorityID] removeAllObjects];
+    [[cityBus routeUID] removeAllObjects];
+    [[cityBus routeName] removeAllObjects];
+    [busStopStartToEnd removeAllObjects];
+    [_searchBusList reloadData];
 
     @try {
         
@@ -581,6 +583,7 @@ didFinishDownloadingToURL:(NSURL *)location {
                 [[cityBus routeUID] addObject:routeUID];
                 [[cityBus routeName] addObject:zhTW];
                 [busStopStartToEnd addObject:departureToDestination];
+                
             }
         }
         
@@ -592,10 +595,10 @@ didFinishDownloadingToURL:(NSURL *)location {
     } @finally {
         
         NSLog(@"Download compeleted.");
-        
         [session finishTasksAndInvalidate];
         [downloadTask cancel];
         [_searchBusList reloadData];
+        
     }
 }
 

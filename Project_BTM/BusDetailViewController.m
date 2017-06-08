@@ -14,7 +14,7 @@
 }
 
 @property (weak, nonatomic) IBOutlet UITableView *busDetailList;
-@property (weak, nonatomic) IBOutlet UISegmentedControl *roundTripControl;
+@property (weak, nonatomic) IBOutlet UISegmentedControl *goBackControl;
 
 @end
 
@@ -26,6 +26,8 @@
     // Do any additional setup after loading the view.
     
     NSLog(@"viewDidload: %@, %@, %@", _authorityID, _routeName, _routeUID);
+    
+    [_goBackControl setSelectedSegmentIndex:0];
     
 //    [_busDetailList setDelegate:self];
     [_busDetailList setDataSource:self];
@@ -94,10 +96,12 @@
 //        mutableArray = [NSMutableArray array];
         cityBus = [[CityBus alloc] init];
         [cityBus setStopUID:[NSMutableArray array]];
-        [cityBus setStopName:[NSMutableArray array]];
+        [cityBus setStopNameGo:[NSMutableArray array]];
+        [cityBus setStopNameBack:[NSMutableArray array]];
         [cityBus setStopStatus:[NSMutableArray array]];
         [cityBus setKeyPattern:[NSMutableArray array]];
-        [cityBus setEstimateTime:[NSMutableArray array]];
+        [cityBus setEstimateTimeGo:[NSMutableArray array]];
+        [cityBus setEstimateTimeBack:[NSMutableArray array]];
         
 //        [[self navigationItem] setTitle:[cityBus cityBusRouteTitle]];
 //        [self setTitle:[cityBus cityBusRouteTitle]];
@@ -113,7 +117,12 @@
  numberOfRowsInSection:(NSInteger)section {
     
 //    NSLog(@"[mutableArray count]: %ld", [mutableArray count]);
-    return [[cityBus stopName] count];
+    if ([_goBackControl selectedSegmentIndex] == 0) {
+        
+        return [[cityBus stopNameGo] count];
+    }
+    
+    return [[cityBus stopNameBack] count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView
@@ -121,10 +130,19 @@
     
     UITableViewCell *tableViewCell = [tableView dequeueReusableCellWithIdentifier:@"Right Detail"
                                                                      forIndexPath:indexPath];
-    NSString *cellTextLabel = [self editStringFromHalfWidthToFullWidth:[[cityBus stopName] objectAtIndex:[indexPath row]]];
+    
+    if ([_goBackControl selectedSegmentIndex] == 0) {
+        NSString *cellTextLabel = [self editStringFromHalfWidthToFullWidth:[[cityBus stopNameGo] objectAtIndex:[indexPath row]]];
+        [[tableViewCell textLabel] setText:cellTextLabel];
+        [[tableViewCell detailTextLabel] setText:[[cityBus estimateTimeGo] objectAtIndex:[indexPath row]]];
+        
+        return tableViewCell;
+    }
+        
+    NSString *cellTextLabel = [self editStringFromHalfWidthToFullWidth:[[cityBus stopNameBack] objectAtIndex:[indexPath row]]];
     [[tableViewCell textLabel] setText:cellTextLabel];
-    [[tableViewCell detailTextLabel] setText:[[cityBus estimateTime] objectAtIndex:[indexPath row]]];
-//    [[tableViewCell detailTextLabel] setText:@"Test"];
+    [[tableViewCell detailTextLabel] setText:[[cityBus estimateTimeBack] objectAtIndex:[indexPath row]]];
+    
     return tableViewCell;
 }
 
@@ -235,8 +253,8 @@ didFinishDownloadingToURL:(NSURL *)location {
                                                                       stopUID:stopUID];
                     NSDictionary *stopName = [dictionary objectForKey:@"StopName"];
                     NSString *nameZhTW = [stopName objectForKey:@"Zh_tw"];
-                    [[cityBus stopName] addObject:nameZhTW];
-                    [[cityBus estimateTime] addObject:time];
+                    [[cityBus stopNameGo] addObject:nameZhTW];
+                    [[cityBus estimateTimeGo] addObject:time];
 //                    NSLog(@"%@, %@", stopUID, nameZhTW);
                 }
                 
@@ -245,36 +263,36 @@ didFinishDownloadingToURL:(NSURL *)location {
                 
 //                    [[cityBus stopStatus] addObject:stringTime];
                 
-                NSLog(@"[[cityBus stopName] count]: %ld", [[cityBus stopName] count]);
-                NSLog(@"[[cityBus estimateTime] count]: %ld", [[cityBus estimateTime] count]);
-//                }
-            }
-//            } else if ([isKeyPattern isEqualToNumber:@0] && [direction isEqualToNumber:@0]) {
-//                
-//                NSArray *stops = [dictionary objectForKey:@"Stops"];
-//                for (NSDictionary *dictionary in stops) {
-//                    
-//                    NSString *stopUID = [dictionary objectForKey:@"StopUID"];
-//                    
-//                    NSString *time = [self fetchEstimateTimeWithAuthorityID:_authorityID
-//                                                                  routeName:_routeName
-//                                                                   routeUID:_routeUID
-//                                                                    stopUID:stopUID];
-//                    NSDictionary *stopName = [dictionary objectForKey:@"StopName"];
-//                    NSString *nameZhTW = [stopName objectForKey:@"Zh_tw"];
-//                    [[cityBus stopName] addObject:nameZhTW];
-//                    [[cityBus estimateTime] addObject:time];
-//                    //                    NSLog(@"%@, %@", stopUID, nameZhTW);
-//                }
-//                
-//                //                    NSNumber *estimateTime = [dictionary objectForKey:@"EstimateTime"];
-//                //                    NSString *stringTime = [estimateTime stringValue];
-//                
-//                //                    [[cityBus stopStatus] addObject:stringTime];
-//                
 //                NSLog(@"[[cityBus stopName] count]: %ld", [[cityBus stopName] count]);
 //                NSLog(@"[[cityBus estimateTime] count]: %ld", [[cityBus estimateTime] count]);
+//                }
 //            }
+            } else if ([isKeyPattern isEqualToNumber:@1] && [direction isEqualToNumber:@1]) {
+                
+                NSArray *stops = [dictionary objectForKey:@"Stops"];
+                for (NSDictionary *dictionary in stops) {
+                    
+                    NSString *stopUID = [dictionary objectForKey:@"StopUID"];
+                    
+                    NSString *time = [self fetchEstimateTimeWithAuthorityID:_authorityID
+                                                                  routeName:_routeName
+                                                                   routeUID:_routeUID
+                                                                    stopUID:stopUID];
+                    NSDictionary *stopName = [dictionary objectForKey:@"StopName"];
+                    NSString *nameZhTW = [stopName objectForKey:@"Zh_tw"];
+                    [[cityBus stopNameBack] addObject:nameZhTW];
+                    [[cityBus estimateTimeBack] addObject:time];
+                    //                    NSLog(@"%@, %@", stopUID, nameZhTW);
+                }
+                
+                //                    NSNumber *estimateTime = [dictionary objectForKey:@"EstimateTime"];
+                //                    NSString *stringTime = [estimateTime stringValue];
+                
+                //                    [[cityBus stopStatus] addObject:stringTime];
+                
+//                NSLog(@"[[cityBus stopName] count]: %ld", [[cityBus stopName] count]);
+//                NSLog(@"[[cityBus estimateTime] count]: %ld", [[cityBus estimateTime] count]);
+            }
     
         }
     } @catch (NSException *exception) {
@@ -331,6 +349,20 @@ didFinishDownloadingToURL:(NSURL *)location {
     
     return time;
 }
+
+
+- (IBAction)segmentedControlGoBackTouch:(UISegmentedControl *)sender {
+    
+    if ([_goBackControl selectedSegmentIndex] == 1) {
+        
+        [_busDetailList reloadData];
+    } else {
+        
+        [_busDetailList reloadData];
+    }
+}
+
+
 /*
 #pragma mark - Navigation
 

@@ -214,6 +214,9 @@
                                     <segment title="去程"/>
                                     <segment title="返程"/>
                                 </segments>
+                                <connections>
+                                    <action selector="segmentedControlGoBackTouch:" destination="Y2h-u9-Drk" eventType="valueChanged" id="IBw-Ny-b83"/>
+                                </connections>
                             </segmentedControl>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -221,7 +224,7 @@
                     <navigationItem key="navigationItem" id="hXC-FA-98e"/>
                     <connections>
                         <outlet property="busDetailList" destination="n1h-tg-w3x" id="v94-vm-Up9"/>
-                        <outlet property="roundTripControl" destination="vRG-Iq-YsH" id="om8-81-OW4"/>
+                        <outlet property="goBackControl" destination="vRG-Iq-YsH" id="Pkt-tC-f3G"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="G93-oC-KeQ" userLabel="First Responder" sceneMemberID="firstResponder"/>
