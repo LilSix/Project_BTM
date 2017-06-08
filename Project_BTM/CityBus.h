@@ -11,7 +11,6 @@
 @property (strong, nonatomic) NSMutableArray<NSString *> *routeUID;
 @property (strong, nonatomic) NSMutableArray<NSString *> *routeName;
 @property (strong, nonatomic) NSMutableArray<NSString *> *keyPattern;
-@property (strong, nonatomic) NSString *direction;
 @property (strong, nonatomic) NSMutableArray<NSString *> *departureStopName;
 @property (strong, nonatomic) NSMutableArray<NSString *> *destinationStopName;
 @property (strong, nonatomic) NSMutableArray<NSString *> *stopUID;

@@ -3,12 +3,12 @@
 //  Project_BTM
 //
 
-///MARK: .h files
+#pragma mark .h files
 #import "SearchBusViewController.h"
 #import "BusDetailViewController.h"
 #import "CityBus.h"
 
-///MARK: Frameworks
+#pragma mark Frameworks
 @import SystemConfiguration;
 
 
@@ -570,9 +570,9 @@ didFinishDownloadingToURL:(NSURL *)location {
             
             if (![departureStopNameZh isEqualToString:@""]) {
 //                NSString *editedZhTW = [self editStringFromHalfWidthToFullWidth:zhTW];
-                NSString *editedDepartureStopNameZh = [self editStringFromHalfWidthToFullWidth:departureStopNameZh];
-                NSString *editedDestinationStopNameZh = [self editStringFromHalfWidthToFullWidth:destinationStopNameZh];
-                NSString *departureToDestination = [NSString stringWithFormat:@"%@－%@", editedDepartureStopNameZh, editedDestinationStopNameZh];
+                departureStopNameZh = [self editStringFromHalfWidthToFullWidth:departureStopNameZh];
+                destinationStopNameZh = [self editStringFromHalfWidthToFullWidth:destinationStopNameZh];
+                NSString *departureToDestination = [NSString stringWithFormat:@"%@－%@", departureStopNameZh, destinationStopNameZh];
                 
                 if ([authorityID isEqualToString:@"004"]) {
                     
@@ -585,7 +585,6 @@ didFinishDownloadingToURL:(NSURL *)location {
                 [[cityBus routeUID] addObject:routeUID];
                 [[cityBus routeName] addObject:zhTW];
                 [busStopStartToEnd addObject:departureToDestination];
-                
             }
         }
         
@@ -600,7 +599,6 @@ didFinishDownloadingToURL:(NSURL *)location {
         [session finishTasksAndInvalidate];
         [downloadTask cancel];
         [_searchBusList reloadData];
-        
     }
 }
 
