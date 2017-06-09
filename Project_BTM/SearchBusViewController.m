@@ -3,14 +3,20 @@
 //  Project_BTM
 //
 
+
 #pragma mark .h files
+
 #import "SearchBusViewController.h"
 #import "BusDetailViewController.h"
 #import "CityBus.h"
 
+
 #pragma mark Frameworks
+
 @import SystemConfiguration;
 
+
+#pragma mark -
 
 @interface SearchBusViewController ()<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIPickerViewDelegate, UIPickerViewDataSource, NSURLSessionDelegate, NSURLSessionDownloadDelegate> {
     
@@ -23,28 +29,26 @@
     NSMutableArray *busStopStartToEnd;
     
     NSArray *searchResults;
-    NSArray *routeNameList;
     
-    UIPickerView *routeNamePicker;
+    UIPickerView *pickerViewRouteName;
     
     NSString *cityBusRouteTitle;
     
     
-//    UIPickerView *routeNamePicker;
 }
 
-@property (weak, nonatomic) IBOutlet UITableView *searchBusList;
+@property (weak, nonatomic) IBOutlet UITableView *tableViewBusList;
 
 //@property (weak, nonatomic) IBOutlet UISearchBar *searchBar;
 //@property (weak, nonatomic) IBOutlet UISearchBar *searchBar;
 //@property (strong, nonatomic) IBOutlet UISearchController *searchDisplayController;
 
 @property (weak, nonatomic) IBOutlet UIButton *buttonSearch;
-@property (weak, nonatomic) IBOutlet UITextField *routeName;
-@property (weak, nonatomic) IBOutlet UITextField *routeNumber;
-//@property (weak, nonatomic) IBOutlet UIPickerView *routeNamePicker;
+@property (weak, nonatomic) IBOutlet UITextField *textViewRouteName;
+@property (weak, nonatomic) IBOutlet UITextField *textViewRouteNumber;
+//@property (weak, nonatomic) IBOutlet UIPickerView *pickerViewRouteName;
 
-//@property (strong, nonatomic) NSString *cityBusRouteTitle;
+@property (strong, nonatomic) NSArray *routeNameDataSouce;
 
 @end
 
@@ -60,25 +64,24 @@
 //    NSLog(@"viewDidLoad");
     
     // Picker view.
-    routeNamePicker = [[UIPickerView alloc] init];
-    [routeNamePicker setDelegate:self];
-    [routeNamePicker setDataSource:self];
-    [routeNamePicker setShowsSelectionIndicator:YES];
+    pickerViewRouteName = [[UIPickerView alloc] init];
+    [pickerViewRouteName setDelegate:self];
+    [pickerViewRouteName setDataSource:self];
+    [pickerViewRouteName setShowsSelectionIndicator:YES];
     
-///FIXME: Picker selection dismiss.
     // Bus route name data in picker view.
-    routeNameList = @[@"", @"藍", @"紅", @"棕", @"綠",
-                      @"橘", @"F", @"內科", @"幹線", @"先導",
-                      @"南軟", @"夜間", @"活動", @"市民", @"跳蛙",
-                      @"其他", @"臺北觀光巴士"];
+    _routeNameDataSouce = @[@"", @"F", @"小", @"藍", @"紅",
+                            @"棕", @"綠", @"橘", @"內科", @"幹線",
+                            @"先導", @"南軟", @"夜間", @"活動", @"市民",
+                            @"跳蛙", @"其他", @"臺北觀光巴士"];
     
     // Route name text field.
-    [_routeName setDelegate:self];
-    [_routeName setInputView:routeNamePicker];
+    [_textViewRouteName setDelegate:self];
+    [_textViewRouteName setInputView:pickerViewRouteName];
 
     // Table view.
-    [_searchBusList setDelegate:self];
-    [_searchBusList setDataSource:self];
+    [_tableViewBusList setDelegate:self];
+    [_tableViewBusList setDataSource:self];
     
     UIToolbar* toolBar = [[UIToolbar alloc] init];
     [toolBar setBarStyle:UIBarStyleDefault];
@@ -107,8 +110,8 @@
     // Setting about toolbar.
     [toolBar sizeToFit];
     [toolBar setItems:arrayToolBarButtonItem];
-    [_routeName setInputAccessoryView:toolBar];
-    [_routeNumber setInputAccessoryView:toolBar];
+    [_textViewRouteName setInputAccessoryView:toolBar];
+    [_textViewRouteNumber setInputAccessoryView:toolBar];
     
 }
 
@@ -124,15 +127,18 @@
 
 - (void)barButtonItemCancelTouch {
     
-    [_routeName endEditing:YES];
-    [_routeNumber endEditing:YES];
+//    [_textViewRouteName endEditing:YES];
+//    [_textViewRouteNumber endEditing:YES];
+    
+    [[self view] endEditing:YES];
+    [[self view] resignFirstResponder];
     
 }
 
 - (void)barButtonItemDoneTouch {
     
-    [_routeName endEditing:YES];
-    [_routeNumber endEditing:YES];
+    [[self view] endEditing:YES];
+    [[self view] resignFirstResponder];
 }
 
 
@@ -228,21 +234,16 @@
 
 
 - (void)textFieldDidEndEditing:(UITextField *)textField {
-//    [_routeNamePicker setDelegate:self];
-//    [_routeNamePicker setDataSource:self];
-//    [textField resignFirstResponder];
-    
 }
 
 - (BOOL)textFieldShouldEndEditing:(UITextField *)textField {
-//    [routeNamePicker setHidden:YES];
+
     
     return YES;
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
 
-//    [routeNamePicker setHidden:YES];
     return YES;
 }
 
@@ -259,7 +260,7 @@
 - (NSInteger)pickerView:(UIPickerView *)pickerView
 numberOfRowsInComponent:(NSInteger)component {
     
-    return [[cityBus routeName] count];
+    return [_routeNameDataSouce count];
 }
 
 
@@ -269,7 +270,7 @@ numberOfRowsInComponent:(NSInteger)component {
              titleForRow:(NSInteger)row
             forComponent:(NSInteger)component {
     
-    return [routeNameList objectAtIndex:row];
+    return [_routeNameDataSouce objectAtIndex:row];
 }
 
 
@@ -278,7 +279,7 @@ numberOfRowsInComponent:(NSInteger)component {
       didSelectRow:(NSInteger)row
        inComponent:(NSInteger)component {
     
-    [_routeName setText:routeNameList[row]];
+    [_textViewRouteName setText:_routeNameDataSouce[row]];
 }
 
 
@@ -317,19 +318,19 @@ numberOfRowsInComponent:(NSInteger)component {
 - (IBAction)buttonSearchTouch:(UIButton *)sender {
     
 //    [routeNamePicker setHidden:YES];
-//    [[self view] endEditing:YES];
+    [[self view] endEditing:YES];
     [[self view] resignFirstResponder];
     
 //    http:ptx.transportdata.tw/MOTC/Swagger/#!/CityBusApi/CityBusApi_Route_0
 //    /v2/Bus/Route/City/{City}/{RouteName}    取得指定[縣市],[路線名稱]的路線資料
     
-    NSString *stringName = [_routeName text];
-    NSString *stringNumber = [_routeNumber text];
+    NSString *stringName = [_textViewRouteName text];
+    NSString *stringNumber = [_textViewRouteNumber text];
     [[cityBus authorityID] removeAllObjects];
     [[cityBus routeUID] removeAllObjects];
     [[cityBus routeName] removeAllObjects];
     [busStopStartToEnd removeAllObjects];
-    [_searchBusList reloadData];
+    [_tableViewBusList reloadData];
     
     
     
@@ -378,7 +379,7 @@ numberOfRowsInComponent:(NSInteger)component {
         [[cityBus routeUID] removeAllObjects];
         [[cityBus routeName] removeAllObjects];
         [busStopStartToEnd removeAllObjects];
-        [_searchBusList reloadData];
+        [_tableViewBusList reloadData];
         
         
         // Alert view.
@@ -394,7 +395,7 @@ numberOfRowsInComponent:(NSInteger)component {
         
         [[cityBus routeName] removeAllObjects];
         [busStopStartToEnd removeAllObjects];
-        [_searchBusList reloadData];
+        [_tableViewBusList reloadData];
     }
     
     
@@ -502,14 +503,14 @@ numberOfRowsInComponent:(NSInteger)component {
 
 - (IBAction)barButtonItemStopTouch:(UIBarButtonItem *)sender {
     
-    [_routeName setText:@""];
-    [_routeNumber setText:@""];
+    [_textViewRouteName setText:@""];
+    [_textViewRouteNumber setText:@""];
     
     [[cityBus authorityID] removeAllObjects];
     [[cityBus routeUID] removeAllObjects];
     [[cityBus routeName] removeAllObjects];
     [busStopStartToEnd removeAllObjects];
-    [_searchBusList reloadData];
+    [_tableViewBusList reloadData];
 }
 
 
@@ -598,7 +599,7 @@ didFinishDownloadingToURL:(NSURL *)location {
         NSLog(@"Download compeleted.");
         [session finishTasksAndInvalidate];
         [downloadTask cancel];
-        [_searchBusList reloadData];
+        [_tableViewBusList reloadData];
     }
 }
 
@@ -614,7 +615,7 @@ didFinishDownloadingToURL:(NSURL *)location {
     if ([[segue identifier] isEqualToString:@"showBusDetail"]) {
         
         BusDetailViewController *busDetailViewController = [segue destinationViewController];
-        NSIndexPath *indexPath = [_searchBusList indexPathForSelectedRow];  /*  An index path identifying the row and
+        NSIndexPath *indexPath = [_tableViewBusList indexPathForSelectedRow];  /*  An index path identifying the row and
                                                                                 section of the selected row.    */
         NSString *authorityID = [[cityBus authorityID] objectAtIndex:[indexPath row]];
         NSString *routeName = [[cityBus routeName] objectAtIndex:[indexPath row]];
