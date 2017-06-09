@@ -23,8 +23,8 @@
     CityBus *cityBus;
     
     NSMutableArray *cityBusList;
-    NSMutableArray *departureStopName;
-    NSMutableArray *destinationStopName;
+//    NSMutableArray *departureStopName;
+//    NSMutableArray *destinationStopName;
     
     NSMutableArray *busStopStartToEnd;
     
@@ -34,6 +34,9 @@
     
     NSString *cityBusRouteTitle;
     
+    
+    NSString *searchRouteName;
+    NSString *searchRouteNumber;
     
 }
 
@@ -60,8 +63,6 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    
-//    NSLog(@"viewDidLoad");
     
     // Picker view.
     pickerViewRouteName = [[UIPickerView alloc] init];
@@ -106,7 +107,6 @@
     // Put bar button item in array.
     NSArray *arrayToolBarButtonItem = @[barButtonItemCancel, barButtonItemFixedSpace, barButtonItemSearch];
     
-    
     // Setting about toolbar.
     [toolBar sizeToFit];
     [toolBar setItems:arrayToolBarButtonItem];
@@ -115,30 +115,9 @@
     
 }
 
-
-
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
-}
-
-
-#pragma mark - UIBarButtonItem Action
-
-- (void)barButtonItemCancelTouch {
-    
-//    [_textViewRouteName endEditing:YES];
-//    [_textViewRouteNumber endEditing:YES];
-    
-    [[self view] endEditing:YES];
-    [[self view] resignFirstResponder];
-    
-}
-
-- (void)barButtonItemDoneTouch {
-    
-    [[self view] endEditing:YES];
-    [[self view] resignFirstResponder];
 }
 
 
@@ -151,8 +130,8 @@
         
         // Initial mutable array.
         cityBusList = [NSMutableArray array];
-        departureStopName = [NSMutableArray array];
-        destinationStopName = [NSMutableArray array];
+//        departureStopName = [NSMutableArray array];
+//        destinationStopName = [NSMutableArray array];
         busStopStartToEnd = [NSMutableArray array];
         
         
@@ -160,9 +139,8 @@
         [cityBus setAuthorityID:[NSMutableArray array]];
         [cityBus setRouteUID:[NSMutableArray array]];
         [cityBus setRouteName:[NSMutableArray array]];
-        
-        
-//        NSLog(@"initWithCoder");
+        [cityBus setDepartureStopName:[NSMutableArray array]];
+        [cityBus setDestinationStopName:[NSMutableArray array]];
     }
     
     return self;
@@ -185,7 +163,12 @@
                                                                      forIndexPath:indexPath];
     NSString *cellTextLabel = [self editStringFromHalfWidthToFullWidth:[[cityBus routeName] objectAtIndex:[indexPath row]]];
     [[tableViewCell textLabel] setText:cellTextLabel];
-    [[tableViewCell detailTextLabel] setText:[busStopStartToEnd objectAtIndex:[indexPath row]]];
+    
+    NSString *cellDetailTextLabel = [NSString stringWithFormat:@"%@－%@",
+                                        [[cityBus departureStopName] objectAtIndex:[indexPath row]],
+                                        [[cityBus destinationStopName] objectAtIndex:[indexPath row]]];
+    
+    [[tableViewCell detailTextLabel] setText:cellDetailTextLabel];
     [[tableViewCell detailTextLabel] setTextColor:[UIColor grayColor]];
     
     return tableViewCell;
@@ -317,25 +300,10 @@ numberOfRowsInComponent:(NSInteger)component {
 
 - (IBAction)buttonSearchTouch:(UIButton *)sender {
     
-//    [routeNamePicker setHidden:YES];
     [[self view] endEditing:YES];
-    [[self view] resignFirstResponder];
+//    [[self view] resignFirstResponder];
     
-//    http:ptx.transportdata.tw/MOTC/Swagger/#!/CityBusApi/CityBusApi_Route_0
-//    /v2/Bus/Route/City/{City}/{RouteName}    取得指定[縣市],[路線名稱]的路線資料
-    
-    NSString *stringName = [_textViewRouteName text];
-    NSString *stringNumber = [_textViewRouteNumber text];
-    [[cityBus authorityID] removeAllObjects];
-    [[cityBus routeUID] removeAllObjects];
-    [[cityBus routeName] removeAllObjects];
-    [busStopStartToEnd removeAllObjects];
-    [_tableViewBusList reloadData];
-    
-    
-    
-    
-    if (![stringName isEqualToString:@""] || ![stringNumber isEqualToString:@""]) {
+    if (![[_textViewRouteName text] isEqualToString:@""] || ![[_textViewRouteNumber text] isEqualToString:@""]) {
         
         // Use NSOperationQueue to background download JSON data.
         NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
@@ -344,40 +312,82 @@ numberOfRowsInComponent:(NSInteger)component {
                                                          delegateQueue:[NSOperationQueue mainQueue]];
         
         
-        // Fix URL encoding. http://blog.csdn.net/andanlan/article/details/53368727
-//        NSString *stringNewTaipeiURL = [NSString stringWithFormat:@"http://data.ntpc.gov.tw/od/data/api/67BB3C2B-E7D1-43A7-B872-61B2F082E11B?$format=json&$filter=nameZh eq %@", combineString];
-//        NSCharacterSet *characterSet = [NSCharacterSet URLQueryAllowedCharacterSet];
-//        NSString *encodingNewTaipeiURL = [stringNewTaipeiURL stringByAddingPercentEncodingWithAllowedCharacters:characterSet];
-//        NSString *encodingTaipeiURL = [stringTaipeiURL stringByAddingPercentEncodingWithAllowedCharacters:characterSet];
-//
-//        NSURL *taipeiURL = [NSURL URLWithString:encodingTaipeiURL];
-//        NSURL *newTaipeiURL = [NSURL URLWithString:encodingNewTaipeiURL];
-        
+        // Fix URL encoding: http://blog.csdn.net/andanlan/article/details/53368727
         // Encoding special characters in URL.
         NSCharacterSet *characterSet = [NSCharacterSet URLQueryAllowedCharacterSet];
-
+        
+        //    http:ptx.transportdata.tw/MOTC/Swagger/#!/CityBusApi/CityBusApi_Route_0
+        //    /v2/Bus/Route/City/{City}/{RouteName}    取得指定[縣市],[路線名稱]的路線資料
         // Prepare for download Taipei City bus JSON file.
-        NSString *stringTaipei = [NSString stringWithFormat:@"http://ptx.transportdata.tw/MOTC/v2/Bus/Route/City/Taipei/%@%@?$orderby=RouteID asc&$format=JSON", stringName, stringNumber];
-        NSString *encodingStringTaipei = [stringTaipei stringByAddingPercentEncodingWithAllowedCharacters:characterSet];
-        NSURL *URLTaipei = [NSURL URLWithString:encodingStringTaipei];
+        NSString *stringTaipei = [NSString stringWithFormat:@"http://ptx.transportdata.tw/MOTC/v2/Bus/Route/City/Taipei/%@%@?$orderby=RouteID asc&$format=JSON", [_textViewRouteName text], [_textViewRouteNumber text]];
+        stringTaipei = [stringTaipei stringByAddingPercentEncodingWithAllowedCharacters:characterSet];
+        NSURL *URLTaipei = [NSURL URLWithString:stringTaipei];
         NSURLSessionDownloadTask *downloadTaskTaipei = [session downloadTaskWithURL:URLTaipei];
 
         // Prepare for download New Taipei City bus JSON file.
-        NSString *stringNewTaipei = [NSString stringWithFormat:@"http://ptx.transportdata.tw/MOTC/v2/Bus/Route/City/NewTaipei/%@%@?$orderby=RouteID asc&$format=JSON", stringName, stringNumber];
-        NSString *encodingStringNewTaipei = [stringNewTaipei stringByAddingPercentEncodingWithAllowedCharacters:characterSet];
-        NSURL *URLNewTiapei = [NSURL URLWithString:encodingStringNewTaipei];
+        NSString *stringNewTaipei = [NSString stringWithFormat:@"http://ptx.transportdata.tw/MOTC/v2/Bus/Route/City/NewTaipei/%@%@?$orderby=RouteID asc&$format=JSON", [_textViewRouteName text], [_textViewRouteNumber text]];
+        stringNewTaipei = [stringNewTaipei stringByAddingPercentEncodingWithAllowedCharacters:characterSet];
+        NSURL *URLNewTiapei = [NSURL URLWithString:stringNewTaipei];
         NSURLSessionDownloadTask *downloadtaskNewTaipei = [session downloadTaskWithURL:URLNewTiapei];
         
-        [downloadTaskTaipei resume];
-        [downloadtaskNewTaipei resume];
+//        NSBlockOperation *operationTaipei = [[NSBlockOperation alloc] init];
+//        NSBlockOperation *operationNewTaipei = [[NSBlockOperation alloc] init];
+        
+        if (!([searchRouteName isEqualToString:[_textViewRouteName text]] &&
+            [searchRouteNumber isEqualToString:[_textViewRouteNumber text]])) {
             
-        NSLog(@"Start download JSON data...");
+            [[cityBus authorityID] removeAllObjects];
+            [[cityBus routeUID] removeAllObjects];
+            [[cityBus routeName] removeAllObjects];
+            [[cityBus departureStopName] removeAllObjects];
+            [[cityBus destinationStopName] removeAllObjects];
+            [busStopStartToEnd removeAllObjects];
+            [_tableViewBusList reloadData];
+            
+            searchRouteName = [_textViewRouteName text];
+            searchRouteNumber = [_textViewRouteNumber text];
+            
+            NSOperationQueue *queue = [[NSOperationQueue alloc] init];
+            [queue addOperationWithBlock:^{
+                
+                [downloadTaskTaipei resume];
+                [downloadtaskNewTaipei resume];
+            }];
+            
+            NSLog(@"Start download JSON data...");   
+        }
+        
+        
+        
+//        [operationTaipei addExecutionBlock:^{
+//        
+//            [downloadTaskTaipei resume];
+//            NSLog(@"Taipei downloadTaskTaipei: %@", downloadTaskTaipei);
+//        }];
+//        
+//        [operationNewTaipei addExecutionBlock:^{
+//            
+//            [downloadtaskNewTaipei resume];
+//            NSLog(@"New Taipei downloadtaskNewTaipei: %@", downloadtaskNewTaipei);
+//        }];
+//        
+//        [queue addOperations:@[operationTaipei, operationNewTaipei] waitUntilFinished:YES];
+
+//        [queue addOperationWithBlock:^{
+//            
+//            [downloadTaskTaipei resume];
+//            [downloadtaskNewTaipei resume];
+//        }];
+        
+        
     } else {
 
         // Remove objects if text field is empty.
         [[cityBus authorityID] removeAllObjects];
         [[cityBus routeUID] removeAllObjects];
         [[cityBus routeName] removeAllObjects];
+        [[cityBus departureStopName] removeAllObjects];
+        [[cityBus destinationStopName] removeAllObjects];
         [busStopStartToEnd removeAllObjects];
         [_tableViewBusList reloadData];
         
@@ -392,10 +402,6 @@ numberOfRowsInComponent:(NSInteger)component {
                                                             handler:nil];
         [alertController addAction:alertAction];
         [self presentViewController:alertController animated:YES completion:nil];
-        
-        [[cityBus routeName] removeAllObjects];
-        [busStopStartToEnd removeAllObjects];
-        [_tableViewBusList reloadData];
     }
     
     
@@ -503,14 +509,34 @@ numberOfRowsInComponent:(NSInteger)component {
 
 - (IBAction)barButtonItemStopTouch:(UIBarButtonItem *)sender {
     
+    searchRouteName = @"";
+    searchRouteNumber = @"";
+    
     [_textViewRouteName setText:@""];
     [_textViewRouteNumber setText:@""];
     
     [[cityBus authorityID] removeAllObjects];
     [[cityBus routeUID] removeAllObjects];
     [[cityBus routeName] removeAllObjects];
+    [[cityBus departureStopName] removeAllObjects];
+    [[cityBus destinationStopName] removeAllObjects];
     [busStopStartToEnd removeAllObjects];
     [_tableViewBusList reloadData];
+}
+
+
+#pragma mark - UIBarButtonItem Action
+
+- (void)barButtonItemCancelTouch {
+    
+    [[self view] endEditing:YES];
+    [[self view] resignFirstResponder];
+}
+
+- (void)barButtonItemDoneTouch {
+    
+    [[self view] endEditing:YES];
+    [[self view] resignFirstResponder];
 }
 
 
@@ -541,9 +567,8 @@ numberOfRowsInComponent:(NSInteger)component {
 #pragma mark - Touch Event
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
-    [[self view] endEditing:YES];
     
-//    [routeNamePicker setHidden:YES];
+    [[self view] endEditing:YES];
 }
 
 
@@ -570,11 +595,10 @@ didFinishDownloadingToURL:(NSURL *)location {
             NSString *destinationStopNameZh = [dictionary objectForKey:@"DestinationStopNameZh"];
             
             if (![departureStopNameZh isEqualToString:@""]) {
-//                NSString *editedZhTW = [self editStringFromHalfWidthToFullWidth:zhTW];
+                
                 departureStopNameZh = [self editStringFromHalfWidthToFullWidth:departureStopNameZh];
                 destinationStopNameZh = [self editStringFromHalfWidthToFullWidth:destinationStopNameZh];
-                NSString *departureToDestination = [NSString stringWithFormat:@"%@－%@", departureStopNameZh, destinationStopNameZh];
-                
+
                 if ([authorityID isEqualToString:@"004"]) {
                     
                     [[cityBus authorityID] addObject:@"Taipei"];
@@ -585,17 +609,18 @@ didFinishDownloadingToURL:(NSURL *)location {
                 
                 [[cityBus routeUID] addObject:routeUID];
                 [[cityBus routeName] addObject:zhTW];
-                [busStopStartToEnd addObject:departureToDestination];
+                [[cityBus departureStopName] addObject:departureStopNameZh];
+                [[cityBus destinationStopName] addObject:destinationStopNameZh];
             }
         }
-        
-        NSLog(@"[cityBus routeUID]: %@", [cityBus routeUID]);
-        NSLog(@"[cityBus routeName]: %@", [cityBus routeName]);
+
     } @catch (NSException *exception) {
         
         NSLog(@"Caught: %@, %@", [exception name], [exception reason]);
     } @finally {
         
+        NSLog(@"[cityBus routeUID]: %@", [cityBus routeUID]);
+        NSLog(@"[cityBus routeName]: %@", [cityBus routeName]);
         NSLog(@"Download compeleted.");
         [session finishTasksAndInvalidate];
         [downloadTask cancel];
@@ -620,11 +645,16 @@ didFinishDownloadingToURL:(NSURL *)location {
         NSString *authorityID = [[cityBus authorityID] objectAtIndex:[indexPath row]];
         NSString *routeName = [[cityBus routeName] objectAtIndex:[indexPath row]];
         NSString *routeUID = [[cityBus routeUID] objectAtIndex:[indexPath row]];
-
+        NSString *departureStopName = [[cityBus departureStopName] objectAtIndex:[indexPath row]];
+        NSString *destinationStopName = [[cityBus destinationStopName] objectAtIndex:[indexPath row]];
+        
         [busDetailViewController setAuthorityID:authorityID];
         [busDetailViewController setRouteName:routeName];
         [busDetailViewController setRouteUID:routeUID];
-//        NSLog(@"routeUID = %@", routeUID);
+        [busDetailViewController setDepartureStopName:departureStopName];
+        [busDetailViewController setDestinationStopName:destinationStopName];
+        [busDetailViewController setSelectedStopUID:routeUID];
+        NSLog(@"[busDetailViewController selectedStopUID]: %@", [busDetailViewController selectedStopUID]);
     }
 }
 

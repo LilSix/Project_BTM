@@ -223,8 +223,8 @@
                     </view>
                     <navigationItem key="navigationItem" id="hXC-FA-98e"/>
                     <connections>
-                        <outlet property="busDetailList" destination="n1h-tg-w3x" id="v94-vm-Up9"/>
                         <outlet property="goBackControl" destination="vRG-Iq-YsH" id="Pkt-tC-f3G"/>
+                        <outlet property="tableViewBusDetailList" destination="n1h-tg-w3x" id="DIH-Gg-6Im"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="G93-oC-KeQ" userLabel="First Responder" sceneMemberID="firstResponder"/>

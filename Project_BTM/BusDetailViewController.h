@@ -11,5 +11,9 @@
 @property (strong, nonatomic) NSString *authorityID;
 @property (strong, nonatomic) NSString *routeUID;
 @property (strong, nonatomic) NSString *routeName;
+@property (strong, nonatomic) NSString *departureStopName;
+@property (strong, nonatomic) NSString *destinationStopName;
+
+@property (strong, nonatomic) NSString *selectedStopUID;
 
 @end
