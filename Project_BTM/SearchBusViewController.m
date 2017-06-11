@@ -9,22 +9,27 @@
 #import "SearchBusViewController.h"
 #import "BusDetailViewController.h"
 #import "CityBus.h"
+#import "MBProgressHUD.h"
 
 
 #pragma mark Frameworks
 
 @import SystemConfiguration;
+@import Foundation;
+@import UIKit;
+@import CoreGraphics;
 
 
 #pragma mark -
 
-@interface SearchBusViewController ()<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIPickerViewDelegate, UIPickerViewDataSource, NSURLSessionDelegate, NSURLSessionDownloadDelegate> {
+@interface SearchBusViewController ()<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate,
+UIPickerViewDelegate, UIPickerViewDataSource, NSURLSessionDelegate, NSURLSessionDownloadDelegate> {
     
     CityBus *cityBus;
     
     NSMutableArray *cityBusList;
-//    NSMutableArray *departureStopName;
-//    NSMutableArray *destinationStopName;
+    //    NSMutableArray *departureStopName;
+    //    NSMutableArray *destinationStopName;
     
     NSMutableArray *busStopStartToEnd;
     
@@ -37,6 +42,9 @@
     
     NSString *searchRouteName;
     NSString *searchRouteNumber;
+    
+    //    UIBarButtonItem *barButtonItemLeftArrow;
+    //    UIBarButtonItem *barButtonItemRightArrow;
     
 }
 
@@ -79,7 +87,7 @@
     // Route name text field.
     [_textViewRouteName setDelegate:self];
     [_textViewRouteName setInputView:pickerViewRouteName];
-
+    
     // Table view.
     [_tableViewBusList setDelegate:self];
     [_tableViewBusList setDataSource:self];
@@ -87,22 +95,32 @@
     UIToolbar* toolBar = [[UIToolbar alloc] init];
     [toolBar setBarStyle:UIBarStyleDefault];
     
+    //    // Create toolbar left arrow bar button item.
+    //    barButtonItemLeftArrow = [[UIBarButtonItem alloc]  initWithTitle:@"＜"
+    //                                                                                style:UIBarButtonItemStylePlain
+    //                                                                               target:self
+    //                                                                               action:@selector(barButtonItemLeftArrowTouch:)];
+    //
+    //    // Create toolbar right arrow bar button item.
+    //    barButtonItemRightArrow = [[UIBarButtonItem alloc]  initWithTitle:@"＞"
+    //                                                                                 style:UIBarButtonItemStylePlain
+    //                                                                                target:self
+    //                                                                                action:@selector(barButtonItemRightArrowTouch:)];
+    
     // Create toolbar cancel bar button item.
-    UIBarButtonItem *barButtonItemCancel = [[UIBarButtonItem alloc] initWithTitle:@"取消"
-                                                                            style:UIBarButtonItemStylePlain
-                                                                           target:self
-                                                                           action:@selector(barButtonItemCancelTouch)];
+    UIBarButtonItem *barButtonItemCancel = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
+                                                                                         target:self
+                                                                                         action:@selector(barButtonItemCancelTouch)];
     
     // Create toolbar fixed space bar button item.
     UIBarButtonItem *barButtonItemFixedSpace = [[UIBarButtonItem alloc]
-                                                    initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
-                                                                         target:self
-                                                                         action:nil];
+                                                initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
+                                                target:self
+                                                action:nil];
     // Create toolbar done bar button item.
-    UIBarButtonItem *barButtonItemSearch = [[UIBarButtonItem alloc] initWithTitle:@"確認"
-                                                                            style:UIBarButtonItemStylePlain
-                                                                           target:self
-                                                                           action:@selector(barButtonItemDoneTouch)];
+    UIBarButtonItem *barButtonItemSearch = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
+                                                                                         target:self
+                                                                                         action:@selector(barButtonItemDoneTouch)];
     
     // Put bar button item in array.
     NSArray *arrayToolBarButtonItem = @[barButtonItemCancel, barButtonItemFixedSpace, barButtonItemSearch];
@@ -130,8 +148,8 @@
         
         // Initial mutable array.
         cityBusList = [NSMutableArray array];
-//        departureStopName = [NSMutableArray array];
-//        destinationStopName = [NSMutableArray array];
+        //        departureStopName = [NSMutableArray array];
+        //        destinationStopName = [NSMutableArray array];
         busStopStartToEnd = [NSMutableArray array];
         
         
@@ -152,7 +170,7 @@
 - (NSInteger)tableView:(UITableView *)tableView
  numberOfRowsInSection:(NSInteger)section {
     
-//    NSLog(@"[[cityBus routeName] count]: %ld", [[cityBus routeName] count]);
+    //    NSLog(@"[[cityBus routeName] count]: %ld", [[cityBus routeName] count]);
     return [[cityBus routeName] count];
 }
 
@@ -161,12 +179,13 @@
     
     UITableViewCell *tableViewCell = [tableView dequeueReusableCellWithIdentifier:@"Subtitle Cell"
                                                                      forIndexPath:indexPath];
-    NSString *cellTextLabel = [self editStringFromHalfWidthToFullWidth:[[cityBus routeName] objectAtIndex:[indexPath row]]];
+    NSString *cellTextLabel = [self editStringFromHalfWidthToFullWidth:[[cityBus routeName]
+                                                                        objectAtIndex:[indexPath row]]];
     [[tableViewCell textLabel] setText:cellTextLabel];
     
     NSString *cellDetailTextLabel = [NSString stringWithFormat:@"%@－%@",
-                                        [[cityBus departureStopName] objectAtIndex:[indexPath row]],
-                                        [[cityBus destinationStopName] objectAtIndex:[indexPath row]]];
+                                     [[cityBus departureStopName] objectAtIndex:[indexPath row]],
+                                     [[cityBus destinationStopName] objectAtIndex:[indexPath row]]];
     
     [[tableViewCell detailTextLabel] setText:cellDetailTextLabel];
     [[tableViewCell detailTextLabel] setTextColor:[UIColor grayColor]];
@@ -178,14 +197,14 @@
 //#pragma mark - UITableViewDelegate
 //
 //- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-//    
-//    
+//
+//
 //    [busDetailViewController setCityBusRouteTitle:[[cityBus routeName] objectAtIndex:[indexPath row]]];
 ////    [cityBus setCityBusRouteTitle:[[cityBus routeName] objectAtIndex:[indexPath row]]];
-//    
+//
 //    NSLog(@"UITableViewDelegate");
 ////    NSLog(@"_cityBusRoute: %@", [cityBus cityBusRouteTitle]);
-//    
+//
 ////    NSLog(@"cityBusRouteTitle = %@", cityBusRouteTitle);
 //}
 
@@ -193,24 +212,24 @@
 #pragma mark - UITextFieldDelegate
 
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField {
-//    NSLog(@"%@", routeNameList);
+    //    NSLog(@"%@", routeNameList);
     
-//    [_routeNamePicker setDelegate:self];
-//    [_routeNamePicker setDataSource:self];
+    //    [_routeNamePicker setDelegate:self];
+    //    [_routeNamePicker setDataSource:self];
     
     NSLog(@"textFieldShouldBeginEditing");
     
-//    [routeNamePicker setHidden:NO];
+    //    [routeNamePicker setHidden:NO];
     
-//    if ([_routeNameTextField ]) {
-//        
-////        UIPickerView *tempPickerView = [[self view] viewWithTag:11];
-////        [tempPickerView setHidden:YES];
-//        NSLog(@"[_routeNameTextField isEditing]");
-//        [_routeNamePicker setHidden:NO];
-//    } else if ([_routeNumberTextField isTouchInside]){
-//        [_routeNamePicker setHidden:YES];
-//    }
+    //    if ([_routeNameTextField ]) {
+    //
+    ////        UIPickerView *tempPickerView = [[self view] viewWithTag:11];
+    ////        [tempPickerView setHidden:YES];
+    //        NSLog(@"[_routeNameTextField isEditing]");
+    //        [_routeNamePicker setHidden:NO];
+    //    } else if ([_routeNumberTextField isTouchInside]){
+    //        [_routeNamePicker setHidden:YES];
+    //    }
     
     return YES;
 }
@@ -220,13 +239,13 @@
 }
 
 - (BOOL)textFieldShouldEndEditing:(UITextField *)textField {
-
+    
     
     return YES;
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
-
+    
     return YES;
 }
 
@@ -270,7 +289,7 @@ numberOfRowsInComponent:(NSInteger)component {
 
 ///TODO: Create method to prepare download JSON data.
 //- (NSURLSessionDownloadTask *)prepareForDownloadJSONData {
-//    
+//
 //    NSString *stringName = [_routeNameTextField text];
 //    NSString *stringNumber = [_routeNumberTextField text];
 //
@@ -279,19 +298,17 @@ numberOfRowsInComponent:(NSInteger)component {
 //    NSURLSession *session = [NSURLSession sessionWithConfiguration:URLSessionConfiguration
 //                                                          delegate:self
 //                                                     delegateQueue:[NSOperationQueue mainQueue]];
-//    
+//
 //    NSString *stringTaipei = [NSString stringWithFormat:@"http://ptx.transportdata.tw/MOTC/v2/Bus/Route/City/Taipei/%@%@?$format=JSON", stringName, stringNumber];
 //    NSURL *URLTaipei = [NSURL URLWithString:stringTaipei];
 //    NSURLSessionDownloadTask *taipeiDownloadTask = [session downloadTaskWithURL:URLTaipei];
-//    
+//
 //    NSString *stringNewTaipei = [NSString stringWithFormat:@"http://ptx.transportdata.tw/MOTC/v2/Bus/Route/City/NewTaipei/%@%@?$format=JSON", stringName, stringNumber];
 //    NSURL *URLNewTiapei = [NSURL URLWithString:stringNewTaipei];
 //    NSURLSessionDownloadTask *newTaipeiDownloadtask = [session downloadTaskWithURL:URLNewTiapei];
-//    
+//
 //    return nil;
 //}
-
-
 
 
 
@@ -301,7 +318,7 @@ numberOfRowsInComponent:(NSInteger)component {
 - (IBAction)buttonSearchTouch:(UIButton *)sender {
     
     [[self view] endEditing:YES];
-//    [[self view] resignFirstResponder];
+    //    [[self view] resignFirstResponder];
     
     if (![[_textViewRouteName text] isEqualToString:@""] || ![[_textViewRouteNumber text] isEqualToString:@""]) {
         
@@ -323,18 +340,18 @@ numberOfRowsInComponent:(NSInteger)component {
         stringTaipei = [stringTaipei stringByAddingPercentEncodingWithAllowedCharacters:characterSet];
         NSURL *URLTaipei = [NSURL URLWithString:stringTaipei];
         NSURLSessionDownloadTask *downloadTaskTaipei = [session downloadTaskWithURL:URLTaipei];
-
+        
         // Prepare for download New Taipei City bus JSON file.
         NSString *stringNewTaipei = [NSString stringWithFormat:@"http://ptx.transportdata.tw/MOTC/v2/Bus/Route/City/NewTaipei/%@%@?$orderby=RouteID asc&$format=JSON", [_textViewRouteName text], [_textViewRouteNumber text]];
         stringNewTaipei = [stringNewTaipei stringByAddingPercentEncodingWithAllowedCharacters:characterSet];
         NSURL *URLNewTiapei = [NSURL URLWithString:stringNewTaipei];
         NSURLSessionDownloadTask *downloadtaskNewTaipei = [session downloadTaskWithURL:URLNewTiapei];
         
-//        NSBlockOperation *operationTaipei = [[NSBlockOperation alloc] init];
-//        NSBlockOperation *operationNewTaipei = [[NSBlockOperation alloc] init];
+        //        NSBlockOperation *operationTaipei = [[NSBlockOperation alloc] init];
+        //        NSBlockOperation *operationNewTaipei = [[NSBlockOperation alloc] init];
         
         if (!([searchRouteName isEqualToString:[_textViewRouteName text]] &&
-            [searchRouteNumber isEqualToString:[_textViewRouteNumber text]])) {
+              [searchRouteNumber isEqualToString:[_textViewRouteNumber text]])) {
             
             [[cityBus authorityID] removeAllObjects];
             [[cityBus routeUID] removeAllObjects];
@@ -347,6 +364,18 @@ numberOfRowsInComponent:(NSInteger)component {
             searchRouteName = [_textViewRouteName text];
             searchRouteNumber = [_textViewRouteNumber text];
             
+            
+            //            [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+            //            dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+            //
+            //                // Do something...
+            //                dispatch_async(dispatch_get_main_queue(), ^{
+            //                    [MBProgressHUD hideHUDForView:self.view animated:YES];
+            //                });
+            //            });
+            
+            
+            [MBProgressHUD showHUDAddedTo:[self view] animated:YES];
             NSOperationQueue *queue = [[NSOperationQueue alloc] init];
             [queue addOperationWithBlock:^{
                 
@@ -354,34 +383,37 @@ numberOfRowsInComponent:(NSInteger)component {
                 [downloadtaskNewTaipei resume];
             }];
             
-            NSLog(@"Start download JSON data...");   
+            
+            
+            
+            NSLog(@"Start download JSON data...");
         }
         
         
         
-//        [operationTaipei addExecutionBlock:^{
-//        
-//            [downloadTaskTaipei resume];
-//            NSLog(@"Taipei downloadTaskTaipei: %@", downloadTaskTaipei);
-//        }];
-//        
-//        [operationNewTaipei addExecutionBlock:^{
-//            
-//            [downloadtaskNewTaipei resume];
-//            NSLog(@"New Taipei downloadtaskNewTaipei: %@", downloadtaskNewTaipei);
-//        }];
-//        
-//        [queue addOperations:@[operationTaipei, operationNewTaipei] waitUntilFinished:YES];
-
-//        [queue addOperationWithBlock:^{
-//            
-//            [downloadTaskTaipei resume];
-//            [downloadtaskNewTaipei resume];
-//        }];
+        //        [operationTaipei addExecutionBlock:^{
+        //
+        //            [downloadTaskTaipei resume];
+        //            NSLog(@"Taipei downloadTaskTaipei: %@", downloadTaskTaipei);
+        //        }];
+        //
+        //        [operationNewTaipei addExecutionBlock:^{
+        //
+        //            [downloadtaskNewTaipei resume];
+        //            NSLog(@"New Taipei downloadtaskNewTaipei: %@", downloadtaskNewTaipei);
+        //        }];
+        
+        //        [queue addOperations:@[operationTaipei, operationNewTaipei] waitUntilFinished:YES];
+        //
+        //        [queue addOperationWithBlock:^{
+        //
+        //            [downloadTaskTaipei resume];
+        //            [downloadtaskNewTaipei resume];
+        //        }];
         
         
     } else {
-
+        
         // Remove objects if text field is empty.
         [[cityBus authorityID] removeAllObjects];
         [[cityBus routeUID] removeAllObjects];
@@ -409,102 +441,102 @@ numberOfRowsInComponent:(NSInteger)component {
     
     
     
-//    NSString *stringName = [_routeNameTextField text];
-//    NSString *stringNumber = [_routeNumberTextField text];
+    //    NSString *stringName = [_routeNameTextField text];
+    //    NSString *stringNumber = [_routeNumberTextField text];
     
-//    NSString *combineString = [NSString stringWithFormat:@"%@%@", stringName, stringNumber];
-//    
-//    [_searchResultsList reloadData];
-//
-//    if ([combineString isEqualToString:@""]) {
-//        
-//        // Remove objects if text field is empty.
-//        [cityBusList removeAllObjects];
-//        [busStopStartToEnd removeAllObjects];
-//        
-//        // Alert view.
-//        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Alert"
-//                                                                                 message:@"Please input route number."
-//                                                                          preferredStyle:UIAlertControllerStyleAlert];
-//        
-//        UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"OK"
-//                                                              style:UIAlertActionStyleDefault
-//                                                            handler:nil];
-//        [alertController addAction:alertAction];
-//        [self presentViewController:alertController animated:YES completion:nil];
-//    } else {
-//        
-//        // Remove objects from mutablearray before search.
-//        [cityBusList removeAllObjects];
-//        [busStopStartToEnd removeAllObjects];
-//        
-//        NSString *stringTaipeiURL = [NSString stringWithFormat:@"http://ptx.transportdata.tw/MOTC/v2/Bus/Route/City/Taipei/%@?$format=JSON", combineString];
-//        
-//        // Fix URL encoding. http://blog.csdn.net/andanlan/article/details/53368727
-//        NSString *stringNewTaipeiURL = [NSString stringWithFormat:@"http://data.ntpc.gov.tw/od/data/api/67BB3C2B-E7D1-43A7-B872-61B2F082E11B?$format=json&$filter=nameZh eq %@", combineString];
-//        NSCharacterSet *characterSet = [NSCharacterSet URLQueryAllowedCharacterSet];
-//        NSString *encodingNewTaipeiURL = [stringNewTaipeiURL stringByAddingPercentEncodingWithAllowedCharacters:characterSet];
-//        NSString *encodingTaipeiURL = [stringTaipeiURL stringByAddingPercentEncodingWithAllowedCharacters:characterSet];
-//        
-//        NSURL *taipeiURL = [NSURL URLWithString:encodingTaipeiURL];
-//        NSURL *newTaipeiURL = [NSURL URLWithString:encodingNewTaipeiURL];
-//        
-//        NSData *taipeiData = [NSData dataWithContentsOfURL:taipeiURL];
-//        NSData *newTaipeiData = [NSData dataWithContentsOfURL:newTaipeiURL];
-//        
-//        NSError *error;
-//        
-//        NSArray *taipeiCityBus = [NSJSONSerialization JSONObjectWithData:taipeiData
-//                                                                 options:NSJSONReadingMutableContainers
-//                                                                   error:&error];
-//        NSArray *newTaipeiCityBus = [NSJSONSerialization JSONObjectWithData:newTaipeiData
-//                                                                    options:NSJSONReadingMutableContainers
-//                                                                      error:&error];
-//        
-//        if (taipeiCityBus != nil) {
-//            
-//            for (NSDictionary *dictionary in taipeiCityBus) {
-//                NSLog(@"result: %@", dictionary);
-//                
-//                NSDictionary *routeName = [dictionary objectForKey:@"RouteName"];
-//                NSString *zhTW = [routeName objectForKey:@"Zh_tw"];
-//                NSString *departureStopNameZh = [dictionary objectForKey:@"DepartureStopNameZh"];
-//                NSString *destinationStopNameZh = [dictionary objectForKey:@"DestinationStopNameZh"];
-//                
-//                NSString *editedString = [self editStringFromHalfWidthToFullWidth:zhTW];
-//                NSString *editedDepartureStopNameZh = [self editStringFromHalfWidthToFullWidth:departureStopNameZh];
-//                NSString *editedDestinationStopNameZh = [self editStringFromHalfWidthToFullWidth:destinationStopNameZh];
-//
-//                NSString *startEnd = [NSString stringWithFormat:@"%@－%@", editedDepartureStopNameZh, editedDestinationStopNameZh];
-//                
-//                [cityBusList addObject:editedString];
-//                [busStopStartToEnd addObject:startEnd];
-//            }
-//        }
-//        
-//
-//        if (newTaipeiCityBus != nil) {
-//    
-//            for (NSDictionary *dictionary in newTaipeiCityBus) {
-//                
-//                NSString *nameZh = [dictionary objectForKey:@"nameZh"];
-//                NSString *departureZh = [dictionary objectForKey:@"departureZh"];
-//                NSString *destinationZh = [dictionary objectForKey:@"destinationZh"];
-//                
-//                NSString *editedString = [self editStringFromHalfWidthToFullWidth:nameZh];
-//                NSString *editedDepartureZh = [self editStringFromHalfWidthToFullWidth:departureZh];
-//                NSString *editedDestinationZh = [self editStringFromHalfWidthToFullWidth:destinationZh];
-//                
-//                NSString *startEnd = [NSString stringWithFormat:@"%@－%@", editedDepartureZh, editedDestinationZh];
-//                
-//                [cityBusList addObject:editedString];
-//                [busStopStartToEnd addObject:startEnd];
-//                
-//            }
-//        }
-//    }
-//
-//    [_searchResultsList reloadData];
+    //    NSString *combineString = [NSString stringWithFormat:@"%@%@", stringName, stringNumber];
+    //
+    //    [_searchResultsList reloadData];
+    //
+    //    if ([combineString isEqualToString:@""]) {
+    //
+    //        // Remove objects if text field is empty.
+    //        [cityBusList removeAllObjects];
+    //        [busStopStartToEnd removeAllObjects];
+    //
+    //        // Alert view.
+    //        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Alert"
+    //                                                                                 message:@"Please input route number."
+    //                                                                          preferredStyle:UIAlertControllerStyleAlert];
+    //
+    //        UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"OK"
+    //                                                              style:UIAlertActionStyleDefault
+    //                                                            handler:nil];
+    //        [alertController addAction:alertAction];
+    //        [self presentViewController:alertController animated:YES completion:nil];
+    //    } else {
+    //
+    //        // Remove objects from mutablearray before search.
+    //        [cityBusList removeAllObjects];
+    //        [busStopStartToEnd removeAllObjects];
+    //
+    //        NSString *stringTaipeiURL = [NSString stringWithFormat:@"http://ptx.transportdata.tw/MOTC/v2/Bus/Route/City/Taipei/%@?$format=JSON", combineString];
+    //
+    //        // Fix URL encoding. http://blog.csdn.net/andanlan/article/details/53368727
+    //        NSString *stringNewTaipeiURL = [NSString stringWithFormat:@"http://data.ntpc.gov.tw/od/data/api/67BB3C2B-E7D1-43A7-B872-61B2F082E11B?$format=json&$filter=nameZh eq %@", combineString];
+    //        NSCharacterSet *characterSet = [NSCharacterSet URLQueryAllowedCharacterSet];
+    //        NSString *encodingNewTaipeiURL = [stringNewTaipeiURL stringByAddingPercentEncodingWithAllowedCharacters:characterSet];
+    //        NSString *encodingTaipeiURL = [stringTaipeiURL stringByAddingPercentEncodingWithAllowedCharacters:characterSet];
+    //
+    //        NSURL *taipeiURL = [NSURL URLWithString:encodingTaipeiURL];
+    //        NSURL *newTaipeiURL = [NSURL URLWithString:encodingNewTaipeiURL];
+    //
+    //        NSData *taipeiData = [NSData dataWithContentsOfURL:taipeiURL];
+    //        NSData *newTaipeiData = [NSData dataWithContentsOfURL:newTaipeiURL];
+    //
+    //        NSError *error;
+    //
+    //        NSArray *taipeiCityBus = [NSJSONSerialization JSONObjectWithData:taipeiData
+    //                                                                 options:NSJSONReadingMutableContainers
+    //                                                                   error:&error];
+    //        NSArray *newTaipeiCityBus = [NSJSONSerialization JSONObjectWithData:newTaipeiData
+    //                                                                    options:NSJSONReadingMutableContainers
+    //                                                                      error:&error];
+    //
+    //        if (taipeiCityBus != nil) {
+    //
+    //            for (NSDictionary *dictionary in taipeiCityBus) {
+    //                NSLog(@"result: %@", dictionary);
+    //
+    //                NSDictionary *routeName = [dictionary objectForKey:@"RouteName"];
+    //                NSString *zhTW = [routeName objectForKey:@"Zh_tw"];
+    //                NSString *departureStopNameZh = [dictionary objectForKey:@"DepartureStopNameZh"];
+    //                NSString *destinationStopNameZh = [dictionary objectForKey:@"DestinationStopNameZh"];
+    //
+    //                NSString *editedString = [self editStringFromHalfWidthToFullWidth:zhTW];
+    //                NSString *editedDepartureStopNameZh = [self editStringFromHalfWidthToFullWidth:departureStopNameZh];
+    //                NSString *editedDestinationStopNameZh = [self editStringFromHalfWidthToFullWidth:destinationStopNameZh];
+    //
+    //                NSString *startEnd = [NSString stringWithFormat:@"%@－%@", editedDepartureStopNameZh, editedDestinationStopNameZh];
+    //
+    //                [cityBusList addObject:editedString];
+    //                [busStopStartToEnd addObject:startEnd];
+    //            }
+    //        }
+    //
+    //
+    //        if (newTaipeiCityBus != nil) {
+    //
+    //            for (NSDictionary *dictionary in newTaipeiCityBus) {
+    //
+    //                NSString *nameZh = [dictionary objectForKey:@"nameZh"];
+    //                NSString *departureZh = [dictionary objectForKey:@"departureZh"];
+    //                NSString *destinationZh = [dictionary objectForKey:@"destinationZh"];
+    //
+    //                NSString *editedString = [self editStringFromHalfWidthToFullWidth:nameZh];
+    //                NSString *editedDepartureZh = [self editStringFromHalfWidthToFullWidth:departureZh];
+    //                NSString *editedDestinationZh = [self editStringFromHalfWidthToFullWidth:destinationZh];
+    //
+    //                NSString *startEnd = [NSString stringWithFormat:@"%@－%@", editedDepartureZh, editedDestinationZh];
+    //
+    //                [cityBusList addObject:editedString];
+    //                [busStopStartToEnd addObject:startEnd];
+    //
+    //            }
+    //        }
+    //    }
+    //
+    //    [_searchResultsList reloadData];
 }
 
 - (IBAction)barButtonItemStopTouch:(UIBarButtonItem *)sender {
@@ -514,6 +546,8 @@ numberOfRowsInComponent:(NSInteger)component {
     
     [_textViewRouteName setText:@""];
     [_textViewRouteNumber setText:@""];
+    
+    [[self view] endEditing:YES];
     
     [[cityBus authorityID] removeAllObjects];
     [[cityBus routeUID] removeAllObjects];
@@ -526,6 +560,20 @@ numberOfRowsInComponent:(NSInteger)component {
 
 
 #pragma mark - UIBarButtonItem Action
+
+//- (void)barButtonItemLeftArrowTouch:(UIBarButtonItem *)barButtonItem {
+//
+//    [_textViewRouteName becomeFirstResponder];
+//    [barButtonItem setEnabled:NO];
+//    [barButtonItemRightArrow setEnabled:YES];
+//}
+//
+//- (void)barButtonItemRightArrowTouch:(UIBarButtonItem *)barButtonItem {
+//
+//    [_textViewRouteNumber becomeFirstResponder];
+//    [barButtonItem setEnabled:NO];
+//    [barButtonItemLeftArrow setEnabled:YES];
+//}
 
 - (void)barButtonItemCancelTouch {
     
@@ -577,7 +625,9 @@ numberOfRowsInComponent:(NSInteger)component {
 - (void)URLSession:(NSURLSession *)session
       downloadTask:(NSURLSessionDownloadTask *)downloadTask
 didFinishDownloadingToURL:(NSURL *)location {
-
+    
+    
+    
     @try {
         
         NSData *data = [NSData dataWithContentsOfURL:location];
@@ -598,7 +648,7 @@ didFinishDownloadingToURL:(NSURL *)location {
                 
                 departureStopNameZh = [self editStringFromHalfWidthToFullWidth:departureStopNameZh];
                 destinationStopNameZh = [self editStringFromHalfWidthToFullWidth:destinationStopNameZh];
-
+                
                 if ([authorityID isEqualToString:@"004"]) {
                     
                     [[cityBus authorityID] addObject:@"Taipei"];
@@ -613,12 +663,13 @@ didFinishDownloadingToURL:(NSURL *)location {
                 [[cityBus destinationStopName] addObject:destinationStopNameZh];
             }
         }
-
+        
     } @catch (NSException *exception) {
         
         NSLog(@"Caught: %@, %@", [exception name], [exception reason]);
     } @finally {
         
+        [MBProgressHUD hideHUDForView:[self view] animated:YES];
         NSLog(@"[cityBus routeUID]: %@", [cityBus routeUID]);
         NSLog(@"[cityBus routeName]: %@", [cityBus routeName]);
         NSLog(@"Download compeleted.");
