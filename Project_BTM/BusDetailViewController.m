@@ -24,10 +24,11 @@
 @interface BusDetailViewController ()<UITableViewDelegate, UITableViewDataSource, NSURLSessionDelegate,
 NSURLSessionDownloadDelegate> {
     
-    CityBus *cityBus;
+    
     NSURLSessionDownloadTask *downloadTaskWithBusStops;
 }
 
+@property (strong, nonatomic) CityBus *cityBus;
 @property (weak, nonatomic) IBOutlet UITableView *tableViewBusDetailList;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *goBackControl;
 
@@ -45,7 +46,7 @@ NSURLSessionDownloadDelegate> {
     
     NSLog(@"viewDidload: %@, %@, %@", _authorityID, _routeName, _routeUID);
     NSLog(@"_selectedStopUID: %@", _selectedStopUID);
-    NSLog(@"[[cityBus stopUIDGo] count]: %ld", [[cityBus stopUIDGo] count]);
+    NSLog(@"[[cityBus stopUIDGo] count]: %ld", [[_cityBus stopUIDGo] count]);
     
     [_goBackControl setSelectedSegmentIndex:0];
     [_tableViewBusDetailList setDataSource:self];
@@ -83,15 +84,15 @@ NSURLSessionDownloadDelegate> {
     self = [super initWithCoder:coder];
     if (self) {
         
-        cityBus = [[CityBus alloc] init];
-        [cityBus setStopUIDGo:[NSMutableArray array]];
-        [cityBus setStopUIDBack:[NSMutableArray array]];
-        [cityBus setStopNameGo:[NSMutableArray array]];
-        [cityBus setStopNameBack:[NSMutableArray array]];
-        [cityBus setStopStatus:[NSMutableArray array]];
-        [cityBus setKeyPattern:[NSMutableArray array]];
-        [cityBus setEstimateTimeGo:[NSMutableArray array]];
-        [cityBus setEstimateTimeBack:[NSMutableArray array]];
+        _cityBus = [[CityBus alloc] init];
+        [_cityBus setStopUIDGo:[NSMutableArray array]];
+        [_cityBus setStopUIDBack:[NSMutableArray array]];
+        [_cityBus setStopNameGo:[NSMutableArray array]];
+        [_cityBus setStopNameBack:[NSMutableArray array]];
+        [_cityBus setStopStatus:[NSMutableArray array]];
+        [_cityBus setKeyPattern:[NSMutableArray array]];
+        [_cityBus setEstimateTimeGo:[NSMutableArray array]];
+        [_cityBus setEstimateTimeBack:[NSMutableArray array]];
     }
     
     return self;
@@ -105,10 +106,10 @@ NSURLSessionDownloadDelegate> {
     
     if ([_goBackControl selectedSegmentIndex] == 0) {
         
-        return [[cityBus stopNameGo] count];
+        return [[_cityBus stopNameGo] count];
     }
     
-    return [[cityBus stopNameBack] count];
+    return [[_cityBus stopNameBack] count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView
@@ -119,18 +120,18 @@ NSURLSessionDownloadDelegate> {
     
     if ([_goBackControl selectedSegmentIndex] == 0) {
         
-        NSString *cellTextLabel = [self editStringFromHalfWidthToFullWidth:[[cityBus stopNameGo]
+        NSString *cellTextLabel = [self editStringFromHalfWidthToFullWidth:[[_cityBus stopNameGo]
                                                                             objectAtIndex:[indexPath row]]];
         [[tableViewCell textLabel] setText:cellTextLabel];
-        [[tableViewCell detailTextLabel] setText:[[cityBus estimateTimeGo] objectAtIndex:[indexPath row]]];
+        [[tableViewCell detailTextLabel] setText:[[_cityBus estimateTimeGo] objectAtIndex:[indexPath row]]];
         
         return tableViewCell;
     }
     
-    NSString *cellTextLabel = [self editStringFromHalfWidthToFullWidth:[[cityBus stopNameBack]
+    NSString *cellTextLabel = [self editStringFromHalfWidthToFullWidth:[[_cityBus stopNameBack]
                                                                         objectAtIndex:[indexPath row]]];
     [[tableViewCell textLabel] setText:cellTextLabel];
-    [[tableViewCell detailTextLabel] setText:[[cityBus estimateTimeBack] objectAtIndex:[indexPath row]]];
+    [[tableViewCell detailTextLabel] setText:[[_cityBus estimateTimeBack] objectAtIndex:[indexPath row]]];
     
     return tableViewCell;
 }
@@ -182,9 +183,9 @@ didFinishDownloadingToURL:(NSURL *)location {
                                                                               stopUID:stopUID];
                     NSDictionary *stopName = [dictionary objectForKey:@"StopName"];
                     NSString *nameZhTW = [stopName objectForKey:@"Zh_tw"];
-                    [[cityBus stopNameGo] addObject:nameZhTW];
-                    [[cityBus stopUIDGo] addObject:stopUID];
-                    [[cityBus estimateTimeGo] addObject:stringWithTime];
+                    [[_cityBus stopNameGo] addObject:nameZhTW];
+                    [[_cityBus stopUIDGo] addObject:stopUID];
+                    [[_cityBus estimateTimeGo] addObject:stringWithTime];
                 }
             }
             //            }];
@@ -206,9 +207,9 @@ didFinishDownloadingToURL:(NSURL *)location {
                                                                               stopUID:stopUID];
                     NSDictionary *stopName = [dictionary objectForKey:@"StopName"];
                     NSString *nameZhTW = [stopName objectForKey:@"Zh_tw"];
-                    [[cityBus stopNameBack] addObject:nameZhTW];
-                    [[cityBus stopUIDBack] addObject:stopUID];
-                    [[cityBus estimateTimeBack] addObject:stringWithTime];
+                    [[_cityBus stopNameBack] addObject:nameZhTW];
+                    [[_cityBus stopUIDBack] addObject:stopUID];
+                    [[_cityBus estimateTimeBack] addObject:stringWithTime];
                 }
             }
             //            }];
@@ -257,10 +258,10 @@ didFinishDownloadingToURL:(NSURL *)location {
     NSBlockOperation *operation = [[NSBlockOperation alloc] init];
     [operation addExecutionBlock:^{
 
-    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
-    NSURLSession *session = [NSURLSession sessionWithConfiguration:configuration
-                                                          delegate:self
-                                                     delegateQueue:[NSOperationQueue currentQueue]];
+        NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
+        NSURLSession *session = [NSURLSession sessionWithConfiguration:configuration
+                                                              delegate:self
+                                                         delegateQueue:[NSOperationQueue currentQueue]];
     
     
         NSCharacterSet *characterSet = [NSCharacterSet URLQueryAllowedCharacterSet];
@@ -279,12 +280,12 @@ didFinishDownloadingToURL:(NSURL *)location {
         downloadTaskWithBusStops = [session downloadTaskWithURL:URL];
         
         
-        if (![[cityBus selectedRouteUID] isEqualToString:_routeUID]) {
+        if (![[_cityBus selectedRouteUID] isEqualToString:_routeUID]) {
             
-            [cityBus setSelectedRouteUID: _routeUID];
+            [_cityBus setSelectedRouteUID: _routeUID];
             [downloadTaskWithBusStops resume];
             NSLog(@"downloadTaskWithBusStops: %@", downloadTaskWithBusStops);
-            NSLog(@"[cityBus selectedStopUID]: %@", [cityBus selectedStopUID]);
+            NSLog(@"[cityBus selectedStopUID]: %@", [_cityBus selectedStopUID]);
             NSLog(@"Download JSON data...");
             
             NSLog(@"Operation in %@ thread.", [NSThread currentThread]);
@@ -342,9 +343,9 @@ didFinishDownloadingToURL:(NSURL *)location {
                                                      options:NSJSONReadingMutableContainers
                                                        error:&error];
     
-    if (!array) {
+    if (![array count]) {
         
-        time = @"尚未發車";
+        time = @"末班車已過";
         
         return time;
     }

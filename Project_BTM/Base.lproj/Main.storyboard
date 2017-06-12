@@ -151,8 +151,8 @@
                     <connections>
                         <outlet property="buttonSearch" destination="Zsi-8P-zmp" id="QH8-nf-pzo"/>
                         <outlet property="tableViewBusList" destination="Xsq-qD-v5t" id="iPw-Mv-w2O"/>
-                        <outlet property="textViewRouteName" destination="TgB-XS-JsN" id="Qe1-BB-u6W"/>
-                        <outlet property="textViewRouteNumber" destination="kEA-vh-g1Z" id="K2d-ku-s9O"/>
+                        <outlet property="textFieldRouteName" destination="TgB-XS-JsN" id="Ex2-a7-IF3"/>
+                        <outlet property="textFieldRouteNumber" destination="kEA-vh-g1Z" id="hhX-Jp-2px"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5cv-iF-OgN" userLabel="First Responder" sceneMemberID="firstResponder"/>
