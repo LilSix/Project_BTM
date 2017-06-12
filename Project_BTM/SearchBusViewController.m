@@ -42,10 +42,6 @@ UIPickerViewDelegate, UIPickerViewDataSource, NSURLSessionDelegate, NSURLSession
     
     NSString *searchRouteName;
     NSString *searchRouteNumber;
-    
-    //    UIBarButtonItem *barButtonItemLeftArrow;
-    //    UIBarButtonItem *barButtonItemRightArrow;
-    
 }
 
 @property (weak, nonatomic) IBOutlet UITableView *tableViewBusList;
@@ -318,100 +314,11 @@ numberOfRowsInComponent:(NSInteger)component {
 - (IBAction)buttonSearchTouch:(UIButton *)sender {
     
     [[self view] endEditing:YES];
-    //    [[self view] resignFirstResponder];
+    [[self view] resignFirstResponder];
     
     if (![[_textViewRouteName text] isEqualToString:@""] || ![[_textViewRouteNumber text] isEqualToString:@""]) {
         
-        // Use NSOperationQueue to background download JSON data.
-        NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
-        NSURLSession *session = [NSURLSession sessionWithConfiguration:configuration
-                                                              delegate:self
-                                                         delegateQueue:[NSOperationQueue mainQueue]];
-        
-        
-        // Fix URL encoding: http://blog.csdn.net/andanlan/article/details/53368727
-        // Encoding special characters in URL.
-        NSCharacterSet *characterSet = [NSCharacterSet URLQueryAllowedCharacterSet];
-        
-        //    http:ptx.transportdata.tw/MOTC/Swagger/#!/CityBusApi/CityBusApi_Route_0
-        //    /v2/Bus/Route/City/{City}/{RouteName}    取得指定[縣市],[路線名稱]的路線資料
-        // Prepare for download Taipei City bus JSON file.
-        NSString *stringTaipei = [NSString stringWithFormat:@"http://ptx.transportdata.tw/MOTC/v2/Bus/Route/City/Taipei/%@%@?$orderby=RouteID asc&$format=JSON", [_textViewRouteName text], [_textViewRouteNumber text]];
-        stringTaipei = [stringTaipei stringByAddingPercentEncodingWithAllowedCharacters:characterSet];
-        NSURL *URLTaipei = [NSURL URLWithString:stringTaipei];
-        NSURLSessionDownloadTask *downloadTaskTaipei = [session downloadTaskWithURL:URLTaipei];
-        
-        // Prepare for download New Taipei City bus JSON file.
-        NSString *stringNewTaipei = [NSString stringWithFormat:@"http://ptx.transportdata.tw/MOTC/v2/Bus/Route/City/NewTaipei/%@%@?$orderby=RouteID asc&$format=JSON", [_textViewRouteName text], [_textViewRouteNumber text]];
-        stringNewTaipei = [stringNewTaipei stringByAddingPercentEncodingWithAllowedCharacters:characterSet];
-        NSURL *URLNewTiapei = [NSURL URLWithString:stringNewTaipei];
-        NSURLSessionDownloadTask *downloadtaskNewTaipei = [session downloadTaskWithURL:URLNewTiapei];
-        
-        //        NSBlockOperation *operationTaipei = [[NSBlockOperation alloc] init];
-        //        NSBlockOperation *operationNewTaipei = [[NSBlockOperation alloc] init];
-        
-        if (!([searchRouteName isEqualToString:[_textViewRouteName text]] &&
-              [searchRouteNumber isEqualToString:[_textViewRouteNumber text]])) {
-            
-            [[cityBus authorityID] removeAllObjects];
-            [[cityBus routeUID] removeAllObjects];
-            [[cityBus routeName] removeAllObjects];
-            [[cityBus departureStopName] removeAllObjects];
-            [[cityBus destinationStopName] removeAllObjects];
-            [busStopStartToEnd removeAllObjects];
-            [_tableViewBusList reloadData];
-            
-            searchRouteName = [_textViewRouteName text];
-            searchRouteNumber = [_textViewRouteNumber text];
-            
-            
-            //            [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-            //            dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
-            //
-            //                // Do something...
-            //                dispatch_async(dispatch_get_main_queue(), ^{
-            //                    [MBProgressHUD hideHUDForView:self.view animated:YES];
-            //                });
-            //            });
-            
-            
-            [MBProgressHUD showHUDAddedTo:[self view] animated:YES];
-            NSOperationQueue *queue = [[NSOperationQueue alloc] init];
-            [queue addOperationWithBlock:^{
-                
-                [downloadTaskTaipei resume];
-                [downloadtaskNewTaipei resume];
-            }];
-            
-            
-            
-            
-            NSLog(@"Start download JSON data...");
-        }
-        
-        
-        
-        //        [operationTaipei addExecutionBlock:^{
-        //
-        //            [downloadTaskTaipei resume];
-        //            NSLog(@"Taipei downloadTaskTaipei: %@", downloadTaskTaipei);
-        //        }];
-        //
-        //        [operationNewTaipei addExecutionBlock:^{
-        //
-        //            [downloadtaskNewTaipei resume];
-        //            NSLog(@"New Taipei downloadtaskNewTaipei: %@", downloadtaskNewTaipei);
-        //        }];
-        
-        //        [queue addOperations:@[operationTaipei, operationNewTaipei] waitUntilFinished:YES];
-        //
-        //        [queue addOperationWithBlock:^{
-        //
-        //            [downloadTaskTaipei resume];
-        //            [downloadtaskNewTaipei resume];
-        //        }];
-        
-        
+        [self downloadBusRouteData];
     } else {
         
         // Remove objects if text field is empty.
@@ -423,120 +330,16 @@ numberOfRowsInComponent:(NSInteger)component {
         [busStopStartToEnd removeAllObjects];
         [_tableViewBusList reloadData];
         
-        
-        // Alert view.
+        // Show alert view when two of text field are all empty.
         UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"警告"
                                                                                  message:@"請輸入路線或號碼後再做搜尋。"
                                                                           preferredStyle:UIAlertControllerStyleAlert];
-        
         UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"確認"
                                                               style:UIAlertActionStyleDefault
                                                             handler:nil];
         [alertController addAction:alertAction];
         [self presentViewController:alertController animated:YES completion:nil];
     }
-    
-    
-    
-    
-    
-    
-    //    NSString *stringName = [_routeNameTextField text];
-    //    NSString *stringNumber = [_routeNumberTextField text];
-    
-    //    NSString *combineString = [NSString stringWithFormat:@"%@%@", stringName, stringNumber];
-    //
-    //    [_searchResultsList reloadData];
-    //
-    //    if ([combineString isEqualToString:@""]) {
-    //
-    //        // Remove objects if text field is empty.
-    //        [cityBusList removeAllObjects];
-    //        [busStopStartToEnd removeAllObjects];
-    //
-    //        // Alert view.
-    //        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Alert"
-    //                                                                                 message:@"Please input route number."
-    //                                                                          preferredStyle:UIAlertControllerStyleAlert];
-    //
-    //        UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"OK"
-    //                                                              style:UIAlertActionStyleDefault
-    //                                                            handler:nil];
-    //        [alertController addAction:alertAction];
-    //        [self presentViewController:alertController animated:YES completion:nil];
-    //    } else {
-    //
-    //        // Remove objects from mutablearray before search.
-    //        [cityBusList removeAllObjects];
-    //        [busStopStartToEnd removeAllObjects];
-    //
-    //        NSString *stringTaipeiURL = [NSString stringWithFormat:@"http://ptx.transportdata.tw/MOTC/v2/Bus/Route/City/Taipei/%@?$format=JSON", combineString];
-    //
-    //        // Fix URL encoding. http://blog.csdn.net/andanlan/article/details/53368727
-    //        NSString *stringNewTaipeiURL = [NSString stringWithFormat:@"http://data.ntpc.gov.tw/od/data/api/67BB3C2B-E7D1-43A7-B872-61B2F082E11B?$format=json&$filter=nameZh eq %@", combineString];
-    //        NSCharacterSet *characterSet = [NSCharacterSet URLQueryAllowedCharacterSet];
-    //        NSString *encodingNewTaipeiURL = [stringNewTaipeiURL stringByAddingPercentEncodingWithAllowedCharacters:characterSet];
-    //        NSString *encodingTaipeiURL = [stringTaipeiURL stringByAddingPercentEncodingWithAllowedCharacters:characterSet];
-    //
-    //        NSURL *taipeiURL = [NSURL URLWithString:encodingTaipeiURL];
-    //        NSURL *newTaipeiURL = [NSURL URLWithString:encodingNewTaipeiURL];
-    //
-    //        NSData *taipeiData = [NSData dataWithContentsOfURL:taipeiURL];
-    //        NSData *newTaipeiData = [NSData dataWithContentsOfURL:newTaipeiURL];
-    //
-    //        NSError *error;
-    //
-    //        NSArray *taipeiCityBus = [NSJSONSerialization JSONObjectWithData:taipeiData
-    //                                                                 options:NSJSONReadingMutableContainers
-    //                                                                   error:&error];
-    //        NSArray *newTaipeiCityBus = [NSJSONSerialization JSONObjectWithData:newTaipeiData
-    //                                                                    options:NSJSONReadingMutableContainers
-    //                                                                      error:&error];
-    //
-    //        if (taipeiCityBus != nil) {
-    //
-    //            for (NSDictionary *dictionary in taipeiCityBus) {
-    //                NSLog(@"result: %@", dictionary);
-    //
-    //                NSDictionary *routeName = [dictionary objectForKey:@"RouteName"];
-    //                NSString *zhTW = [routeName objectForKey:@"Zh_tw"];
-    //                NSString *departureStopNameZh = [dictionary objectForKey:@"DepartureStopNameZh"];
-    //                NSString *destinationStopNameZh = [dictionary objectForKey:@"DestinationStopNameZh"];
-    //
-    //                NSString *editedString = [self editStringFromHalfWidthToFullWidth:zhTW];
-    //                NSString *editedDepartureStopNameZh = [self editStringFromHalfWidthToFullWidth:departureStopNameZh];
-    //                NSString *editedDestinationStopNameZh = [self editStringFromHalfWidthToFullWidth:destinationStopNameZh];
-    //
-    //                NSString *startEnd = [NSString stringWithFormat:@"%@－%@", editedDepartureStopNameZh, editedDestinationStopNameZh];
-    //
-    //                [cityBusList addObject:editedString];
-    //                [busStopStartToEnd addObject:startEnd];
-    //            }
-    //        }
-    //
-    //
-    //        if (newTaipeiCityBus != nil) {
-    //
-    //            for (NSDictionary *dictionary in newTaipeiCityBus) {
-    //
-    //                NSString *nameZh = [dictionary objectForKey:@"nameZh"];
-    //                NSString *departureZh = [dictionary objectForKey:@"departureZh"];
-    //                NSString *destinationZh = [dictionary objectForKey:@"destinationZh"];
-    //
-    //                NSString *editedString = [self editStringFromHalfWidthToFullWidth:nameZh];
-    //                NSString *editedDepartureZh = [self editStringFromHalfWidthToFullWidth:departureZh];
-    //                NSString *editedDestinationZh = [self editStringFromHalfWidthToFullWidth:destinationZh];
-    //
-    //                NSString *startEnd = [NSString stringWithFormat:@"%@－%@", editedDepartureZh, editedDestinationZh];
-    //
-    //                [cityBusList addObject:editedString];
-    //                [busStopStartToEnd addObject:startEnd];
-    //
-    //            }
-    //        }
-    //    }
-    //
-    //    [_searchResultsList reloadData];
 }
 
 - (IBAction)barButtonItemStopTouch:(UIBarButtonItem *)sender {
@@ -560,20 +363,6 @@ numberOfRowsInComponent:(NSInteger)component {
 
 
 #pragma mark - UIBarButtonItem Action
-
-//- (void)barButtonItemLeftArrowTouch:(UIBarButtonItem *)barButtonItem {
-//
-//    [_textViewRouteName becomeFirstResponder];
-//    [barButtonItem setEnabled:NO];
-//    [barButtonItemRightArrow setEnabled:YES];
-//}
-//
-//- (void)barButtonItemRightArrowTouch:(UIBarButtonItem *)barButtonItem {
-//
-//    [_textViewRouteNumber becomeFirstResponder];
-//    [barButtonItem setEnabled:NO];
-//    [barButtonItemLeftArrow setEnabled:YES];
-//}
 
 - (void)barButtonItemCancelTouch {
     
@@ -626,8 +415,6 @@ numberOfRowsInComponent:(NSInteger)component {
       downloadTask:(NSURLSessionDownloadTask *)downloadTask
 didFinishDownloadingToURL:(NSURL *)location {
     
-    
-    
     @try {
         
         NSData *data = [NSData dataWithContentsOfURL:location];
@@ -669,13 +456,94 @@ didFinishDownloadingToURL:(NSURL *)location {
         NSLog(@"Caught: %@, %@", [exception name], [exception reason]);
     } @finally {
         
-        [MBProgressHUD hideHUDForView:[self view] animated:YES];
+        [session finishTasksAndInvalidate];
+        [downloadTask cancel];
+        
         NSLog(@"[cityBus routeUID]: %@", [cityBus routeUID]);
         NSLog(@"[cityBus routeName]: %@", [cityBus routeName]);
         NSLog(@"Download compeleted.");
-        [session finishTasksAndInvalidate];
-        [downloadTask cancel];
+    }
+    
+    [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+        
         [_tableViewBusList reloadData];
+        [MBProgressHUD hideHUDForView:[self view] animated:YES];
+    }];
+}
+
+
+#pragma mark - Download Bus Route Data
+
+- (void)downloadBusRouteData {
+    
+    if (!([searchRouteName isEqualToString:[_textViewRouteName text]] &&
+          [searchRouteNumber isEqualToString:[_textViewRouteNumber text]])) {
+        
+        // Show progress view.
+        [MBProgressHUD showHUDAddedTo:[self view] animated:YES];
+        
+        // Remove all objects before download data.
+        [[cityBus authorityID] removeAllObjects];
+        [[cityBus routeUID] removeAllObjects];
+        [[cityBus routeName] removeAllObjects];
+        [[cityBus departureStopName] removeAllObjects];
+        [[cityBus destinationStopName] removeAllObjects];
+        [busStopStartToEnd removeAllObjects];
+        [_tableViewBusList reloadData];
+        
+        // Save text field string.
+        searchRouteName = [_textViewRouteName text];
+        searchRouteNumber = [_textViewRouteNumber text];
+        
+        // Fix URL encoding: http://blog.csdn.net/andanlan/article/details/53368727
+        // Encoding special characters in URL.
+        NSCharacterSet *characterSet = [NSCharacterSet URLQueryAllowedCharacterSet];
+        
+        // Create background thread to download data.
+        NSOperationQueue *queue = [[NSOperationQueue alloc] init];
+        NSBlockOperation *operationTaipei = [[NSBlockOperation alloc] init];
+        NSBlockOperation *operationNewTaipei = [[NSBlockOperation alloc] init];
+        [operationTaipei addExecutionBlock:^{
+            
+            // Use NSOperationQueue to background download JSON data.
+            NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
+            NSURLSession *session = [NSURLSession sessionWithConfiguration:configuration
+                                                                  delegate:self
+                                                             delegateQueue:[NSOperationQueue currentQueue]];
+            
+            //    http:ptx.transportdata.tw/MOTC/Swagger/#!/CityBusApi/CityBusApi_Route_0
+            //    /v2/Bus/Route/City/{City}/{RouteName}    取得指定[縣市],[路線名稱]的路線資料
+            // Prepare for download Taipei City bus JSON file.
+            NSString *stringTaipei = [NSString stringWithFormat:@"http://ptx.transportdata.tw/MOTC/v2/Bus/Route/City/Taipei/%@%@?$orderby=RouteID asc&$format=JSON", [_textViewRouteName text], [_textViewRouteNumber text]];
+            stringTaipei = [stringTaipei stringByAddingPercentEncodingWithAllowedCharacters:characterSet];
+            NSURL *URLTaipei = [NSURL URLWithString:stringTaipei];
+            NSURLSessionDownloadTask *downloadTaskTaipei = [session downloadTaskWithURL:URLTaipei];
+            [downloadTaskTaipei resume];
+            
+            NSLog(@"downloadTaskTaipei 在第 %@ 幾個執行緒。", [NSThread currentThread]);
+        }];
+        
+        [operationNewTaipei addExecutionBlock:^{
+            
+            // Use NSOperationQueue to background download JSON data.
+            NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
+            NSURLSession *session = [NSURLSession sessionWithConfiguration:configuration
+                                                                  delegate:self
+                                                             delegateQueue:[NSOperationQueue currentQueue]];
+            
+            // Prepare for download New Taipei City bus JSON file.
+            NSString *stringNewTaipei = [NSString stringWithFormat:@"http://ptx.transportdata.tw/MOTC/v2/Bus/Route/City/NewTaipei/%@%@?$orderby=RouteID asc&$format=JSON", [_textViewRouteName text], [_textViewRouteNumber text]];
+            stringNewTaipei = [stringNewTaipei stringByAddingPercentEncodingWithAllowedCharacters:characterSet];
+            NSURL *URLNewTiapei = [NSURL URLWithString:stringNewTaipei];
+            NSURLSessionDownloadTask *downloadTaskNewTaipei = [session downloadTaskWithURL:URLNewTiapei];
+            [downloadTaskNewTaipei resume];
+            
+            NSLog(@"downloadTaskNewTaipei 在第 %@ 幾個執行緒。", [NSThread currentThread]);
+        }];
+//        [queue addOperation:operationNewTaipei];
+        [queue addOperations:@[operationTaipei, operationNewTaipei] waitUntilFinished:NO];
+        
+        NSLog(@"Start download JSON data...");
     }
 }
 

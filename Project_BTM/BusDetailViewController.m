@@ -25,7 +25,7 @@
 NSURLSessionDownloadDelegate> {
     
     CityBus *cityBus;
-    //    NSURLSessionDownloadTask *downloadTask;
+    NSURLSessionDownloadTask *downloadTaskWithBusStops;
 }
 
 @property (weak, nonatomic) IBOutlet UITableView *tableViewBusDetailList;
@@ -56,8 +56,6 @@ NSURLSessionDownloadDelegate> {
     
     [_goBackControl setTitle:go forSegmentAtIndex:0];
     [_goBackControl setTitle:back forSegmentAtIndex:1];
-    
-    
     
     [self fetchBusStopsWithAuthorityID:_authorityID
                              routeName:_routeName
@@ -148,6 +146,10 @@ didFinishDownloadingToURL:(NSURL *)location {
     
     @try {
         
+        NSLog(@"Thread: %@", [NSThread currentThread]);
+        
+        NSLog(@"downloadTask: %@", downloadTask);
+        
         // /v2/Bus/EstimatedTimeOfArrival/City/{City}/{RouteName}   取得指定[縣市],[路線名稱]的公車預估到站資料(N1)
         // http://ptx.transportdata.tw/MOTC/Swagger/#!/CityBusApi/CityBusApi_EstimatedTimeOfArrival_0
         
@@ -220,19 +222,105 @@ didFinishDownloadingToURL:(NSURL *)location {
             
             //            NSOperationQueue *queue = [[NSOperationQueue alloc] init];
             //            [queue addOperations:@[operationGo, operationBack] waitUntilFinished:Y ES];
+            
+            
         }
+        
     } @catch (NSException *exception) {
         
         NSLog(@"[%@]: %@", [exception name], [exception reason]);
     } @finally {
         
         [session finishTasksAndInvalidate];
-        //        [downloadTask cancel];
-        [_tableViewBusDetailList reloadData];
-        //        [operation cancel];
-        [MBProgressHUD hideHUDForView:[self view] animated:YES];
+        [downloadTask cancel];
+        
         NSLog(@"Download compelete.");
     }
+    
+    [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+        
+        [_tableViewBusDetailList reloadData];
+        [MBProgressHUD hideHUDForView:[self view] animated:YES];
+    }];
+}
+
+
+#pragma mark - FetchData
+
+- (void)fetchBusStopsWithAuthorityID:(NSString *)authorityID
+                           routeName:(NSString *)routeName
+                            routeUID:(NSString *)routeUID {
+    
+    [MBProgressHUD showHUDAddedTo:[self view] animated:YES];
+    
+    NSOperationQueue *queue = [[NSOperationQueue alloc] init];
+    NSBlockOperation *operation = [[NSBlockOperation alloc] init];
+    [operation addExecutionBlock:^{
+
+    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
+    NSURLSession *session = [NSURLSession sessionWithConfiguration:configuration
+                                                          delegate:self
+                                                     delegateQueue:[NSOperationQueue currentQueue]];
+    
+    
+        NSCharacterSet *characterSet = [NSCharacterSet URLQueryAllowedCharacterSet];
+        
+        // /v2/Bus/StopOfRoute/City/{City}/{RouteName}   取得指定[縣市],[路線名稱]的市區公車路線與站牌資料
+        // http://ptx.transportdata.tw/MOTC/Swagger/#!/CityBusApi/CityBusApi_StopOfRoute_0
+        
+        
+        NSString *stringWithURL = [NSString stringWithFormat:@"http://ptx.transportdata.tw/MOTC/v2/Bus/StopOfRoute/City/%@/%@?$filter=RouteUID eq '%@' and KeyPattern eq true&$format=JSON",authorityID, routeName, routeUID];
+        NSLog(@"URL: %@", stringWithURL);
+        stringWithURL = [stringWithURL stringByAddingPercentEncodingWithAllowedCharacters:characterSet];
+        NSURL *URL = [NSURL URLWithString:stringWithURL];
+        
+        //    NSString *stringWithEstimate = [NSString stringWithFormat:@"http://ptx.transportdata.tw/MOTC/v2/Bus/EstimatedTimeOfArrival/City/%@/%@?$filter=RouteUID eq '%@'&$format=JSON"];
+        
+        downloadTaskWithBusStops = [session downloadTaskWithURL:URL];
+        
+        
+        if (![[cityBus selectedRouteUID] isEqualToString:_routeUID]) {
+            
+            [cityBus setSelectedRouteUID: _routeUID];
+            [downloadTaskWithBusStops resume];
+            NSLog(@"downloadTaskWithBusStops: %@", downloadTaskWithBusStops);
+            NSLog(@"[cityBus selectedStopUID]: %@", [cityBus selectedStopUID]);
+            NSLog(@"Download JSON data...");
+            
+            NSLog(@"Operation in %@ thread.", [NSThread currentThread]);
+        }
+    }];
+    [queue addOperation:operation];
+    
+    
+    
+//    else {
+//        
+//        ///FIXME: Don't download data again after enter same selection of view.
+//        ///FIXME: Bus stops data don't download again just update bus estimate time.
+//        for (int i = 0; i < [[cityBus stopUIDGo] count]; i++) {
+//            
+//            NSString *stopUID = [[cityBus stopUIDGo] objectAtIndex:i];
+//            [[cityBus stopUIDGo] removeAllObjects];
+//            [[cityBus stopUIDGo] addObject:[self fetchEstimateTimeWithAuthorityID:_authorityID
+//                                                                        routeName:_routeName
+//                                                                         routeUID:_routeUID
+//                                                                          stopUID:stopUID]];
+//        }
+//        
+//        for (int i = 0; i < [[cityBus stopUIDBack] count]; i++) {
+//            
+//            NSString *stopUID = [[cityBus stopUIDBack] objectAtIndex:i];
+//            [[cityBus stopUIDBack] removeAllObjects];
+//            [[cityBus stopUIDBack] addObject:[self fetchEstimateTimeWithAuthorityID:_authorityID
+//                                                                          routeName:_routeName
+//                                                                           routeUID:_routeUID
+//                                                                            stopUID:stopUID]];
+//        }
+//        
+//        NSLog(@"Update bus estimate time.");
+//        [_tableViewBusDetailList reloadData];
+//    }
 }
 
 ///FIXME: SUPER SLOW!!! SOMETIME CAN'T FETCH THE FXXKING TIME!!!
@@ -273,6 +361,11 @@ didFinishDownloadingToURL:(NSURL *)location {
             if (minutes < 1) {
                 
                 time = @"進站中";
+                
+                return time;
+            } else if (minutes >= 1 && minutes <= 2) {
+                
+                time = @"即將進站";
                 
                 return time;
             }
@@ -388,7 +481,7 @@ didFinishDownloadingToURL:(NSURL *)location {
 }
 
 
-#pragma mark - Half-Width To Full-Width
+#pragma mark - Half-WidthToFull-Width
 
 - (NSString *)editStringFromHalfWidthToFullWidth:(NSString *)string {
     
@@ -412,80 +505,7 @@ didFinishDownloadingToURL:(NSURL *)location {
 }
 
 
-- (void) fetchBusStopsWithAuthorityID:(NSString *)authorityID
-                            routeName:(NSString *)routeName
-                             routeUID:(NSString *)routeUID {
-    
-    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
-    NSURLSession *session = [NSURLSession sessionWithConfiguration:configuration
-                                                          delegate:self
-                                                     delegateQueue:[NSOperationQueue mainQueue]];
-    
-    NSCharacterSet *characterSet = [NSCharacterSet URLQueryAllowedCharacterSet];
-    
-    // /v2/Bus/StopOfRoute/City/{City}/{RouteName}   取得指定[縣市],[路線名稱]的市區公車路線與站牌資料
-    // http://ptx.transportdata.tw/MOTC/Swagger/#!/CityBusApi/CityBusApi_StopOfRoute_0
-    
-    
-    ///FIXME: Don't download data again after enter same selection of view.
-    
-    
-    
-    
-    NSString *stringWithURL = [NSString stringWithFormat:@"http://ptx.transportdata.tw/MOTC/v2/Bus/StopOfRoute/City/%@/%@?$filter=RouteUID eq '%@' and KeyPattern eq true&$format=JSON",authorityID, routeName, routeUID];
-    NSLog(@"URL: %@", stringWithURL);
-    stringWithURL = [stringWithURL stringByAddingPercentEncodingWithAllowedCharacters:characterSet];
-    NSURL *URL = [NSURL URLWithString:stringWithURL];
-    
-    //    NSString *stringWithEstimate = [NSString stringWithFormat:@"http://ptx.transportdata.tw/MOTC/v2/Bus/EstimatedTimeOfArrival/City/%@/%@?$filter=RouteUID eq '%@'&$format=JSON"];
-    
-    NSURLSessionDownloadTask *downloadTask = [session downloadTaskWithURL:URL];
-    
-    
-    if (![[cityBus selectedRouteUID] isEqualToString:_routeUID]) {
-        
-        [cityBus setSelectedRouteUID: _routeUID];
-        
-        [MBProgressHUD showHUDAddedTo:[self view] animated:YES];
-        NSOperationQueue *queue = [[NSOperationQueue alloc] init];
-        
-        [queue addOperationWithBlock:^{
-            
-            [downloadTask resume];
-        }];
-        
-        
-        
-        
-        NSLog(@"[cityBus selectedStopUID]: %@", [cityBus selectedStopUID]);
-        NSLog(@"Download JSON data...");
-    } else {
-        
-        ///FIXME: Bus stops data don't download again just update bus estimate time.
-        for (int i = 0; i < [[cityBus stopUIDGo] count]; i++) {
-            
-            NSString *stopUID = [[cityBus stopUIDGo] objectAtIndex:i];
-            [[cityBus stopUIDGo] removeAllObjects];
-            [[cityBus stopUIDGo] addObject:[self fetchEstimateTimeWithAuthorityID:_authorityID
-                                                                        routeName:_routeName
-                                                                         routeUID:_routeUID
-                                                                          stopUID:stopUID]];
-        }
-        
-        for (int i = 0; i < [[cityBus stopUIDBack] count]; i++) {
-            
-            NSString *stopUID = [[cityBus stopUIDBack] objectAtIndex:i];
-            [[cityBus stopUIDBack] removeAllObjects];
-            [[cityBus stopUIDBack] addObject:[self fetchEstimateTimeWithAuthorityID:_authorityID
-                                                                          routeName:_routeName
-                                                                           routeUID:_routeUID
-                                                                            stopUID:stopUID]];
-        }
-        
-        NSLog(@"Update bus estimate time.");
-        [_tableViewBusDetailList reloadData];
-    }
-}
+
 
 /*
  #pragma mark - Navigation
