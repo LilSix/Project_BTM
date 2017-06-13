@@ -480,7 +480,7 @@ didFinishDownloadingToURL:(NSURL *)location {
 }
 
 
-#pragma mark - Download Bus Route Data
+#pragma mark - DownloadBusRouteData
 
 - (void)downloadBusRouteData {
     

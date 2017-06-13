@@ -22,10 +22,14 @@
 #pragma mark -
 
 @interface BusDetailViewController ()<UITableViewDelegate, UITableViewDataSource, NSURLSessionDelegate,
-NSURLSessionDownloadDelegate> {
+NSURLSessionDownloadDelegate, NSURLSessionTaskDelegate, NSURLSessionDataDelegate> {
     
     
-    NSURLSessionDownloadTask *downloadTaskWithBusStops;
+    NSURLSessionDataTask *fetchBusStopsGo;
+    NSURLSessionDataTask *fetchBusStopsBack;
+    NSURLSessionDataTask *fetchEstimateGo;
+    NSURLSessionDataTask *fetchEstimateBack;
+    NSCharacterSet *characterSet;
 }
 
 @property (strong, nonatomic) CityBus *cityBus;
@@ -54,45 +58,30 @@ NSURLSessionDownloadDelegate> {
     [[self navigationItem] setTitle:[self editStringFromHalfWidthToFullWidth:_routeName]];
     NSString *go = [NSString stringWithFormat:@"去程（%@）", _destinationStopName];
     NSString *back = [NSString stringWithFormat:@"返程（%@）", _departureStopName];
-    
     [_goBackControl setTitle:go forSegmentAtIndex:0];
     [_goBackControl setTitle:back forSegmentAtIndex:1];
     
-//    [self fetchBusStopsWithAuthorityID:_authorityID
-//                             routeName:_routeName
-//                              routeUID:_routeUID];
-    
-    
-    
-    NSOperationQueue *queue = [[NSOperationQueue alloc] init];
-//    NSBlockOperation *operationBusStops = [[NSBlockOperation alloc] init];
-//    NSBlockOperation *operationEstimateTime = [[NSBlockOperation alloc] init];
-    NSBlockOperation *operation = [[NSBlockOperation alloc] init];
-    
-    [operation addExecutionBlock:^{
-        
-        [self fetchBusStopsGoWithAuthorityID:_authorityID routeUID:_routeUID];
-        [self fetchBusStopsBackWithAuthorityID:_authorityID routeUID:_routeUID];
-    }];
 
-//    [operationEstimateTime addExecutionBlock:^{
-//        
-//        [self fetchEstimateTimeGoWithAuthorityID:_authorityID routeUID:_routeUID];
-//        [self fetchEstimateTimeBackWithAuthorityID:_authorityID routeUID:_routeUID];
-//    }];
+    
+    [self fetchBusStopsGoWithAuthorityID:_authorityID routeUID:_routeUID];
+    [self fetchBusStopsBackWithAuthorityID:_authorityID routeUID:_routeUID];
+    [self fetchEstimateTimeGoWithAuthorityID:_authorityID routeUID:_routeUID];
 
-//    [operationEstimateTime addDependency:operationBusStops];
+}
+
+- (void)viewWillAppear:(BOOL)animated {
     
-//    [operation setCompletionBlock:^{
-//        
-//        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-//            
-//            [_tableViewBusDetailList reloadData];
-//            NSLog(@"table view reload data.");
-//        }];
-//    }];
+    [super viewWillAppear:animated];
+    [_tableViewBusDetailList reloadData];
+    [MBProgressHUD hideHUDForView:[self view] animated:YES];
+    NSLog(@"viewWillAppear.");
+}
+
+
+- (void)viewDidAppear:(BOOL)animated {
     
-    [queue addOperation:operation];
+//    [_tableViewBusDetailList reloadData];
+    NSLog(@"viewDidAppear.");
 }
 
 - (void)viewDidDisappear:(BOOL)animated {
@@ -105,8 +94,6 @@ NSURLSessionDownloadDelegate> {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-
-
 
 
 #pragma mark - Init
@@ -125,6 +112,8 @@ NSURLSessionDownloadDelegate> {
         [_cityBus setKeyPattern:[NSMutableArray array]];
         [_cityBus setEstimateTimeGo:[NSMutableArray array]];
         [_cityBus setEstimateTimeBack:[NSMutableArray array]];
+        
+        characterSet = [NSCharacterSet URLQueryAllowedCharacterSet];
     }
     
     return self;
@@ -270,11 +259,11 @@ didFinishDownloadingToURL:(NSURL *)location {
         NSLog(@"Download compelete.");
     }
     
-    [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-        
-        [_tableViewBusDetailList reloadData];
-        [MBProgressHUD hideHUDForView:[self view] animated:YES];
-    }];
+//    [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+//        
+//        [_tableViewBusDetailList reloadData];
+//        [MBProgressHUD hideHUDForView:[self view] animated:YES];
+//    }];
 }
 
 
@@ -368,7 +357,7 @@ didFinishDownloadingToURL:(NSURL *)location {
     
     NSString *stringWithURL = [NSString stringWithFormat:@"http://ptx.transportdata.tw/MOTC/v2/Bus/EstimatedTimeOfArrival/City/%@/%@?$filter=RouteUID eq '%@' and StopUID eq '%@'&$format=JSON", authorityID, routeName, routeID, stopUID];
 //    NSLog(@"fetchEstimateTime URL: %@", stringWithURL);
-    NSCharacterSet *characterSet = [NSCharacterSet URLQueryAllowedCharacterSet];
+//    NSCharacterSet *characterSet = [NSCharacterSet URLQueryAllowedCharacterSet];
     stringWithURL = [stringWithURL stringByAddingPercentEncodingWithAllowedCharacters:characterSet];
     NSURL *URL = [NSURL URLWithString:stringWithURL];
     NSData *data = [NSData dataWithContentsOfURL:URL];
@@ -542,15 +531,26 @@ didFinishDownloadingToURL:(NSURL *)location {
 
 #pragma mark - TEST
 
+/*
 - (void)fetchBusStopsGoWithAuthorityID:(NSString *)authorityID
                                routeUID:(NSString *)routeUID {
     
     NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
-    NSURLSession *session = [NSURLSession sessionWithConfiguration:configuration];
+    
+    NSURLSession *session = [NSURLSession sessionWithConfiguration:configuration
+                                                          delegate:self
+                                                     delegateQueue:[NSOperationQueue mainQueue]];
+    
     NSString *stringWithURL = [NSString stringWithFormat:@"http://ptx.transportdata.tw/MOTC/v2/Bus/StopOfRoute/City/%@?$filter=RouteUID eq '%@' and KeyPattern eq true and Direction eq '0'&$format=JSON", authorityID, routeUID];
+    NSLog(@"fetchEstimateTimeGo URL: %@", stringWithURL);
+    
     NSCharacterSet *characterSet = [NSCharacterSet URLQueryAllowedCharacterSet];
     NSString *encodingString = [stringWithURL stringByAddingPercentEncodingWithAllowedCharacters:characterSet];
     NSURL *URL = [NSURL URLWithString:encodingString];
+//    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
+    fetchBusStopsGo = [session dataTaskWithURL:URL];
+    NSLog(@"fetchBusStopsGo = %@", fetchBusStopsGo);
+    
     NSURLRequest *request = [NSURLRequest requestWithURL:URL];
     NSURLSessionDataTask *dataTask = [session dataTaskWithRequest:request
                                                 completionHandler:^(NSData *data,
@@ -562,15 +562,15 @@ didFinishDownloadingToURL:(NSURL *)location {
                                                         NSArray *array = [NSJSONSerialization JSONObjectWithData:data
                                                                                                          options:NSJSONReadingMutableContainers
                                                                                                            error:&error];
+                                                        NSLog(@"fetchBusStopsGo count: %ld", [array count]);
                                                         for (id object in array) {
                                                             
                                                             NSArray *stops = [object objectForKey:@"Stops"];
                                                             for (id objectInStops in stops) {
                                                                 
                                                                 NSString *stopUID = [objectInStops objectForKey:@"StopUID"];
-//                                                                [self fetchEstimateTimeGoWithAuthorityID:authorityID
-//                                                                                                routeUID:routeUID
-//                                                                                                 stopUID:stopUID];
+                                                                [self fetchEstimateTimeGoWithAuthorityID:authorityID
+                                                                                                 stopUID:stopUID];
                                                                 NSDictionary *stopName = [objectInStops objectForKey:@"StopName"];
                                                                 NSString *nameZhTW = [stopName objectForKey:@"Zh_tw"];
                                                                 
@@ -578,27 +578,32 @@ didFinishDownloadingToURL:(NSURL *)location {
                                                                 [[_cityBus stopNameGo] addObject:nameZhTW];
                                                             }
                                                         }
-                                                        
-                                                        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-                                                            
-                                                            [_tableViewBusDetailList reloadData];
-                                                        }];
-
                                                     }
                                                 }];
-    [dataTask resume];
-    NSLog(@"fetchBusStopsGo URL: %@", URL);
+    
+    
+    [fetchBusStopsGo resume];
 }
 
+
+
 - (void)fetchBusStopsBackWithAuthorityID:(NSString *)authorityID
-                               routeUID:(NSString *)routeUID {
+                                routeUID:(NSString *)routeUID {
     
     NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
-    NSURLSession *session = [NSURLSession sessionWithConfiguration:configuration];
+    
+    NSURLSession *session = [NSURLSession sessionWithConfiguration:configuration
+                                                          delegate:self
+                                                     delegateQueue:[NSOperationQueue mainQueue]];
+    
     NSString *stringWithURL = [NSString stringWithFormat:@"http://ptx.transportdata.tw/MOTC/v2/Bus/StopOfRoute/City/%@?$filter=RouteUID eq '%@' and KeyPattern eq true and Direction eq '1'&$format=JSON", authorityID, routeUID];
-    NSCharacterSet *characterSet = [NSCharacterSet URLQueryAllowedCharacterSet];
+//    NSCharacterSet *characterSet = [NSCharacterSet URLQueryAllowedCharacterSet];
     NSString *encodingString = [stringWithURL stringByAddingPercentEncodingWithAllowedCharacters:characterSet];
     NSURL *URL = [NSURL URLWithString:encodingString];
+//    NSURLRequest *request = [NSURLRequest requestWithURL:URL];
+    fetchBusStopsBack = [session dataTaskWithURL:URL];
+    
+
     NSURLRequest *request = [NSURLRequest requestWithURL:URL];
     NSURLSessionDataTask *dataTask = [session dataTaskWithRequest:request
                                                 completionHandler:^(NSData *data,
@@ -610,15 +615,16 @@ didFinishDownloadingToURL:(NSURL *)location {
                                                         NSArray *array = [NSJSONSerialization JSONObjectWithData:data
                                                                                                          options:NSJSONReadingMutableContainers
                                                                                                            error:&error];
+                                                        NSLog(@"fetchBusStopsBack count: %ld", [array count]);
+                                                        
                                                         for (id object in array) {
                                                             
                                                             NSArray *stops = [object objectForKey:@"Stops"];
                                                             for (id objectInStops in stops) {
                                                                 
                                                                 NSString *stopUID = [objectInStops objectForKey:@"StopUID"];
-//                                                                [self fetchEstimateTimeBackWithAuthorityID:authorityID
-//                                                                                                  routeUID:routeUID
-//                                                                                                   stopUID:stopUID];
+                                                                [self fetchEstimateTimeBackWithAuthorityID:authorityID
+                                                                                                   stopUID:stopUID];
                                                                 NSDictionary *stopName = [objectInStops objectForKey:@"StopName"];
                                                                 NSString *nameZhTW = [stopName objectForKey:@"Zh_tw"];
                                                                 
@@ -626,45 +632,44 @@ didFinishDownloadingToURL:(NSURL *)location {
                                                                 [[_cityBus stopNameBack] addObject:nameZhTW];
                                                             }
                                                         }
-                                                        
-                                                        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-                                                           
-                                                            [_tableViewBusDetailList reloadData];
-                                                        }];
                                                     }
                                                 }];
-    [dataTask resume];
-    NSLog(@"fetchBusStopsBack URL: %@", URL);
+
+    [fetchBusStopsBack resume];
 }
 
 - (void)fetchEstimateTimeGoWithAuthorityID:(NSString *)authorityID
-                                  routeUID:(NSString *)routeUID
                                    stopUID:(NSString *)stopUID {
     
-    NSString *stringWithURL;
     NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
-    NSURLSession *session = [NSURLSession sessionWithConfiguration:configuration];
-//    for (id object in [_cityBus stopUIDGo]) {
-//        NSLog(@"object: %@", object);
-        stringWithURL = [NSString stringWithFormat:@"http://ptx.transportdata.tw/MOTC/v2/Bus/EstimatedTimeOfArrival/City/%@?$filter=RouteUID eq '%@' and StopUID eq '%@'&$format=JSON", authorityID, routeUID, stopUID];
-//    }
-    NSCharacterSet *characterSet = [NSCharacterSet URLQueryAllowedCharacterSet];
+    
+    NSURLSession *session = [NSURLSession sessionWithConfiguration:configuration
+                                                          delegate:self
+                                                     delegateQueue:nil];
+    
+    NSString *stringWithURL = [NSString stringWithFormat:@"http://ptx.transportdata.tw/MOTC/v2/Bus/EstimatedTimeOfArrival/City/%@?$filter=StopUID eq '%@'&$format=JSON", authorityID, stopUID];
+    
+//    NSCharacterSet *characterSet = [NSCharacterSet URLQueryAllowedCharacterSet];
     NSString *encodingString = [stringWithURL stringByAddingPercentEncodingWithAllowedCharacters:characterSet];
     NSURL *URL = [NSURL URLWithString:encodingString];
+    fetchEstimateGo = [session dataTaskWithURL:URL];
+    
+
     NSURLRequest *request = [NSURLRequest requestWithURL:URL];
     NSURLSessionDataTask *dataTask = [session dataTaskWithRequest:request
                                                 completionHandler:^(NSData *data,
                                                                     NSURLResponse *response,
                                                                     NSError *error) {
-                                                    
+                                                        
                                                     if (!error) {
-                                                        
+
                                                         NSArray *array = [NSJSONSerialization JSONObjectWithData:data
-                                                                                                         options:NSJSONReadingMutableContainers
-                                                                                                           error:&error];
-                                                        
+                                                                                                             options:NSJSONReadingMutableContainers
+                                                                                                               error:&error];
                                                         NSString *stringWithTime;
-                                                        if (![array count]) {
+                                                        NSLog(@"%@ array: %@", stopUID, array);
+                                                        
+                                                        if (array == nil || [array count] == 0 || data == nil) {
                                                             
                                                             stringWithTime = @"尚未發車";
                                                         } else {
@@ -675,26 +680,7 @@ didFinishDownloadingToURL:(NSURL *)location {
                                                                 NSNumber *stopStatus = [object objectForKey:@"StopStatus"];
                                                                 if (estimateTime != nil) {
                                                                     
-                                                                    int intTime = [estimateTime intValue];
-                                                                    int minutes = intTime / 60;
-                                                                    int seconds = intTime % 60;
-                                                                    if (minutes == 0 && seconds <= 30) {
-                                                                        
-                                                                        stringWithTime = @"進站中";
-                                                                    } else if (minutes <= 1 && seconds < 60) {
-                                                                        
-                                                                        stringWithTime = @"即將進站";
-                                                                    } else if (minutes >= 2 && seconds <= 30) {
-                                                                        
-                                                                        NSNumber *numberWithMinutes = [NSNumber numberWithInt:minutes];
-                                                                        NSString *string = [numberWithMinutes stringValue];
-                                                                        stringWithTime = [NSString stringWithFormat:@"約 %@ 分", string];
-                                                                    } else {
-                                                                        
-                                                                        NSNumber *numberWithMinutes = [NSNumber numberWithInt:minutes + 1];
-                                                                        NSString *string = [numberWithMinutes stringValue];
-                                                                        stringWithTime = [NSString stringWithFormat:@"約 %@ 分", string];
-                                                                    }
+                                                                     stringWithTime = [estimateTime stringValue];
                                                                 } else {
                                                                     
                                                                     if ([stopStatus isEqualToNumber:@1]) {
@@ -709,36 +695,37 @@ didFinishDownloadingToURL:(NSURL *)location {
                                                                     } else if ([stopStatus isEqualToNumber:@4]) {
                                                                         
                                                                         stringWithTime = @"今日未營運";
+                                                                    } else {
+                                                                        
+                                                                        stringWithTime = @"尚未發車";
                                                                     }
                                                                 }
-                                                                [[_cityBus estimateTimeGo] addObject:stringWithTime];
                                                             }
                                                         }
-//                                                        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-//                                                            
-//                                                            [_tableViewBusDetailList reloadData];
-//                                                        }];
+                                                        [[_cityBus estimateTimeGo] addObject:stringWithTime];
                                                     }
                                                 }];
+
     
-    [dataTask resume];
-    NSLog(@"fetchEstimateTimeGo URL: %@", URL);
+//    [fetchEstimateGo resume];
 }
 
 - (void)fetchEstimateTimeBackWithAuthorityID:(NSString *)authorityID
-                                    routeUID:(NSString *)routeUID
                                      stopUID:(NSString *)stopUID {
     
-    NSString *stringWithURL;
     NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
-    NSURLSession *session = [NSURLSession sessionWithConfiguration:configuration];
-//    for (id object in [_cityBus stopUIDBack]) {
-//        NSLog(@"object: %@", object);
-        stringWithURL = [NSString stringWithFormat:@"http://ptx.transportdata.tw/MOTC/v2/Bus/EstimatedTimeOfArrival/City/%@?$filter=RouteUID eq '%@' and StopUID eq '%@'&$format=JSON", authorityID, routeUID, stopUID];
-//    }
-    NSCharacterSet *characterSet = [NSCharacterSet URLQueryAllowedCharacterSet];
+    
+    NSURLSession *session = [NSURLSession sessionWithConfiguration:configuration
+                                                          delegate:self
+                                                     delegateQueue:[NSOperationQueue mainQueue]];
+    
+    NSString *stringWithURL = [NSString stringWithFormat:@"http://ptx.transportdata.tw/MOTC/v2/Bus/EstimatedTimeOfArrival/City/%@?$filter=StopUID eq '%@'&$format=JSON", authorityID, stopUID];
+//    NSCharacterSet *characterSet = [NSCharacterSet URLQueryAllowedCharacterSet];
     NSString *encodingString = [stringWithURL stringByAddingPercentEncodingWithAllowedCharacters:characterSet];
     NSURL *URL = [NSURL URLWithString:encodingString];
+    fetchEstimateBack = [session dataTaskWithURL:URL];
+    
+
     NSURLRequest *request = [NSURLRequest requestWithURL:URL];
     NSURLSessionDataTask *dataTask = [session dataTaskWithRequest:request
                                                 completionHandler:^(NSData *data,
@@ -750,71 +737,335 @@ didFinishDownloadingToURL:(NSURL *)location {
                                                         NSArray *array = [NSJSONSerialization JSONObjectWithData:data
                                                                                                          options:NSJSONReadingMutableContainers
                                                                                                            error:&error];
-                                                        
+                                                        NSLog(@"%@ array: %@", stopUID, array);
                                                         NSString *stringWithTime;
                                                         
-                                                        
-                                                        if (![array count]) {
+                                                        if (array == nil || [array count] == 0 || data == nil) {
                                                             
                                                             stringWithTime = @"尚未發車";
+                                                            [[_cityBus estimateTimeBack] addObject:stringWithTime];
                                                         } else {
-                                                            
+                                                        
                                                             for (id object in array) {
                                                                 
                                                                 NSNumber *estimateTime = [object objectForKey:@"EstimateTime"];
                                                                 NSNumber *stopStatus = [object objectForKey:@"StopStatus"];
                                                                 if (estimateTime != nil) {
                                                                     
-                                                                    int intTime = [estimateTime intValue];
-                                                                    int minutes = intTime / 60;
-                                                                    int seconds = intTime % 60;
-                                                                    if (minutes == 0 && seconds <= 30) {
-                                                                        
-                                                                        stringWithTime = @"進站中";
-                                                                    } else if (minutes <= 1 && seconds < 60) {
-                                                                        
-                                                                        stringWithTime = @"即將進站";
-                                                                    } else if (minutes >= 2 && seconds <= 30) {
-                                                                        
-                                                                        NSNumber *numberWithMinutes = [NSNumber numberWithInt:minutes];
-                                                                        NSString *string = [numberWithMinutes stringValue];
-                                                                        stringWithTime = [NSString stringWithFormat:@"約 %@ 分", string];
-                                                                    } else {
-                                                                        
-                                                                        NSNumber *numberWithMinutes = [NSNumber numberWithInt:minutes + 1];
-                                                                        NSString *string = [numberWithMinutes stringValue];
-                                                                        stringWithTime = [NSString stringWithFormat:@"約 %@ 分", string];
-                                                                    }
+                                                                    stringWithTime = [estimateTime stringValue];
+                                                                    [[_cityBus estimateTimeBack] addObject:stringWithTime];
                                                                 } else {
                                                                     
-                                                                    if ([stopStatus isEqualToNumber:@1]) {
+                                                                    if (estimateTime == nil || [stopStatus isEqualToNumber:@1]) {
                                                                         
                                                                         stringWithTime = @"尚未發車";
-                                                                    } else if ([stopStatus isEqualToNumber:@2]) {
+                                                                        [[_cityBus estimateTimeBack] addObject:stringWithTime];
+                                                                    } else if (estimateTime == nil || [stopStatus isEqualToNumber:@2]) {
                                                                         
                                                                         stringWithTime = @"交管不停靠";
-                                                                    } else if ([stopStatus isEqualToNumber:@3]) {
+                                                                        [[_cityBus estimateTimeBack] addObject:stringWithTime];
+                                                                    } else if (estimateTime == nil || [stopStatus isEqualToNumber:@3]) {
                                                                         
                                                                         stringWithTime = @"末班車已過";
-                                                                    } else if ([stopStatus isEqualToNumber:@4]) {
+                                                                        [[_cityBus estimateTimeBack] addObject:stringWithTime];
+                                                                    } else if (estimateTime == nil || [stopStatus isEqualToNumber:@4]) {
                                                                         
                                                                         stringWithTime = @"今日未營運";
+                                                                        [[_cityBus estimateTimeBack] addObject:stringWithTime];
+                                                                    } else {
+                                                                        
+                                                                        stringWithTime = @"尚未發車";
+                                                                        [[_cityBus estimateTimeGo] addObject:stringWithTime];
                                                                     }
                                                                 }
-                                                                [[_cityBus estimateTimeBack] addObject:stringWithTime];
                                                             }
-                                                        
                                                         }
-//                                                        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-//                                                            
-//                                                            [_tableViewBusDetailList reloadData];
-//                                                        }];
                                                     }
                                                 }];
-    
-    [dataTask resume];
-    NSLog(@"fetchEstimateTimeBack URL: %@", URL);
+
+//    [fetchEstimateBack resume];
 }
+
+
+#pragma mark - TESTDelegate
+
+- (void)URLSession:(NSURLSession *)session
+          dataTask:(NSURLSessionDataTask *)dataTask
+    didReceiveData:(NSData *)data {
+    
+    @try {
+        
+        NSLog(@"dataTask = %@", dataTask);
+            NSArray *array = [NSJSONSerialization JSONObjectWithData:data
+                                                             options:NSJSONReadingMutableContainers
+                                                               error:nil];
+        
+        if (array == nil) {
+            
+            [dataTask resume];
+        }
+            for (id object in array) {
+                
+                NSArray *stops = [object objectForKey:@"Stops"];
+                for (id objectInStops in stops) {
+                    
+                    NSString *stopUID = [objectInStops objectForKey:@"StopUID"];
+                    NSDictionary *stopName = [objectInStops objectForKey:@"StopName"];
+                    NSString *nameZhTW = [stopName objectForKey:@"Zh_tw"];
+                    NSLog(@"fetchBusStopsGo: %@", nameZhTW);
+                    [[_cityBus stopUIDGo] addObject:stopUID];
+                    [[_cityBus stopNameGo] addObject:nameZhTW];
+                }
+            }
+            
+        
+    
+            
+//            NSArray *array = [NSJSONSerialization JSONObjectWithData:data
+//                                                             options:NSJSONReadingMutableContainers
+//                                                               error:nil];
+//
+//            for (id object in array) {
+//                
+//                NSArray *stops = [object objectForKey:@"Stops"];
+//                for (id objectInStops in stops) {
+//                    
+//                    NSString *stopUID = [objectInStops objectForKey:@"StopUID"];
+//                    NSDictionary *stopName = [objectInStops objectForKey:@"StopName"];
+//                    NSString *nameZhTW = [stopName objectForKey:@"Zh_tw"];
+//                    NSLog(@"fetchBusStopsBack: %@", nameZhTW);
+//                    [[_cityBus stopUIDBack] addObject:stopUID];
+//                    [[_cityBus stopNameBack] addObject:nameZhTW];
+//                }
+//            }
+        
+    } @catch (NSException *exception) {
+        
+        NSLog(@"%@, %@", [exception name], [exception reason]);
+    } @finally {
+        
+        [session finishTasksAndInvalidate];
+//        [_tableViewBusDetailList reloadData];
+        NSLog(@"Compelet.");
+    }
+    
+    [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+        
+        [_tableViewBusDetailList reloadData];
+    }];
+}
+*/
+
+    
+    
+
+
+- (void)fetchBusStopsGoWithAuthorityID:(NSString *)authorityID
+                              routeUID:(NSString *)routeUID {
+
+    NSString *stringWithURL = [NSString stringWithFormat:@"http://ptx.transportdata.tw/MOTC/v2/Bus/StopOfRoute/City/%@?$filter=RouteUID eq '%@' and KeyPattern eq true and Direction eq '0'&$format=JSON", authorityID, routeUID];
+    NSString *stringWithURLEncoding = [stringWithURL stringByAddingPercentEncodingWithAllowedCharacters:characterSet];
+    NSLog(@"fetchEstimateTimeGo URL: %@", stringWithURLEncoding);
+    NSURL *URL = [NSURL URLWithString:stringWithURLEncoding];
+    NSData *data = [NSData dataWithContentsOfURL:URL];
+    NSError *error;
+    NSArray *array = [NSJSONSerialization JSONObjectWithData:data
+                                                     options:NSJSONReadingMutableContainers
+                                                       error:&error];
+    for (id object in array) {
+        
+        NSArray *stops = [object objectForKey:@"Stops"];
+        for (id objectInStops in stops) {
+            
+            NSString *stopUID = [objectInStops objectForKey:@"StopUID"];
+            NSDictionary *stopName = [objectInStops objectForKey:@"StopName"];
+//            [self fetchEstimateTimeGoWithAuthorityID:authorityID stopUID:stopUID];
+            NSString *nameZhTW = [stopName objectForKey:@"Zh_tw"];
+            
+            [[_cityBus stopUIDGo] addObject:stopUID];
+            [[_cityBus stopNameGo] addObject:nameZhTW];
+            NSLog(@"%@, %@", [_cityBus stopUIDGo], [_cityBus stopNameGo]);
+        }
+    }
+}
+
+- (void)fetchBusStopsBackWithAuthorityID:(NSString *)authorityID
+                                routeUID:(NSString *)routeUID {
+    
+    NSString *stringWithURL = [NSString stringWithFormat:@"http://ptx.transportdata.tw/MOTC/v2/Bus/StopOfRoute/City/%@?$filter=RouteUID eq '%@' and KeyPattern eq true and Direction eq '1'&$format=JSON", authorityID, routeUID];
+    NSString *stringWithURLEncoding = [stringWithURL stringByAddingPercentEncodingWithAllowedCharacters:characterSet];
+    NSLog(@"fetchEstimateTimeGo URL: %@", stringWithURLEncoding);
+    NSURL *URL = [NSURL URLWithString:stringWithURLEncoding];
+    NSData *data = [NSData dataWithContentsOfURL:URL];
+    NSError *error;
+    NSArray *array = [NSJSONSerialization JSONObjectWithData:data
+                                                     options:NSJSONReadingMutableContainers
+                                                       error:&error];
+    for (id object in array) {
+        
+        NSArray *stops = [object objectForKey:@"Stops"];
+        for (id objectInStops in stops) {
+            
+            NSString *stopUID = [objectInStops objectForKey:@"StopUID"];
+            NSDictionary *stopName = [objectInStops objectForKey:@"StopName"];
+//            [self fetchEstimateTimeBackWithAuthorityID:authorityID stopUID:stopUID];
+            NSString *nameZhTW = [stopName objectForKey:@"Zh_tw"];
+            
+            [[_cityBus stopUIDBack] addObject:stopUID];
+            [[_cityBus stopNameBack] addObject:nameZhTW];
+            NSLog(@"%@, %@", [_cityBus stopUIDBack], [_cityBus stopNameBack]);
+        }
+    }
+}
+
+/*
+- (void)fetchEstimateTimeGoWithAuthorityID:(NSString *)authorityID
+                                   stopUID:(NSString *)stopUID {
+    
+    NSString *stringWithURL = [NSString stringWithFormat:@"http://ptx.transportdata.tw/MOTC/v2/Bus/EstimatedTimeOfArrival/City/%@?$filter=StopUID eq '%@'&$format=JSON", authorityID, stopUID];
+    NSString *stringWithURLEncoding = [stringWithURL stringByAddingPercentEncodingWithAllowedCharacters:characterSet];
+    NSURL *URL = [NSURL URLWithString:stringWithURLEncoding];
+    NSData *data = [NSData dataWithContentsOfURL:URL];
+    NSError *error;
+    NSArray *array = [NSJSONSerialization JSONObjectWithData:data
+                                                     options:NSJSONReadingMutableContainers
+                                                       error:&error];
+
+    NSString *stringWithTime;
+    if (array == nil || [array count] == 0 || data == nil) {
+        
+        stringWithTime = @"尚未發車";
+    } else {
+        
+        for (id object in array) {
+            
+            NSNumber *estimateTime = [object objectForKey:@"EstimateTime"];
+            NSNumber *stopStatus = [object objectForKey:@"StopStatus"];
+            if (estimateTime != nil) {
+                
+                stringWithTime = [estimateTime stringValue];
+            } else {
+                
+                if ([stopStatus isEqualToNumber:@1]) {
+                    
+                    stringWithTime = @"尚未發車";
+                } else if ([stopStatus isEqualToNumber:@2]) {
+                    
+                    stringWithTime = @"交管不停靠";
+                } else if ([stopStatus isEqualToNumber:@3]) {
+                    
+                    stringWithTime = @"末班車已過";
+                } else if ([stopStatus isEqualToNumber:@4]) {
+                    
+                    stringWithTime = @"今日未營運";
+                } else {
+                    
+                    stringWithTime = @"尚未發車";
+                }
+            }
+            
+            [[_cityBus estimateTimeGo] addObject:stringWithTime];
+        }
+    }
+}
+
+- (void)fetchEstimateTimeBackWithAuthorityID:(NSString *)authorityID
+                                     stopUID:(NSString *)stopUID {
+    
+    NSString *stringWithURL = [NSString stringWithFormat:@"http://ptx.transportdata.tw/MOTC/v2/Bus/EstimatedTimeOfArrival/City/%@?$filter=StopUID eq '%@'&$format=JSON", authorityID, stopUID];
+    NSString *stringWithURLEncoding = [stringWithURL stringByAddingPercentEncodingWithAllowedCharacters:characterSet];
+    NSURL *URL = [NSURL URLWithString:stringWithURLEncoding];
+    NSData *data = [NSData dataWithContentsOfURL:URL];
+    NSError *error;
+    NSArray *array = [NSJSONSerialization JSONObjectWithData:data
+                                                     options:NSJSONReadingMutableContainers
+                                                       error:&error];
+    
+    NSString *stringWithTime;
+    if (array == nil || [array count] == 0 || data == nil) {
+        
+        stringWithTime = @"尚未發車";
+    } else {
+        
+        for (id object in array) {
+            
+            NSNumber *estimateTime = [object objectForKey:@"EstimateTime"];
+            NSNumber *stopStatus = [object objectForKey:@"StopStatus"];
+            if (estimateTime != nil) {
+                
+                stringWithTime = [estimateTime stringValue];
+            } else {
+                
+                if ([stopStatus isEqualToNumber:@1]) {
+                    
+                    stringWithTime = @"尚未發車";
+                } else if ([stopStatus isEqualToNumber:@2]) {
+                    
+                    stringWithTime = @"交管不停靠";
+                } else if ([stopStatus isEqualToNumber:@3]) {
+                    
+                    stringWithTime = @"末班車已過";
+                } else if ([stopStatus isEqualToNumber:@4]) {
+                    
+                    stringWithTime = @"今日未營運";
+                } else {
+                    
+                    stringWithTime = @"尚未發車";
+                }
+            }
+            
+            [[_cityBus estimateTimeBack] addObject:stringWithTime];
+        }
+    }
+}
+*/
+
+
+- (void)fetchEstimateTimeGoWithAuthorityID:(NSString *)authorityID
+                                  routeUID:(NSString *)routeUID {
+    
+    NSString *stringWithURL = [NSString stringWithFormat:@"http://ptx.transportdata.tw/MOTC/v2/Bus/EstimatedTimeOfArrival/City/%@?$filter=RouteUID eq '%@' and Direction eq '0'&$format=JSON", authorityID, routeUID];
+    NSString *stringWithURLEncoding = [stringWithURL stringByAddingPercentEncodingWithAllowedCharacters:characterSet];
+    NSURL *URL = [NSURL URLWithString:stringWithURLEncoding];
+    NSData *data = [NSData dataWithContentsOfURL:URL];
+    NSError *error;
+    NSArray *array = [NSJSONSerialization JSONObjectWithData:data
+                                                     options:NSJSONReadingMutableContainers
+                                                       error:&error];
+    NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+    NSString *stringWithTime;
+    
+    for (id object in array) {
+        
+        NSNumber *estimateTime = [object objectForKey:@"EstimateTime"];
+        NSNumber *stopStatus = [object objectForKey:@"StopStatus"];
+        if (estimateTime != nil) {
+         
+            
+            stringWithTime = [estimateTime stringValue];
+        } else if ([stopStatus isEqualToNumber:@1]) {
+            
+            stringWithTime = @"尚未發車";
+        } else if ([stopStatus isEqualToNumber:@2]) {
+            
+            stringWithTime = @"交管不停靠";
+        } else if ([stopStatus isEqualToNumber:@3]) {
+            
+            stringWithTime = @"末班車已過";
+        } else if ([stopStatus isEqualToNumber:@4]) {
+            
+            stringWithTime = @"今日未營運";
+        } else {
+            
+            stringWithTime = @"尚未發車";
+        }
+        
+        [dictionary setObject:stringWithTime forKey:routeUID];
+    }
+}
+
+
+
 
 /*
  #pragma mark - Navigation
