@@ -144,7 +144,7 @@ NSURLSessionDownloadDelegate, NSURLSessionTaskDelegate, NSURLSessionDataDelegate
         NSString *cellTextLabel = [self editStringFromHalfWidthToFullWidth:[[_cityBus stopNameGo]
                                                                             objectAtIndex:[indexPath row]]];
         [[tableViewCell textLabel] setText:cellTextLabel];
-//        [[tableViewCell detailTextLabel] setText:[[_cityBus estimateTimeGo] objectAtIndex:[indexPath row]]];
+        [[tableViewCell detailTextLabel] setText:[[_cityBus estimateTimeGo] objectAtIndex:[indexPath row]]];
         
         return tableViewCell;
     }
@@ -1041,7 +1041,6 @@ didFinishDownloadingToURL:(NSURL *)location {
         NSNumber *stopStatus = [object objectForKey:@"StopStatus"];
         if (estimateTime != nil) {
          
-            
             stringWithTime = [estimateTime stringValue];
         } else if ([stopStatus isEqualToNumber:@1]) {
             
@@ -1061,6 +1060,7 @@ didFinishDownloadingToURL:(NSURL *)location {
         }
         
         [dictionary setObject:stringWithTime forKey:routeUID];
+        [[_cityBus estimateTimeGo] addObject:dictionary];
     }
 }
 

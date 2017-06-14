@@ -21,8 +21,8 @@
 @property (strong, nonatomic) NSMutableArray<NSString *> *stopUIDBack;
 @property (strong, nonatomic) NSMutableArray<NSString *> *stopNameGo;
 @property (strong, nonatomic) NSMutableArray<NSString *> *stopNameBack;
-@property (strong, nonatomic) NSMutableArray<NSString *> *estimateTimeGo;
-@property (strong, nonatomic) NSMutableArray<NSString *> *estimateTimeBack;
+@property (strong, nonatomic) NSMutableArray *estimateTimeGo;
+@property (strong, nonatomic) NSMutableArray *estimateTimeBack;
 @property (strong, nonatomic) NSMutableArray *stopStatus;
 
 @end
