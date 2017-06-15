@@ -31,11 +31,14 @@ NSURLSessionTaskDelegate, NSURLSessionDataDelegate> {
     NSCharacterSet *characterSet;
     NSURLSessionConfiguration *configuration;
     NSURLSession *session;
+    int updateTime;
+    NSTimer *timerWithEstimateTime;
 }
 
 @property (strong, nonatomic) CityBus *cityBus;
 @property (weak, nonatomic) IBOutlet UITableView *tableViewBusDetailList;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *goBackControl;
+@property (weak, nonatomic) IBOutlet UILabel *labelUpdateTime;
 
 @end
 
@@ -49,29 +52,27 @@ NSURLSessionTaskDelegate, NSURLSessionDataDelegate> {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
-//    NSTimer *timer = [NSTimer timerWithTimeInterval:15
-//                                             target:self
-//                                           selector:@selector(updateEstimateTime)
-//                                           userInfo:nil
-//                                            repeats:YES];
-    
-    
-    
+    // Segue Parameter
     NSLog(@"viewDidload: %@, %@, %@", _authorityID, _routeName, _routeID);
     NSLog(@"_selectedStopUID: %@", _selectedStopUID);
     NSLog(@"[[cityBus stopIDGo] count]: %ld", [[_cityBus stopIDGo] count]);
     
+    // Segmented Control
     [_goBackControl setSelectedSegmentIndex:0];
-    [_tableViewBusDetailList setDataSource:self];
     
+    // Table View
+    [_tableViewBusDetailList setDataSource:self];
+    [_tableViewBusDetailList setDelegate:self];
+    
+    // Navigationbar Title
     [[self navigationItem] setTitle:[self editStringFromHalfWidthToFullWidth:_routeName]];
     NSString *go = [NSString stringWithFormat:@"去程（%@）", _destinationStopName];
     NSString *back = [NSString stringWithFormat:@"返程（%@）", _departureStopName];
     [_goBackControl setTitle:go forSegmentAtIndex:0];
     [_goBackControl setTitle:back forSegmentAtIndex:1];
     
-    
-//    [MBProgressHUD showHUDAddedTo:[self view] animated:YES];
+    // Fetch JSON Data
+    [MBProgressHUD showHUDAddedTo:[self view] animated:YES];
     [self fetchBusStopsGoWithAuthorityID:_authorityID routeID:_routeID];
     [self fetchBusStopsBackWithAuthorityID:_authorityID routeID:_routeID];
     
@@ -83,6 +84,22 @@ NSURLSessionTaskDelegate, NSURLSessionDataDelegate> {
         [self fetchNewTaipeiEstimateTimeWithrouteID:_routeID];
     }
     
+    // Auto Refresh Data
+    timerWithEstimateTime = [NSTimer scheduledTimerWithTimeInterval:1
+                                                            repeats:YES
+                                                              block:^(NSTimer *timer) {
+                                                                  
+                                                                  updateTime--;
+                                                                  if (updateTime < 0) {
+                                                                      
+                                                                      updateTime = 16;
+                                                                      [self updateEstimateTime];
+                                                                  } else {
+                                                                      
+                                                                      [_labelUpdateTime setText:[NSString stringWithFormat:@"%d 秒後更新", updateTime]];
+                                                                  }
+                                                              }];
+    [timerWithEstimateTime isValid];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -94,12 +111,13 @@ NSURLSessionTaskDelegate, NSURLSessionDataDelegate> {
 - (void)viewDidAppear:(BOOL)animated {
     
     [_tableViewBusDetailList reloadData];
-//    [MBProgressHUD hideHUDForView:[self view] animated:YES];
+    [MBProgressHUD hideHUDForView:[self view] animated:YES];
     NSLog(@"viewDidAppear.");
 }
 
 - (void)viewDidDisappear:(BOOL)animated {
     
+    [timerWithEstimateTime invalidate];
     NSLog(@"viewDidDisappear.");
 }
 
@@ -109,7 +127,7 @@ NSURLSessionTaskDelegate, NSURLSessionDataDelegate> {
     // Dispose of any resources that can be recreated.
 }
 
-
+/*
 - (void)updateEstimateTime {
     
     if ([_authorityID isEqualToString:@"Taipei"]) {
@@ -129,7 +147,7 @@ NSURLSessionTaskDelegate, NSURLSessionDataDelegate> {
     }
     
 }
-
+*/
 
 #pragma mark - Init
 
@@ -152,6 +170,9 @@ NSURLSessionTaskDelegate, NSURLSessionDataDelegate> {
         characterSet = [NSCharacterSet URLQueryAllowedCharacterSet];
         configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
         session = [NSURLSession sessionWithConfiguration:configuration];
+        
+//        timerWithEstimateTime = [[NSTimer alloc] init];
+        updateTime = 16;
     }
     
     return self;
@@ -549,6 +570,14 @@ didFinishDownloadingToURL:(NSURL *)location {
 //}
 
 
+#pragma mark - UITableViewDelegate
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+}
+
+
 #pragma mark - IBACtion
 
 - (IBAction)segmentedControlGoBackTouch:(UISegmentedControl *)sender {
@@ -560,6 +589,30 @@ didFinishDownloadingToURL:(NSURL *)location {
         
         [_tableViewBusDetailList reloadData];
     }
+}
+
+- (IBAction)barButtonItemRefreshTouch:(UIBarButtonItem *)sender {
+    
+    [[_cityBus stopNameGo] removeAllObjects];
+    [[_cityBus stopNameBack] removeAllObjects];
+    [[_cityBus stopIDGo] removeAllObjects];
+    [[_cityBus stopIDBack] removeAllObjects];
+    [[_cityBus estimateTime] removeAllObjects];
+    [[_cityBus estimateTimeGo] removeAllObjects];
+    [[_cityBus estimateTimeBack] removeAllObjects];
+    
+    //    [MBProgressHUD showHUDAddedTo:[self view] animated:YES];
+    [self fetchBusStopsGoWithAuthorityID:_authorityID routeID:_routeID];
+    [self fetchBusStopsBackWithAuthorityID:_authorityID routeID:_routeID];
+    
+    if ([_authorityID isEqualToString:@"Taipei"]) {
+        
+        [self fetchTaipeiEstimateTimeWithrouteID:_routeID];
+    } else {
+        
+        [self fetchNewTaipeiEstimateTimeWithrouteID:_routeID];
+    }
+    [_tableViewBusDetailList reloadData];
 }
 
 
@@ -589,7 +642,7 @@ didFinishDownloadingToURL:(NSURL *)location {
 
 
 
-#pragma mark - TEST
+#pragma mark - FetchData
 
 - (void)fetchBusStopsGoWithAuthorityID:(NSString *)authorityID
                                routeID:(NSString *)routeID {
@@ -598,34 +651,32 @@ didFinishDownloadingToURL:(NSURL *)location {
     NSLog(@"fetchBusStopsGo URL: %@", stringWithURL);
     NSString *encodingString = [stringWithURL stringByAddingPercentEncodingWithAllowedCharacters:characterSet];
     NSURL *URL = [NSURL URLWithString:encodingString];
-//    NSData *data = [NSData dataWithContentsOfURL:URL];
-    NSURLRequest *request = [NSURLRequest requestWithURL:URL];
-    NSURLSessionDataTask *dataTask = [session dataTaskWithRequest:request
-                                                completionHandler:^(NSData *data,
-                                                                    NSURLResponse *response,
-                                                                    NSError *error) {
-//    NSError *error;
-                                                    if (!error) {
+    NSURLSessionDataTask *dataTask = [session dataTaskWithURL:URL
+                                            completionHandler:^(NSData *data,
+                                                                NSURLResponse *response,
+                                                                NSError *error) {
+                                                NSLog(@"fetchBusStopsGo Thread: %@", [NSThread currentThread]);
+                                                if (!error) {
+                                                    
+                                                    NSArray *array = [NSJSONSerialization JSONObjectWithData:data
+                                                                                                     options:NSJSONReadingMutableContainers
+                                                                                                       error:&error];
+                                                    
+                                                    for (id object in array) {
                                                         
-                                                        NSArray *array = [NSJSONSerialization JSONObjectWithData:data
-                                                                                                         options:NSJSONReadingMutableContainers
-                                                                                                           error:&error];
-                                                        
-                                                        for (id object in array) {
+                                                        NSArray *stops = [object objectForKey:@"Stops"];
+                                                        for (id objectInStops in stops) {
                                                             
-                                                            NSArray *stops = [object objectForKey:@"Stops"];
-                                                            for (id objectInStops in stops) {
-                                                                
-                                                                NSString *stopID = [objectInStops objectForKey:@"StopID"];
-                                                                NSDictionary *stopName = [objectInStops objectForKey:@"StopName"];
-                                                                NSString *nameZhTW = [stopName objectForKey:@"Zh_tw"];
-                                                                
-                                                                [[_cityBus stopIDGo] addObject:stopID];
-                                                                [[_cityBus stopNameGo] addObject:nameZhTW];
-                                                            }
+                                                            NSString *stopID = [objectInStops objectForKey:@"StopID"];
+                                                            NSDictionary *stopName = [objectInStops objectForKey:@"StopName"];
+                                                            NSString *nameZhTW = [stopName objectForKey:@"Zh_tw"];
+                                                            
+                                                            [[_cityBus stopIDGo] addObject:stopID];
+                                                            [[_cityBus stopNameGo] addObject:nameZhTW];
                                                         }
                                                     }
-                                                }];
+                                                }
+                                            }];
     [dataTask resume];
 }
 
@@ -638,34 +689,32 @@ didFinishDownloadingToURL:(NSURL *)location {
     NSLog(@"fetchBusStopsBack URL: %@", stringWithURL);
     NSString *encodingString = [stringWithURL stringByAddingPercentEncodingWithAllowedCharacters:characterSet];
     NSURL *URL = [NSURL URLWithString:encodingString];
-    NSURLRequest *request = [NSURLRequest requestWithURL:URL];
-//    NSData *data = [NSData dataWithContentsOfURL:URL];
-    NSURLSessionDataTask *dataTask = [session dataTaskWithRequest:request
-                                                completionHandler:^(NSData *data,
-                                                                    NSURLResponse *response,
-                                                                    NSError *error) {
-//    NSError *error;
-                                                    if (!error) {
+    NSURLSessionDataTask *dataTask = [session dataTaskWithURL:URL
+                                            completionHandler:^(NSData *data,
+                                                                NSURLResponse *response,
+                                                                NSError *error) {
+                                                NSLog(@"fetchBusStopsBack Thread: %@", [NSThread currentThread]);
+                                                if (!error) {
+                                                    
+                                                    NSArray *array = [NSJSONSerialization JSONObjectWithData:data
+                                                                                                     options:NSJSONReadingMutableContainers
+                                                                                                       error:&error];
+                                                    
+                                                    for (id object in array) {
                                                         
-                                                        NSArray *array = [NSJSONSerialization JSONObjectWithData:data
-                                                                                                         options:NSJSONReadingMutableContainers
-                                                                                                           error:&error];
-                                                        
-                                                        for (id object in array) {
+                                                        NSArray *stops = [object objectForKey:@"Stops"];
+                                                        for (id objectInStops in stops) {
                                                             
-                                                            NSArray *stops = [object objectForKey:@"Stops"];
-                                                            for (id objectInStops in stops) {
-                                                                
-                                                                NSString *stopID = [objectInStops objectForKey:@"StopID"];
-                                                                NSDictionary *stopName = [objectInStops objectForKey:@"StopName"];
-                                                                NSString *nameZhTW = [stopName objectForKey:@"Zh_tw"];
-                                                                
-                                                                [[_cityBus stopIDBack] addObject:stopID];
-                                                                [[_cityBus stopNameBack] addObject:nameZhTW];
-                                                            }
+                                                            NSString *stopID = [objectInStops objectForKey:@"StopID"];
+                                                            NSDictionary *stopName = [objectInStops objectForKey:@"StopName"];
+                                                            NSString *nameZhTW = [stopName objectForKey:@"Zh_tw"];
+                                                            
+                                                            [[_cityBus stopIDBack] addObject:stopID];
+                                                            [[_cityBus stopNameBack] addObject:nameZhTW];
                                                         }
                                                     }
-                                                }];
+                                                }
+                                            }];
     [dataTask resume];
 }
 
@@ -1360,140 +1409,72 @@ didFinishDownloadingToURL:(NSURL *)location {
     NSString *stringWithURLEncoding = [stringWithURL stringByAddingPercentEncodingWithAllowedCharacters:characterSet];
     NSLog(@"fetchTaipeiEstimateTime URL: %@", stringWithURL);
     NSURL *URL = [NSURL URLWithString:stringWithURLEncoding];
-//    NSData *data = [NSData dataWithContentsOfURL:URL];
-//    NSURLRequest *request = [NSURLRequest requestWithURL:URL];
-    NSURLSessionDataTask *dataTask = [session dataTaskWithURL:URL completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-        
-        NSArray *array = [NSJSONSerialization JSONObjectWithData:data
-                                                         options:NSJSONReadingMutableContainers
-                                                           error:&error];
-        
-        for (id object in array) {
-            
-            NSString *stopID = [object objectForKey:@"StopID"];
-            NSNumber *estimateTime = [object objectForKey:@"EstimateTime"];
-            NSNumber *stopStatus = [object objectForKey:@"StopStatus"];
-            NSString *stringWithTime;
-            NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
-            if (estimateTime != nil) {
-                
-                int minutes = [estimateTime intValue] / 60;
-                int seconds = [estimateTime intValue] % 60;;
-                if (minutes == 0 && seconds <= 30) {
-                    
-                    stringWithTime = @"進站中";
-                    [dictionary setObject:stringWithTime forKey:stopID];
-                } else if ((minutes <= 1 && seconds < 60) || (minutes == 2 && seconds == 0)) {
-                    
-                    stringWithTime = @"即將進站";
-                    [dictionary setObject:stringWithTime forKey:stopID];
-                } else {
-                    
-                    if (seconds <= 30) {
-                        
-                        stringWithTime = [NSString stringWithFormat:@"約 %d 分", minutes];
-                        [dictionary setObject:stringWithTime forKey:stopID];
-                    } else {
-                        
-                        minutes++;
-                        stringWithTime = [NSString stringWithFormat:@"約 %d 分", minutes];
-                        [dictionary setObject:stringWithTime forKey:stopID];
-                    }
-                }
-            } else if ([stopStatus isEqualToNumber:@1]) {
-                
-                stringWithTime = @"尚未發車";
-                [dictionary setObject:stringWithTime forKey:stopID];
-            } else if ([stopStatus isEqualToNumber:@2]) {
-                
-                stringWithTime = @"交管不停靠";
-                [dictionary setObject:stringWithTime forKey:stopID];
-            } else if ([stopStatus isEqualToNumber:@3]) {
-                
-                stringWithTime = @"末班車已過";
-                [dictionary setObject:stringWithTime forKey:stopID];
-            } else if ([stopStatus isEqualToNumber:@4]) {
-                
-                stringWithTime = @"今日未營運";
-                [dictionary setObject:stringWithTime forKey:stopID];
-            } else {
-                
-                stringWithTime = @"尚未發車";
-                [dictionary setObject:stringWithTime forKey:stopID];
-            }
-            
-            [[_cityBus estimateTime] addEntriesFromDictionary:dictionary];
-        }
-    }];
-    
-    /*
-    NSURLSessionDataTask *dataTask = [session dataTaskWithRequest:request
-                                                completionHandler:^(NSData *data,
-                                                                    NSURLResponse *response,
-                                                                    NSError *error) {
-    
-                                                    NSArray *array = [NSJSONSerialization JSONObjectWithData:data
-                                                                                                     options:NSJSONReadingMutableContainers
-                                                                                                       error:&error];
-     
-                                                    for (id object in array) {
-     
-                                                        NSString *stopID = [object objectForKey:@"StopID"];
-                                                        NSNumber *estimateTime = [object objectForKey:@"EstimateTime"];
-                                                        NSNumber *stopStatus = [object objectForKey:@"StopStatus"];
-                                                        NSString *stringWithTime;
-                                                        NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
-                                                        if (estimateTime != nil) {
-     
-                                                            int minutes = [estimateTime intValue] / 60;
-                                                            int seconds = [estimateTime intValue] % 60;;
-                                                            if (minutes == 0 && seconds <= 30) {
-     
-                                                                stringWithTime = @"進站中";
-                                                                [dictionary setObject:stringWithTime forKey:stopID];
-                                                            } else if ((minutes <= 1 && seconds < 60) || (minutes == 2 && seconds == 0)) {
-     
-                                                                stringWithTime = @"即將進站";
-                                                                [dictionary setObject:stringWithTime forKey:stopID];
-                                                            } else {
-                                                                
-                                                                if (seconds <= 30) {
-                                                                    
-                                                                    stringWithTime = [NSString stringWithFormat:@"約 %d 分", minutes];
-                                                                    [dictionary setObject:stringWithTime forKey:stopID];
-                                                                } else {
-                                                                    
-                                                                    minutes++;
-                                                                    stringWithTime = [NSString stringWithFormat:@"約 %d 分", minutes];
-                                                                    [dictionary setObject:stringWithTime forKey:stopID];
-                                                                }
-                                                            }
-                                                        } else if ([stopStatus isEqualToNumber:@1]) {
+    NSURLSessionDataTask *dataTask = [session dataTaskWithURL:URL
+                                            completionHandler:^(NSData *data,
+                                                                NSURLResponse *response,
+                                                                NSError *error) {
+                                                NSLog(@"fetchTaipeiEstimateTime Thread: %@", [NSThread currentThread]);
+                                                NSArray *array = [NSJSONSerialization JSONObjectWithData:data
+                                                                                                 options:NSJSONReadingMutableContainers
+                                                                                                   error:&error];
+                                                
+                                                for (id object in array) {
+                                                    
+                                                    NSString *stopID = [object objectForKey:@"StopID"];
+                                                    NSNumber *estimateTime = [object objectForKey:@"EstimateTime"];
+                                                    NSNumber *stopStatus = [object objectForKey:@"StopStatus"];
+                                                    NSString *stringWithTime;
+                                                    NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+                                                    if (estimateTime != nil) {
+                                                        
+                                                        int minutes = [estimateTime intValue] / 60;
+                                                        int seconds = [estimateTime intValue] % 60;;
+                                                        if ([estimateTime intValue] <= 40) {
                                                             
-                                                            stringWithTime = @"尚未發車";
+                                                            stringWithTime = @"進站中";
                                                             [dictionary setObject:stringWithTime forKey:stopID];
-                                                        } else if ([stopStatus isEqualToNumber:@2]) {
+                                                        } else if ([estimateTime intValue] <= 120) {
                                                             
-                                                            stringWithTime = @"交管不停靠";
-                                                            [dictionary setObject:stringWithTime forKey:stopID];
-                                                        } else if ([stopStatus isEqualToNumber:@3]) {
-                                                            
-                                                            stringWithTime = @"末班車已過";
-                                                            [dictionary setObject:stringWithTime forKey:stopID];
-                                                        } else if ([stopStatus isEqualToNumber:@4]) {
-                                                            
-                                                            stringWithTime = @"今日未營運";
+                                                            stringWithTime = @"即將進站";
                                                             [dictionary setObject:stringWithTime forKey:stopID];
                                                         } else {
                                                             
-                                                            stringWithTime = @"尚未發車";
-                                                            [dictionary setObject:stringWithTime forKey:stopID];
+                                                            if (seconds <= 40) {
+                                                                
+                                                                stringWithTime = [NSString stringWithFormat:@"約 %d 分", minutes];
+                                                                [dictionary setObject:stringWithTime forKey:stopID];
+                                                            } else {
+                                                                
+                                                                minutes++;
+                                                                stringWithTime = [NSString stringWithFormat:@"約 %d 分", minutes];
+                                                                [dictionary setObject:stringWithTime forKey:stopID];
+                                                            }
                                                         }
+                                                    } else if ([stopStatus isEqualToNumber:@1]) {
                                                         
-                                                        [[_cityBus estimateTime] addEntriesFromDictionary:dictionary];
+                                                        stringWithTime = @"尚未發車";
+                                                        [dictionary setObject:stringWithTime forKey:stopID];
+                                                    } else if ([stopStatus isEqualToNumber:@2]) {
+                                                        
+                                                        stringWithTime = @"交管不停靠";
+                                                        [dictionary setObject:stringWithTime forKey:stopID];
+                                                    } else if ([stopStatus isEqualToNumber:@3]) {
+                                                        
+                                                        stringWithTime = @"末班車已過";
+                                                        [dictionary setObject:stringWithTime forKey:stopID];
+                                                    } else if ([stopStatus isEqualToNumber:@4]) {
+                                                        
+                                                        stringWithTime = @"今日未營運";
+                                                        [dictionary setObject:stringWithTime forKey:stopID];
+                                                    } else {
+                                                        
+                                                        stringWithTime = @"尚未發車";
+                                                        [dictionary setObject:stringWithTime forKey:stopID];
                                                     }
-                                                }];
-     */
+                                                    
+                                                    [[_cityBus estimateTime] addEntriesFromDictionary:dictionary];
+                                                }
+                                            }];
     [dataTask resume];
 }
  
@@ -1506,112 +1487,105 @@ didFinishDownloadingToURL:(NSURL *)location {
     NSString *stringWithURLEncoding = [stringWithURL stringByAddingPercentEncodingWithAllowedCharacters:characterSet];
     NSLog(@"fetchNewTaipeiEstimateTime URL: %@", stringWithURL);
     NSURL *URL = [NSURL URLWithString:stringWithURLEncoding];
-//    NSData *data = [NSData dataWithContentsOfURL:URL];
-    NSURLRequest *request = [NSURLRequest requestWithURL:URL];
-    
-    
-    
-    
-    
-    NSURLSessionDataTask *dataTask = [session dataTaskWithRequest:request
-                                                completionHandler:^(NSData *data,
-                                                                    NSURLResponse *response,
-                                                                    NSError *error) {
-//    NSError *error;
-                                                    NSArray *array = [NSJSONSerialization JSONObjectWithData:data
-                                                                                                     options:NSJSONReadingMutableContainers
-                                                                                                       error:&error];
-                                                    for (id object in array) {
+    NSURLSessionDataTask *dataTask = [session dataTaskWithURL:URL
+                                            completionHandler:^(NSData *data,
+                                                                NSURLResponse *response,
+                                                                NSError *error) {
+                                                
+                                                NSArray *array = [NSJSONSerialization JSONObjectWithData:data
+                                                                                                 options:NSJSONReadingMutableContainers
+                                                                                                   error:&error];
+                                                NSLog(@"fetchNewTaipeiEstimateTime Thread: %@", [NSThread currentThread]);
+                                                for (id object in array) {
+                                                    
+                                                    NSString *stopID = [object objectForKey:@"StopID"];
+                                                    NSString *estimateTime = [object objectForKey:@"EstimateTime"];
+                                                    NSString *goBack = [object objectForKey:@"GoBack"];
+                                                    NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+                                                    NSString *stringWithTime;
+                                                    
+                                                    int minutes = [estimateTime intValue] / 60;
+                                                    int seconds = [estimateTime intValue] % 60;;
+                                                    
+                                                    if ([goBack isEqualToString:@"0"]) {
                                                         
-                                                        NSString *stopID = [object objectForKey:@"StopID"];
-                                                        NSString *estimateTime = [object objectForKey:@"EstimateTime"];
-                                                        NSString *goBack = [object objectForKey:@"GoBack"];
-                                                        NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
-                                                        NSString *stringWithTime;
-                                                        
-                                                        int minutes = [estimateTime intValue] / 60;
-                                                        int seconds = [estimateTime intValue] % 60;;
-                                                        
-                                                        if ([goBack isEqualToString:@"0"]) {
+                                                        if ([estimateTime intValue] <= 40) {
                                                             
-                                                            if (minutes == 0 && seconds <= 30) {
-                                                                
-                                                                stringWithTime = @"進站中";
-                                                                [dictionary setObject:stringWithTime forKey:stopID];
-                                                            } else if ((minutes <= 1 && seconds < 60) || (minutes == 2 && seconds == 0)) {
-                                                                
-                                                                stringWithTime = @"即將進站";
-                                                                [dictionary setObject:stringWithTime forKey:stopID];
-                                                            } else {
-                                                                
-                                                                if (seconds <= 30) {
-                                                                    
-                                                                    stringWithTime = [NSString stringWithFormat:@"約 %d 分", minutes];
-                                                                    [dictionary setObject:stringWithTime forKey:stopID];
-                                                                } else {
-                                                                    
-                                                                    minutes++;
-                                                                    stringWithTime = [NSString stringWithFormat:@"約 %d 分", minutes];
-                                                                    [dictionary setObject:stringWithTime forKey:stopID];
-                                                                }
-                                                            }
-                                                        } else if ([goBack isEqualToString:@"1"]) {
-                                                            
-                                                            if (minutes == 0 && seconds <= 30) {
-                                                                
-                                                                stringWithTime = @"進站中";
-                                                                [dictionary setObject:stringWithTime forKey:stopID];
-                                                            } else if ((minutes <= 1 && seconds < 60) || (minutes == 2 && seconds == 0)) {
-                                                                
-                                                                stringWithTime = @"即將進站";
-                                                                [dictionary setObject:stringWithTime forKey:stopID];
-                                                            } else {
-                                                                
-                                                                if (seconds <= 30) {
-                                                                    
-                                                                    stringWithTime = [NSString stringWithFormat:@"約 %d 分", minutes];
-                                                                    [dictionary setObject:stringWithTime forKey:stopID];
-                                                                } else {
-                                                                    
-                                                                    minutes++;
-                                                                    stringWithTime = [NSString stringWithFormat:@"約 %d 分", minutes];
-                                                                    [dictionary setObject:stringWithTime forKey:stopID];
-                                                                }
-                                                            }
-                                                        } else if ([goBack isEqualToString:@"2"]) {
-                                                            
-                                                            stringWithTime = @"尚未發車";
+                                                            stringWithTime = @"進站中";
                                                             [dictionary setObject:stringWithTime forKey:stopID];
-                                                        } else if ([goBack isEqualToString:@"3"]) {
+                                                        } else if ([estimateTime intValue] <= 120) {
                                                             
-                                                            stringWithTime = @"末班車已過";
+                                                            stringWithTime = @"即將進站";
                                                             [dictionary setObject:stringWithTime forKey:stopID];
                                                         } else {
                                                             
-                                                            stringWithTime = @"今日未營運";
-                                                            [dictionary setObject:stringWithTime forKey:stopID];
+                                                            if (seconds <= 40) {
+                                                                
+                                                                stringWithTime = [NSString stringWithFormat:@"約 %d 分", minutes];
+                                                                [dictionary setObject:stringWithTime forKey:stopID];
+                                                            } else {
+                                                                
+                                                                minutes++;
+                                                                stringWithTime = [NSString stringWithFormat:@"約 %d 分", minutes];
+                                                                [dictionary setObject:stringWithTime forKey:stopID];
+                                                            }
                                                         }
+                                                    } else if ([goBack isEqualToString:@"1"]) {
                                                         
-                                                        [[_cityBus estimateTime] addEntriesFromDictionary:dictionary];
+                                                        if ([estimateTime intValue] <= 40) {
+                                                            
+                                                            stringWithTime = @"進站中";
+                                                            [dictionary setObject:stringWithTime forKey:stopID];
+                                                        } else if ([estimateTime intValue] <= 120) {
+                                                            
+                                                            stringWithTime = @"即將進站";
+                                                            [dictionary setObject:stringWithTime forKey:stopID];
+                                                        } else {
+                                                            
+                                                            if (seconds <= 40) {
+                                                                
+                                                                stringWithTime = [NSString stringWithFormat:@"約 %d 分", minutes];
+                                                                [dictionary setObject:stringWithTime forKey:stopID];
+                                                            } else {
+                                                                
+                                                                minutes++;
+                                                                stringWithTime = [NSString stringWithFormat:@"約 %d 分", minutes];
+                                                                [dictionary setObject:stringWithTime forKey:stopID];
+                                                            }
+                                                        }
+                                                    } else if ([goBack isEqualToString:@"2"]) {
+                                                        
+                                                        stringWithTime = @"尚未發車";
+                                                        [dictionary setObject:stringWithTime forKey:stopID];
+                                                    } else if ([goBack isEqualToString:@"3"]) {
+                                                        
+                                                        stringWithTime = @"末班車已過";
+                                                        [dictionary setObject:stringWithTime forKey:stopID];
+                                                    } else {
+                                                        
+                                                        stringWithTime = @"今日未營運";
+                                                        [dictionary setObject:stringWithTime forKey:stopID];
                                                     }
-                                                }];
+                                                    
+                                                    [[_cityBus estimateTime] addEntriesFromDictionary:dictionary];
+                                                }
+                                            }];
     [dataTask resume];
 }
 
- 
-- (IBAction)barButtonItemRefreshTouch:(UIBarButtonItem *)sender {
+
+
+
+
+
+
+
+
+
+- (void)updateEstimateTime {
     
-    [[_cityBus stopNameGo] removeAllObjects];
-    [[_cityBus stopNameBack] removeAllObjects];
-    [[_cityBus stopIDGo] removeAllObjects];
-    [[_cityBus stopIDBack] removeAllObjects];
-    [[_cityBus estimateTime] removeAllObjects];
     [[_cityBus estimateTimeGo] removeAllObjects];
     [[_cityBus estimateTimeBack] removeAllObjects];
-    
-//    [MBProgressHUD showHUDAddedTo:[self view] animated:YES];
-    [self fetchBusStopsGoWithAuthorityID:_authorityID routeID:_routeID];
-    [self fetchBusStopsBackWithAuthorityID:_authorityID routeID:_routeID];
     
     if ([_authorityID isEqualToString:@"Taipei"]) {
         
@@ -1622,7 +1596,7 @@ didFinishDownloadingToURL:(NSURL *)location {
     }
     [_tableViewBusDetailList reloadData];
 }
- 
+
  
 /*
  #pragma mark - Navigation

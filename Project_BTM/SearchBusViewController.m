@@ -190,19 +190,12 @@ UIPickerViewDelegate, UIPickerViewDataSource, NSURLSessionDelegate, NSURLSession
 }
 
 
-//#pragma mark - UITableViewDelegate
-//
-//- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-//
-//
-//    [busDetailViewController setCityBusRouteTitle:[[cityBus routeName] objectAtIndex:[indexPath row]]];
-////    [cityBus setCityBusRouteTitle:[[cityBus routeName] objectAtIndex:[indexPath row]]];
-//
-//    NSLog(@"UITableViewDelegate");
-////    NSLog(@"_cityBusRoute: %@", [cityBus cityBusRouteTitle]);
-//
-////    NSLog(@"cityBusRouteTitle = %@", cityBusRouteTitle);
-//}
+#pragma mark - UITableViewDelegate
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+}
 
 
 #pragma mark - UITextFieldDelegate
