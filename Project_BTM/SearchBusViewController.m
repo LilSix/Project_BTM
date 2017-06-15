@@ -151,7 +151,7 @@ UIPickerViewDelegate, UIPickerViewDataSource, NSURLSessionDelegate, NSURLSession
         
         _cityBus = [[CityBus alloc] init];
         [_cityBus setAuthorityID:[NSMutableArray array]];
-        [_cityBus setRouteUID:[NSMutableArray array]];
+        [_cityBus setRouteID:[NSMutableArray array]];
         [_cityBus setRouteName:[NSMutableArray array]];
         [_cityBus setDepartureStopName:[NSMutableArray array]];
         [_cityBus setDestinationStopName:[NSMutableArray array]];
@@ -323,7 +323,7 @@ numberOfRowsInComponent:(NSInteger)component {
         
         // Remove objects if text field is empty.
         [[_cityBus authorityID] removeAllObjects];
-        [[_cityBus routeUID] removeAllObjects];
+        [[_cityBus routeID] removeAllObjects];
         [[_cityBus routeName] removeAllObjects];
         [[_cityBus departureStopName] removeAllObjects];
         [[_cityBus destinationStopName] removeAllObjects];
@@ -331,7 +331,7 @@ numberOfRowsInComponent:(NSInteger)component {
         [_tableViewBusList reloadData];
         
         // Show alert view when two of text field are all empty.
-        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"警告"
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"提醒"
                                                                                  message:@"請輸入路線或號碼後再做搜尋。"
                                                                           preferredStyle:UIAlertControllerStyleAlert];
         UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"確認"
@@ -353,7 +353,7 @@ numberOfRowsInComponent:(NSInteger)component {
     [[self view] endEditing:YES];
     
     [[_cityBus authorityID] removeAllObjects];
-    [[_cityBus routeUID] removeAllObjects];
+    [[_cityBus routeID] removeAllObjects];
     [[_cityBus routeName] removeAllObjects];
     [[_cityBus departureStopName] removeAllObjects];
     [[_cityBus destinationStopName] removeAllObjects];
@@ -433,7 +433,7 @@ didFinishDownloadingToURL:(NSURL *)location {
         for (NSDictionary *dictionary in array) {
             
             NSString *authorityID = [dictionary objectForKey:@"AuthorityID"];
-            NSString *routeUID = [dictionary objectForKey:@"RouteUID"];
+            NSString *routeID = [dictionary objectForKey:@"RouteID"];
             NSDictionary *routeName = [dictionary objectForKey:@"RouteName"];
             NSString *zhTW = [routeName objectForKey:@"Zh_tw"];
             NSString *departureStopNameZh = [dictionary objectForKey:@"DepartureStopNameZh"];
@@ -452,7 +452,7 @@ didFinishDownloadingToURL:(NSURL *)location {
                     [[_cityBus authorityID] addObject:@"NewTaipei"];
                 }
                 
-                [[_cityBus routeUID] addObject:routeUID];
+                [[_cityBus routeID] addObject:routeID];
                 [[_cityBus routeName] addObject:zhTW];
                 [[_cityBus departureStopName] addObject:departureStopNameZh];
                 [[_cityBus destinationStopName] addObject:destinationStopNameZh];
@@ -467,7 +467,7 @@ didFinishDownloadingToURL:(NSURL *)location {
         [session finishTasksAndInvalidate];
         [downloadTask cancel];
         
-        NSLog(@"[cityBus routeUID]: %@", [_cityBus routeUID]);
+        NSLog(@"[cityBus routeID]: %@", [_cityBus routeID]);
         NSLog(@"[cityBus routeName]: %@", [_cityBus routeName]);
         NSLog(@"Download compeleted.");
     }
@@ -492,7 +492,7 @@ didFinishDownloadingToURL:(NSURL *)location {
         
         // Remove all objects before download data.
         [[_cityBus authorityID] removeAllObjects];
-        [[_cityBus routeUID] removeAllObjects];
+        [[_cityBus routeID] removeAllObjects];
         [[_cityBus routeName] removeAllObjects];
         [[_cityBus departureStopName] removeAllObjects];
         [[_cityBus destinationStopName] removeAllObjects];
@@ -571,16 +571,16 @@ didFinishDownloadingToURL:(NSURL *)location {
                                                                                 section of the selected row.    */
         NSString *authorityID = [[_cityBus authorityID] objectAtIndex:[indexPath row]];
         NSString *routeName = [[_cityBus routeName] objectAtIndex:[indexPath row]];
-        NSString *routeUID = [[_cityBus routeUID] objectAtIndex:[indexPath row]];
+        NSString *routeID = [[_cityBus routeID] objectAtIndex:[indexPath row]];
         NSString *departureStopName = [[_cityBus departureStopName] objectAtIndex:[indexPath row]];
         NSString *destinationStopName = [[_cityBus destinationStopName] objectAtIndex:[indexPath row]];
         
         [busDetailViewController setAuthorityID:authorityID];
         [busDetailViewController setRouteName:routeName];
-        [busDetailViewController setRouteUID:routeUID];
+        [busDetailViewController setRouteID:routeID];
         [busDetailViewController setDepartureStopName:departureStopName];
         [busDetailViewController setDestinationStopName:destinationStopName];
-        [busDetailViewController setSelectedStopUID:routeUID];
+        [busDetailViewController setSelectedStopUID:routeID];
         NSLog(@"[busDetailViewController selectedStopUID]: %@", [busDetailViewController selectedStopUID]);
     }
 }
