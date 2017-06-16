@@ -40,6 +40,7 @@
     [_tableViewSubwayDetailList setDelegate:self];
     [_tableViewSubwayDetailList setDataSource:self];
     
+    /*
     // Remove objects from mutable array before search.
      [subwayLists removeAllObjects];
      [destinationLists removeAllObjects];
@@ -68,6 +69,7 @@
          
      }
          [_tableViewSubwayDetailList reloadData];
+     */
 }
 
 - (void)didReceiveMemoryWarning {
@@ -104,7 +106,7 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView
          cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    UITableViewCell *tableViewCell = [tableView dequeueReusableCellWithIdentifier:@"Right Detail" forIndexPath:indexPath];
+    UITableViewCell *tableViewCell = [tableView dequeueReusableCellWithIdentifier:@"Right Detail Cell" forIndexPath:indexPath];
     [[tableViewCell textLabel] setText:[subwayLists objectAtIndex:[indexPath row]]];
     
     return tableViewCell;

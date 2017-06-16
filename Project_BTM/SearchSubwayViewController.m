@@ -33,6 +33,8 @@ UIPickerViewDataSource, UITextFieldDelegate, UITextFieldDelegate> {
     NSURLSession *session;
     
     UIColor *colorWithImageViewRoute;
+    
+    int saveDidSelectRow;
 }
 
 @property (strong, nonatomic) TaipeiSubway *taipeiSubway;
@@ -132,7 +134,7 @@ UIPickerViewDataSource, UITextFieldDelegate, UITextFieldDelegate> {
         [_taipeiSubway setRouteO:[NSMutableArray array]];
         [_taipeiSubway setRouteBL:[NSMutableArray array]];
         
-//        colorWithImageViewRoute = [[UIColor alloc] init];
+        saveDidSelectRow = 0;
     }
     
     return self;
@@ -140,6 +142,11 @@ UIPickerViewDataSource, UITextFieldDelegate, UITextFieldDelegate> {
 
 
 #pragma mark - UITextFieldDelegate
+
+- (void)textFieldDidBeginEditing:(UITextField *)textField {
+ 
+    [textField setText:[_routeNameDataSource objectAtIndex:saveDidSelectRow]];
+}
 
 - (void)textFieldDidEndEditing:(UITextField *)textField {
     
@@ -158,7 +165,7 @@ UIPickerViewDataSource, UITextFieldDelegate, UITextFieldDelegate> {
 - (UITableViewCell *)tableView:(UITableView *)tableView
          cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    UITableViewCell *tableViewCell = [tableView dequeueReusableCellWithIdentifier:@"Subtitle"
+    UITableViewCell *tableViewCell = [tableView dequeueReusableCellWithIdentifier:@"Subtitle Cell"
                                                                      forIndexPath:indexPath];
     [[tableViewCell textLabel] setText:[[_taipeiSubway route] objectAtIndex:[indexPath row]]];
     
@@ -240,6 +247,7 @@ numberOfRowsInComponent:(NSInteger)component {
     
     NSLog(@"didSelectRow");
     [_textFieldRouteName setText:_routeNameDataSource[row]];
+    saveDidSelectRow = (int)row;
 }
 
 
@@ -253,58 +261,99 @@ numberOfRowsInComponent:(NSInteger)component {
 
 - (IBAction)buttonSearchTouch:(UIButton *)sender {
     
-    [MBProgressHUD showHUDAddedTo:[self view] animated:YES];
-    [_buttonSearch setTintColor:[UIColor whiteColor]];
+    [[self view] endEditing:YES];
+    [[self view] resignFirstResponder];
     
-    // BR 文湖線
-    if ([[_textFieldRouteName text] isEqualToString:_routeNameDataSource[0]]) {
+    if (![[_textFieldRouteName text] isEqualToString:@""]) {
         
-        colorWithImageViewRoute = [UIColor colorWithRed:0.75
-                                                  green:0.55
-                                                   blue:0.23
-                                                  alpha:1.0];
-        [_imageViewRouteBackground setBackgroundColor:colorWithImageViewRoute];
-        [self fetchSubwayDetail:[_textFieldRouteName text]];
+        [MBProgressHUD showHUDAddedTo:[self view] animated:YES];
+        if (![[_buttonSearch currentTitleColor] isEqual:[UIColor whiteColor]]) {
+            
+            [UIView animateWithDuration:0.5 animations:^{
+                
+                [_buttonSearch setTintColor:[UIColor whiteColor]];
+            }];
+        }
         
-    // R 淡水信義線
-    } else if ([[_textFieldRouteName text] isEqualToString:_routeNameDataSource[1]]) {
+        // BR 文湖線
+        if ([[_textFieldRouteName text] isEqualToString:_routeNameDataSource[0]]) {
+            
+            colorWithImageViewRoute = [UIColor colorWithRed:0.75
+                                                      green:0.55
+                                                       blue:0.23
+                                                      alpha:1.0];
+            
+            [UIView animateWithDuration:0.5 animations:^{
+                
+                [_imageViewRouteBackground setBackgroundColor:colorWithImageViewRoute];
+            }];
+            
+            [self fetchSubwayDetail:[_textFieldRouteName text]];
+            
+        // R 淡水信義線
+        } else if ([[_textFieldRouteName text] isEqualToString:_routeNameDataSource[1]]) {
+            
+            colorWithImageViewRoute = [UIColor colorWithRed:0.87
+                                                      green:0.05
+                                                       blue:0.20
+                                                      alpha:1.0];
+            [UIView animateWithDuration:0.5 animations:^{
+               
+                [_imageViewRouteBackground setBackgroundColor:colorWithImageViewRoute];
+            }];
+            [self fetchSubwayDetail:[_textFieldRouteName text]];
         
-        colorWithImageViewRoute = [UIColor colorWithRed:0.87
-                                                  green:0.05
-                                                   blue:0.20
-                                                  alpha:1.0];
-        [_imageViewRouteBackground setBackgroundColor:colorWithImageViewRoute];
-        [self fetchSubwayDetail:[_textFieldRouteName text]];
-    
-    // G 松山新店線
-    } else if ([[_textFieldRouteName text] isEqualToString:_routeNameDataSource[2]]) {
+        // G 松山新店線
+        } else if ([[_textFieldRouteName text] isEqualToString:_routeNameDataSource[2]]) {
+            
+            colorWithImageViewRoute = [UIColor colorWithRed:0.07
+                                                      green:0.52
+                                                       blue:0.36
+                                                      alpha:1.0];
+            [UIView animateWithDuration:0.5 animations:^{
+                
+                [_imageViewRouteBackground setBackgroundColor:colorWithImageViewRoute];
+            }];
+            [self fetchSubwayDetail:[_textFieldRouteName text]];
+            
+        // O 中和新蘆線
+        } else if ([[_textFieldRouteName text] isEqualToString:_routeNameDataSource[3]]) {
+            
+            colorWithImageViewRoute = [UIColor colorWithRed:0.96
+                                                      green:0.71
+                                                       blue:0.20
+                                                      alpha:1.0];
+            [UIView animateWithDuration:0.5 animations:^{
+                
+                [_imageViewRouteBackground setBackgroundColor:colorWithImageViewRoute];
+            }];
+            [self fetchSubwayDetail:[_textFieldRouteName text]];
+            
+        // BL 板南線
+        } else if ([[_textFieldRouteName text] isEqualToString:_routeNameDataSource[4]]) {
+            
+            colorWithImageViewRoute = [UIColor colorWithRed:0.06
+                                                      green:0.45
+                                                       blue:0.73
+                                                      alpha:1.0];
+            [UIView animateWithDuration:0.5 animations:^{
+                
+                [_imageViewRouteBackground setBackgroundColor:colorWithImageViewRoute];
+            }];
+            [self fetchSubwayDetail:[_textFieldRouteName text]];
+        }
+    } else {
         
-        colorWithImageViewRoute = [UIColor colorWithRed:0.07
-                                                  green:0.52
-                                                   blue:0.36
-                                                  alpha:1.0];
-        [_imageViewRouteBackground setBackgroundColor:colorWithImageViewRoute];
-        [self fetchSubwayDetail:[_textFieldRouteName text]];
-        
-    // O 中和新蘆線
-    } else if ([[_textFieldRouteName text] isEqualToString:_routeNameDataSource[3]]) {
-        
-        colorWithImageViewRoute = [UIColor colorWithRed:0.96
-                                                  green:0.71
-                                                   blue:0.20
-                                                  alpha:1.0];
-        [_imageViewRouteBackground setBackgroundColor:colorWithImageViewRoute];
-        [self fetchSubwayDetail:[_textFieldRouteName text]];
-        
-    // BL 板南線
-    } else if ([[_textFieldRouteName text] isEqualToString:_routeNameDataSource[4]]) {
-        
-        colorWithImageViewRoute = [UIColor colorWithRed:0.06
-                                                  green:0.45
-                                                   blue:0.73
-                                                  alpha:1.0];
-        [_imageViewRouteBackground setBackgroundColor:colorWithImageViewRoute];
-        [self fetchSubwayDetail:[_textFieldRouteName text]];
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"提醒"
+                                                                                 message:@"請先選擇捷運路線後再做搜尋。"
+                                                                          preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"確認"
+                                                              style:UIAlertActionStyleDefault
+                                                            handler:nil];
+        [alertController addAction:alertAction];
+        [self presentViewController:alertController
+                           animated:YES
+                         completion:nil];
     }
 }
 
@@ -656,7 +705,7 @@ didFinishDownloadingToURL:(NSURL *)location {
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     
-    if ([[segue identifier] isEqualToString:@"showSubwayDetail"]) {
+    if ([[segue identifier] isEqualToString:@"Show Subway Detail"]) {
         
         SubwayDetailViewController *subwayDetailViewController = [segue destinationViewController];
         [subwayDetailViewController setColorWithSelectedRoute:colorWithImageViewRoute];

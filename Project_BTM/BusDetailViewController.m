@@ -196,7 +196,7 @@ NSURLSessionTaskDelegate, NSURLSessionDataDelegate> {
 - (UITableViewCell *)tableView:(UITableView *)tableView
          cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    UITableViewCell *tableViewCell = [tableView dequeueReusableCellWithIdentifier:@"Right Detail"
+    UITableViewCell *tableViewCell = [tableView dequeueReusableCellWithIdentifier:@"Right Detail Cell"
                                                                      forIndexPath:indexPath];
     
     if ([_goBackControl selectedSegmentIndex] == 0) {
@@ -1589,14 +1589,6 @@ didFinishDownloadingToURL:(NSURL *)location {
     }
     [_tableViewBusDetailList reloadData];
 }
-
-
-
-
-///FIXME: BUG!!!
-///TODO: function.
-///!!!: Test
-///???: 111
 
 
 

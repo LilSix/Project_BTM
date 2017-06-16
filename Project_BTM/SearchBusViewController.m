@@ -40,6 +40,7 @@ UIPickerViewDelegate, UIPickerViewDataSource, NSURLSessionDelegate, NSURLSession
     
     NSString *searchRouteName;
     NSString *searchRouteNumber;
+    int saveDidSelectRow;
 }
 
 
@@ -155,6 +156,8 @@ UIPickerViewDelegate, UIPickerViewDataSource, NSURLSessionDelegate, NSURLSession
         [_cityBus setRouteName:[NSMutableArray array]];
         [_cityBus setDepartureStopName:[NSMutableArray array]];
         [_cityBus setDestinationStopName:[NSMutableArray array]];
+        
+        saveDidSelectRow = 0;
     }
     
     return self;
@@ -219,7 +222,7 @@ UIPickerViewDelegate, UIPickerViewDataSource, NSURLSessionDelegate, NSURLSession
     //    } else if ([_routeNumberTextField isTouchInside]){
     //        [_routeNamePicker setHidden:YES];
     //    }
-    
+    [textField setText:[_routeNameDataSource objectAtIndex:saveDidSelectRow]];
     return YES;
 }
 
@@ -271,6 +274,7 @@ numberOfRowsInComponent:(NSInteger)component {
        inComponent:(NSInteger)component {
     
     [_textFieldRouteName setText:_routeNameDataSource[row]];
+    saveDidSelectRow = (int)row;
 }
 
 
@@ -311,7 +315,7 @@ numberOfRowsInComponent:(NSInteger)component {
     
     if (![[_textFieldRouteName text] isEqualToString:@""] || ![[_textFieldRouteNumber text] isEqualToString:@""]) {
         
-        [self downloadBusRouteData];
+        [self fetchBusDataListWithRouteName:[_textFieldRouteName text] RouteNumber:[_textFieldRouteNumber text]];
     } else {
         
         // Remove objects if text field is empty.
@@ -325,13 +329,15 @@ numberOfRowsInComponent:(NSInteger)component {
         
         // Show alert view when two of text field are all empty.
         UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"提醒"
-                                                                                 message:@"請輸入路線或號碼後再做搜尋。"
+                                                                                 message:@"請先輸入路線或號碼後再做搜尋。"
                                                                           preferredStyle:UIAlertControllerStyleAlert];
         UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"確認"
                                                               style:UIAlertActionStyleDefault
                                                             handler:nil];
         [alertController addAction:alertAction];
-        [self presentViewController:alertController animated:YES completion:nil];
+        [self presentViewController:alertController
+                           animated:YES
+                         completion:nil];
     }
 }
 
@@ -473,12 +479,12 @@ didFinishDownloadingToURL:(NSURL *)location {
 }
 
 
-#pragma mark - DownloadBusRouteData
+#pragma mark - FetchBusDataList
 
-- (void)downloadBusRouteData {
+- (void)fetchBusDataListWithRouteName:(NSString *)routeName RouteNumber:(NSString *)routeNumber {
     
-    if (!([searchRouteName isEqualToString:[_textFieldRouteName text]] &&
-          [searchRouteNumber isEqualToString:[_textFieldRouteNumber text]])) {
+    if (!([searchRouteName isEqualToString:routeName] &&
+          [searchRouteNumber isEqualToString:routeNumber])) {
         
         // Show progress view.
         [MBProgressHUD showHUDAddedTo:[self view] animated:YES];
@@ -492,9 +498,14 @@ didFinishDownloadingToURL:(NSURL *)location {
         [busStopStartToEnd removeAllObjects];
         [_tableViewBusList reloadData];
         
+        if ([routeName isEqualToString:@"夜間"]) {
+            
+            routeName = @"夜";
+        }
+        
         // Save text field string.
-        searchRouteName = [_textFieldRouteName text];
-        searchRouteNumber = [_textFieldRouteNumber text];
+        searchRouteName = routeName;
+        searchRouteNumber = routeNumber;
         
         // Fix URL encoding: http://blog.csdn.net/andanlan/article/details/53368727
         // Encoding special characters in URL.
@@ -515,7 +526,7 @@ didFinishDownloadingToURL:(NSURL *)location {
             //    http:ptx.transportdata.tw/MOTC/Swagger/#!/CityBusApi/CityBusApi_Route_0
             //    /v2/Bus/Route/City/{City}/{RouteName}    取得指定[縣市],[路線名稱]的路線資料
             // Prepare for download Taipei City bus JSON file.
-            NSString *stringTaipei = [NSString stringWithFormat:@"http://ptx.transportdata.tw/MOTC/v2/Bus/Route/City/Taipei/%@%@?$orderby=RouteID asc&$format=JSON", [_textFieldRouteName text], [_textFieldRouteNumber text]];
+            NSString *stringTaipei = [NSString stringWithFormat:@"http://ptx.transportdata.tw/MOTC/v2/Bus/Route/City/Taipei/%@%@?$orderby=RouteID asc&$format=JSON", routeName, routeNumber];
             stringTaipei = [stringTaipei stringByAddingPercentEncodingWithAllowedCharacters:characterSet];
             NSURL *URLTaipei = [NSURL URLWithString:stringTaipei];
             NSURLSessionDownloadTask *downloadTaskTaipei = [session downloadTaskWithURL:URLTaipei];
@@ -557,7 +568,7 @@ didFinishDownloadingToURL:(NSURL *)location {
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.
     
-    if ([[segue identifier] isEqualToString:@"showBusDetail"]) {
+    if ([[segue identifier] isEqualToString:@"Show Bus Detail"]) {
         
         BusDetailViewController *busDetailViewController = [segue destinationViewController];
         NSIndexPath *indexPath = [_tableViewBusList indexPathForSelectedRow];  /*  An index path identifying the row and
