@@ -90,8 +90,9 @@ NSURLSessionTaskDelegate, NSURLSessionDataDelegate> {
                                                               block:^(NSTimer *timer) {
                                                                   
                                                                   updateTime--;
-                                                                  if (updateTime < 0) {
+                                                                  if (updateTime < 1) {
                                                                       
+                                                                      [_labelUpdateTime setText:@"更新中⋯⋯"];
                                                                       updateTime = 16;
                                                                       [self updateEstimateTime];
                                                                   } else {

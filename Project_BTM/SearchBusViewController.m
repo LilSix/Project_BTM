@@ -55,7 +55,7 @@ UIPickerViewDelegate, UIPickerViewDataSource, NSURLSessionDelegate, NSURLSession
 @property (weak, nonatomic) IBOutlet UITextField *textFieldRouteNumber;
 //@property (weak, nonatomic) IBOutlet UIPickerView *pickerViewRouteName;
 
-@property (strong, nonatomic) NSArray *routeNameDataSouce;
+@property (strong, nonatomic) NSArray *routeNameDataSource;
 
 @end
 
@@ -75,7 +75,7 @@ UIPickerViewDelegate, UIPickerViewDataSource, NSURLSessionDelegate, NSURLSession
     [pickerViewRouteName setShowsSelectionIndicator:YES];
     
     // Bus route name data in picker view.
-    _routeNameDataSouce = @[@"", @"F", @"小", @"藍", @"紅",
+    _routeNameDataSource = @[@"", @"F", @"小", @"藍", @"紅",
                             @"棕", @"綠", @"橘", @"內科", @"幹線",
                             @"先導", @"南軟", @"夜間", @"活動", @"市民",
                             @"跳蛙", @"其他", @"臺北觀光巴士"];
@@ -251,7 +251,7 @@ UIPickerViewDelegate, UIPickerViewDataSource, NSURLSessionDelegate, NSURLSession
 - (NSInteger)pickerView:(UIPickerView *)pickerView
 numberOfRowsInComponent:(NSInteger)component {
     
-    return [_routeNameDataSouce count];
+    return [_routeNameDataSource count];
 }
 
 
@@ -261,7 +261,7 @@ numberOfRowsInComponent:(NSInteger)component {
              titleForRow:(NSInteger)row
             forComponent:(NSInteger)component {
     
-    return [_routeNameDataSouce objectAtIndex:row];
+    return [_routeNameDataSource objectAtIndex:row];
 }
 
 
@@ -270,7 +270,7 @@ numberOfRowsInComponent:(NSInteger)component {
       didSelectRow:(NSInteger)row
        inComponent:(NSInteger)component {
     
-    [_textFieldRouteName setText:_routeNameDataSouce[row]];
+    [_textFieldRouteName setText:_routeNameDataSource[row]];
 }
 
 
