@@ -15,6 +15,7 @@
 		292124C51EC47A0A00D5C526 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 292124C41EC47A0A00D5C526 /* Assets.xcassets */; };
 		292124C81EC47A0A00D5C526 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 292124C61EC47A0A00D5C526 /* LaunchScreen.storyboard */; };
 		292124D71EC487CB00D5C526 /* FavoritesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292124D61EC487CB00D5C526 /* FavoritesViewController.m */; };
+		29367DE21EF3C0AD00941432 /* SubwayDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 29367DE11EF3C0AD00941432 /* SubwayDetailViewController.m */; };
 		294459CB1EC55FF600883264 /* SearchBusViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 294459CA1EC55FF600883264 /* SearchBusViewController.m */; };
 		29526A931ED6F6000002096E /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29526A921ED6F6000002096E /* SystemConfiguration.framework */; };
 		297FFE4E1EE0384B00B62030 /* BusDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 297FFE4D1EE0384B00B62030 /* BusDetailViewController.m */; };
@@ -37,6 +38,8 @@
 		292124C91EC47A0A00D5C526 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		292124D51EC487CB00D5C526 /* FavoritesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FavoritesViewController.h; sourceTree = "<group>"; };
 		292124D61EC487CB00D5C526 /* FavoritesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FavoritesViewController.m; sourceTree = "<group>"; };
+		29367DE01EF3C0AD00941432 /* SubwayDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubwayDetailViewController.h; sourceTree = "<group>"; };
+		29367DE11EF3C0AD00941432 /* SubwayDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SubwayDetailViewController.m; sourceTree = "<group>"; };
 		294459C91EC55FF600883264 /* SearchBusViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchBusViewController.h; sourceTree = "<group>"; };
 		294459CA1EC55FF600883264 /* SearchBusViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchBusViewController.m; sourceTree = "<group>"; };
 		29526A921ED6F6000002096E /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
@@ -94,16 +97,12 @@
 		292124B41EC47A0A00D5C526 /* Project_BTM */ = {
 			isa = PBXGroup;
 			children = (
+				29367DDE1EF3C02F00941432 /* Bus */,
+				29367DDF1EF3C04200941432 /* Subway */,
 				292124B81EC47A0A00D5C526 /* AppDelegate.h */,
 				292124B91EC47A0A00D5C526 /* AppDelegate.m */,
 				292124D51EC487CB00D5C526 /* FavoritesViewController.h */,
 				292124D61EC487CB00D5C526 /* FavoritesViewController.m */,
-				294459C91EC55FF600883264 /* SearchBusViewController.h */,
-				294459CA1EC55FF600883264 /* SearchBusViewController.m */,
-				297FFE4C1EE0384B00B62030 /* BusDetailViewController.h */,
-				297FFE4D1EE0384B00B62030 /* BusDetailViewController.m */,
-				290D64061ED577D7009E81E3 /* SearchSubwayViewController.h */,
-				290D64071ED577D7009E81E3 /* SearchSubwayViewController.m */,
 				292124C41EC47A0A00D5C526 /* Assets.xcassets */,
 				292124C61EC47A0A00D5C526 /* LaunchScreen.storyboard */,
 				292124BE1EC47A0A00D5C526 /* Main.storyboard */,
@@ -124,6 +123,28 @@
 				2DC6A9131EF3010200F6B631 /* TaipeiSubway.m */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		29367DDE1EF3C02F00941432 /* Bus */ = {
+			isa = PBXGroup;
+			children = (
+				294459C91EC55FF600883264 /* SearchBusViewController.h */,
+				294459CA1EC55FF600883264 /* SearchBusViewController.m */,
+				297FFE4C1EE0384B00B62030 /* BusDetailViewController.h */,
+				297FFE4D1EE0384B00B62030 /* BusDetailViewController.m */,
+			);
+			name = Bus;
+			sourceTree = "<group>";
+		};
+		29367DDF1EF3C04200941432 /* Subway */ = {
+			isa = PBXGroup;
+			children = (
+				290D64061ED577D7009E81E3 /* SearchSubwayViewController.h */,
+				290D64071ED577D7009E81E3 /* SearchSubwayViewController.m */,
+				29367DE01EF3C0AD00941432 /* SubwayDetailViewController.h */,
+				29367DE11EF3C0AD00941432 /* SubwayDetailViewController.m */,
+			);
+			name = Subway;
 			sourceTree = "<group>";
 		};
 		29526A911ED6F6000002096E /* Frameworks */ = {
@@ -266,6 +287,7 @@
 				292124BA1EC47A0A00D5C526 /* AppDelegate.m in Sources */,
 				2DC6A9141EF3010200F6B631 /* TaipeiSubway.m in Sources */,
 				290D64081ED577D7009E81E3 /* SearchSubwayViewController.m in Sources */,
+				29367DE21EF3C0AD00941432 /* SubwayDetailViewController.m in Sources */,
 				292124B71EC47A0A00D5C526 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

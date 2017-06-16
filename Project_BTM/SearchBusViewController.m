@@ -4,7 +4,7 @@
 //
 
 
-#pragma mark .h files
+#pragma mark - .h Files
 
 #import "SearchBusViewController.h"
 #import "BusDetailViewController.h"
@@ -12,7 +12,7 @@
 #import "MBProgressHUD.h"
 
 
-#pragma mark Frameworks
+#pragma mark - Frameworks
 
 @import SystemConfiguration;
 @import Foundation;

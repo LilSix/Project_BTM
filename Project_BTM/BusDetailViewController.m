@@ -4,14 +4,14 @@
 //
 
 
-#pragma mark .h files
+#pragma mark - .h Files
 
 #import "BusDetailViewController.h"
 #import "CityBus.h"
 #import "MBProgressHUD.h"
 
 
-#pragma mark Frameworks
+#pragma mark - Frameworks
 
 @import SystemConfiguration;
 @import Foundation;
@@ -1430,11 +1430,11 @@ didFinishDownloadingToURL:(NSURL *)location {
                                                         
                                                         int minutes = [estimateTime intValue] / 60;
                                                         int seconds = [estimateTime intValue] % 60;;
-                                                        if ([estimateTime intValue] <= 40) {
+                                                        if ([estimateTime intValue] <= 30) {
                                                             
                                                             stringWithTime = @"進站中";
                                                             [dictionary setObject:stringWithTime forKey:stopID];
-                                                        } else if ([estimateTime intValue] <= 120) {
+                                                        } else if ([estimateTime intValue] <= 90) {
                                                             
                                                             stringWithTime = @"即將進站";
                                                             [dictionary setObject:stringWithTime forKey:stopID];
@@ -1510,11 +1510,11 @@ didFinishDownloadingToURL:(NSURL *)location {
                                                     
                                                     if ([goBack isEqualToString:@"0"]) {
                                                         
-                                                        if ([estimateTime intValue] <= 40) {
+                                                        if ([estimateTime intValue] <= 30) {
                                                             
                                                             stringWithTime = @"進站中";
                                                             [dictionary setObject:stringWithTime forKey:stopID];
-                                                        } else if ([estimateTime intValue] <= 120) {
+                                                        } else if ([estimateTime intValue] <= 90) {
                                                             
                                                             stringWithTime = @"即將進站";
                                                             [dictionary setObject:stringWithTime forKey:stopID];
@@ -1533,11 +1533,11 @@ didFinishDownloadingToURL:(NSURL *)location {
                                                         }
                                                     } else if ([goBack isEqualToString:@"1"]) {
                                                         
-                                                        if ([estimateTime intValue] <= 40) {
+                                                        if ([estimateTime intValue] <= 30) {
                                                             
                                                             stringWithTime = @"進站中";
                                                             [dictionary setObject:stringWithTime forKey:stopID];
-                                                        } else if ([estimateTime intValue] <= 120) {
+                                                        } else if ([estimateTime intValue] <= 90) {
                                                             
                                                             stringWithTime = @"即將進站";
                                                             [dictionary setObject:stringWithTime forKey:stopID];
@@ -1575,14 +1575,6 @@ didFinishDownloadingToURL:(NSURL *)location {
 }
 
 
-
-
-
-
-
-
-
-
 - (void)updateEstimateTime {
     
     [[_cityBus estimateTimeGo] removeAllObjects];
@@ -1598,7 +1590,18 @@ didFinishDownloadingToURL:(NSURL *)location {
     [_tableViewBusDetailList reloadData];
 }
 
- 
+
+
+
+///FIXME: BUG!!!
+///TODO: function.
+///!!!: Test
+///???: 111
+
+
+
+
+
 /*
  #pragma mark - Navigation
  
