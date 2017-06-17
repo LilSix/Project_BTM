@@ -40,7 +40,7 @@ UIPickerViewDelegate, UIPickerViewDataSource, NSURLSessionDelegate, NSURLSession
     
     NSString *searchRouteName;
     NSString *searchRouteNumber;
-    int saveDidSelectRow;
+    NSInteger saveDidSelectRow;
 }
 
 
@@ -273,8 +273,8 @@ numberOfRowsInComponent:(NSInteger)component {
       didSelectRow:(NSInteger)row
        inComponent:(NSInteger)component {
     
-    [_textFieldRouteName setText:_routeNameDataSource[row]];
-    saveDidSelectRow = (int)row;
+    [_textFieldRouteName setText:[_routeNameDataSource objectAtIndex:row]];
+    saveDidSelectRow = row;
 }
 
 
@@ -346,8 +346,8 @@ numberOfRowsInComponent:(NSInteger)component {
     searchRouteName = @"";
     searchRouteNumber = @"";
     
-    [_textFieldRouteName setText:@""];
-    [_textFieldRouteNumber setText:@""];
+    [_textFieldRouteName setText:searchRouteName];
+    [_textFieldRouteNumber setText:searchRouteNumber];
     
     [[self view] endEditing:YES];
     
@@ -365,13 +365,13 @@ numberOfRowsInComponent:(NSInteger)component {
 
 - (void)barButtonItemCancelTouch {
     
-    if ([_textFieldRouteName isEditing]) {
-        
-        [_textFieldRouteName setText:@""];
-    } else {
-        
-        [_textFieldRouteNumber setText:@""];
-    }
+//    if ([_textFieldRouteName isEditing]) {
+//        
+//        [_textFieldRouteName setText:@""];
+//    } else {
+//        
+//        [_textFieldRouteNumber setText:@""];
+//    }
     
     [[self view] endEditing:YES];
     [[self view] resignFirstResponder];
@@ -379,8 +379,15 @@ numberOfRowsInComponent:(NSInteger)component {
 
 - (void)barButtonItemDoneTouch {
     
-    [[self view] endEditing:YES];
-    [[self view] resignFirstResponder];
+    if ([_textFieldRouteName isEditing]) {
+        
+        [_textFieldRouteName endEditing:YES];
+        [_textFieldRouteNumber becomeFirstResponder];
+    } else {
+    
+        [[self view] endEditing:YES];
+        [[self view] resignFirstResponder];
+    }
 }
 
 

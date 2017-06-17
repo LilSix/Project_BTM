@@ -34,7 +34,8 @@ UIPickerViewDataSource, UITextFieldDelegate, UITextFieldDelegate> {
     
     UIColor *colorWithImageViewRoute;
     
-    int saveDidSelectRow;
+    NSInteger saveDidSelectRow;
+    int lastDidSelectRow;
 }
 
 @property (strong, nonatomic) TaipeiSubway *taipeiSubway;
@@ -70,31 +71,8 @@ UIPickerViewDataSource, UITextFieldDelegate, UITextFieldDelegate> {
     [_textFieldRouteName setDelegate:self];
     [_textFieldRouteName setInputView:pickerViewRouteName];
     
-    UIToolbar* toolBar = [[UIToolbar alloc] init];
-    [toolBar setBarStyle:UIBarStyleDefault];
+    [self setInputAccessoryViewWithUIToolbar];
     
-    // Create toolbar cancel bar button item.
-    UIBarButtonItem *barButtonItemCancel = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
-                                                                                         target:self
-                                                                                         action:@selector(barButtonItemCancelTouch)];
-    
-    // Create toolbar fixed space bar button item.
-    UIBarButtonItem *barButtonItemFixedSpace = [[UIBarButtonItem alloc]
-                                                initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
-                                                target:self
-                                                action:nil];
-    // Create toolbar done bar button item.
-    UIBarButtonItem *barButtonItemSearch = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
-                                                                                         target:self
-                                                                                         action:@selector(barButtonItemDoneTouch)];
-    
-    // Put bar button item in array.
-    NSArray *arrayToolBarButtonItem = @[barButtonItemCancel, barButtonItemFixedSpace, barButtonItemSearch];
-    
-    // Setting about toolbar.
-    [toolBar sizeToFit];
-    [toolBar setItems:arrayToolBarButtonItem];
-    [_textFieldRouteName setInputAccessoryView:toolBar];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -135,9 +113,42 @@ UIPickerViewDataSource, UITextFieldDelegate, UITextFieldDelegate> {
         [_taipeiSubway setRouteBL:[NSMutableArray array]];
         
         saveDidSelectRow = 0;
+        lastDidSelectRow = 0;
     }
     
     return self;
+}
+
+
+#pragma mark - UIToolbar
+
+- (void)setInputAccessoryViewWithUIToolbar {
+    
+    UIToolbar* toolBar = [[UIToolbar alloc] init];
+    [toolBar setBarStyle:UIBarStyleDefault];
+    
+    // Create toolbar cancel bar button item.
+    UIBarButtonItem *barButtonItemCancel = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
+                                                                                         target:self
+                                                                                         action:@selector(barButtonItemCancelTouch)];
+    
+    // Create toolbar fixed space bar button item.
+    UIBarButtonItem *barButtonItemFixedSpace = [[UIBarButtonItem alloc]
+                                                initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
+                                                target:self
+                                                action:nil];
+    // Create toolbar done bar button item.
+    UIBarButtonItem *barButtonItemSearch = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
+                                                                                         target:self
+                                                                                         action:@selector(barButtonItemDoneTouch)];
+    
+    // Put bar button item in array.
+    NSArray *arrayToolBarButtonItem = @[barButtonItemCancel, barButtonItemFixedSpace, barButtonItemSearch];
+    
+    // Setting about toolbar.
+    [toolBar sizeToFit];
+    [toolBar setItems:arrayToolBarButtonItem];
+    [_textFieldRouteName setInputAccessoryView:toolBar];
 }
 
 
@@ -247,16 +258,21 @@ numberOfRowsInComponent:(NSInteger)component {
     
     NSLog(@"didSelectRow");
     [_textFieldRouteName setText:_routeNameDataSource[row]];
-    saveDidSelectRow = (int)row;
+    saveDidSelectRow = row;
 }
 
 
 #pragma mark - IBAction
 
-- (IBAction)barButtonItemRefreshTouch:(UIBarButtonItem *)sender {
+- (IBAction)barButtonItemMapTouch:(UIBarButtonItem *)sender {
     
-    [_tableViewSubwayList reloadData];
-    NSLog(@"[[_taipeiSubway routeBR] count]: %ld", [[_taipeiSubway route] count]);
+    UIViewController *viewController = [[UIViewController alloc] init];
+    NSString *stringWithResource = [[NSBundle mainBundle] pathForResource:@"MetroTaipeiMap" ofType:@"jpg"];
+    UIImage *image = [[UIImage alloc] initWithContentsOfFile:stringWithResource];
+    UIImageView *imageView = [[UIImageView alloc] initWithImage:image];
+    [imageView setContentMode:UIViewContentModeScaleAspectFit];
+    
+    [self presentViewController:viewController animated:YES completion:nil];
 }
 
 - (IBAction)buttonSearchTouch:(UIButton *)sender {
@@ -362,14 +378,11 @@ numberOfRowsInComponent:(NSInteger)component {
 
 - (void)barButtonItemCancelTouch {
     
-    [_textFieldRouteName setText:@""];
-    
     [[self view] endEditing:YES];
     [[self view] resignFirstResponder];
 }
 
 - (void)barButtonItemDoneTouch {
-    
     
     [[self view] endEditing:YES];
     [[self view] resignFirstResponder];

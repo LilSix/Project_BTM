@@ -38,7 +38,7 @@
         <scene sceneID="zTK-FV-UZJ">
             <objects>
                 <navigationController id="Xv3-yK-lZs" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="公車" image="Tab_Bar_Item_Bus" id="qE1-K3-Kv0"/>
+                    <tabBarItem key="tabBarItem" title="公車" image="Tab_Bar_Item_Bus" selectedImage="Tab_Bar_Item_Bus-Selected" id="qE1-K3-Kv0"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="sfA-4w-nZk">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -142,7 +142,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" title="公車" id="Utv-9h-oyR">
-                        <barButtonItem key="rightBarButtonItem" systemItem="stop" id="Au9-Bl-N9I">
+                        <barButtonItem key="rightBarButtonItem" title="清除" id="Au9-Bl-N9I">
                             <connections>
                                 <action selector="barButtonItemStopTouch:" destination="1UL-uh-T2R" id="nnY-Y4-7Jt"/>
                             </connections>
@@ -316,6 +316,45 @@
             </objects>
             <point key="canvasLocation" x="3004" y="2390.5547226386807"/>
         </scene>
+        <!--臺北捷運路網圖-->
+        <scene sceneID="4GJ-mY-VmT">
+            <objects>
+                <viewController id="tAV-fk-eop" customClass="SubwayMapViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="ZaL-ra-UUO"/>
+                        <viewControllerLayoutGuide type="bottom" id="FvV-Oi-SnH"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="akJ-Ry-sCw">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleAspectFit" translatesAutoresizingMaskIntoConstraints="NO" id="Ln0-l3-7cO">
+                                <rect key="frame" x="0.0" y="64" width="375" height="603"/>
+                            </scrollView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="Ln0-l3-7cO" firstAttribute="bottom" secondItem="FvV-Oi-SnH" secondAttribute="top" id="hQk-Gm-oEZ"/>
+                            <constraint firstItem="Ln0-l3-7cO" firstAttribute="leading" secondItem="akJ-Ry-sCw" secondAttribute="leading" id="iv1-FX-707"/>
+                            <constraint firstItem="Ln0-l3-7cO" firstAttribute="top" secondItem="ZaL-ra-UUO" secondAttribute="bottom" id="qWs-ig-G60"/>
+                            <constraint firstAttribute="trailing" secondItem="Ln0-l3-7cO" secondAttribute="trailing" id="u9X-LB-Lyw"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" title="臺北捷運路網圖" id="9oH-vN-T2E">
+                        <barButtonItem key="rightBarButtonItem" systemItem="stop" id="qSE-zK-Ubd">
+                            <connections>
+                                <action selector="barButtonItemStopTouch:" destination="tAV-fk-eop" id="9ov-b8-Euh"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="scrollViewWithSubwayMap" destination="Ln0-l3-7cO" id="tcO-tl-u3K"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Lsx-LS-E37" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3956" y="3206.4467766116945"/>
+        </scene>
         <!--捷運-->
         <scene sceneID="eZ1-JJ-myL">
             <objects>
@@ -348,7 +387,7 @@
                                     <action selector="buttonSearchTouch:" destination="bAQ-k7-ek0" eventType="touchUpInside" id="5C6-wE-TDy"/>
                                 </connections>
                             </button>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="7ny-ZN-s38">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" keyboardDismissMode="onDrag" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="7ny-ZN-s38">
                                 <rect key="frame" x="0.0" y="109" width="375" height="509"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -386,9 +425,10 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" title="捷運" id="O1D-dV-eS9">
-                        <barButtonItem key="rightBarButtonItem" systemItem="refresh" id="tO1-5l-SgI">
+                        <barButtonItem key="rightBarButtonItem" image="Tab_Bar_Item_Map" id="tO1-5l-SgI">
                             <connections>
-                                <action selector="barButtonItemRefreshTouch:" destination="bAQ-k7-ek0" id="6e2-Mk-4IR"/>
+                                <action selector="barButtonItemMapTouch:" destination="bAQ-k7-ek0" id="56L-ma-rR3"/>
+                                <segue destination="WDX-0F-Qbd" kind="presentation" identifier="presentSubwayMap" id="2hq-Ol-5pb"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -473,7 +513,7 @@
         <scene sceneID="vbc-XV-iid">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="EA6-PR-0VP" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="捷運" image="Tab_Bar_Item_Subway" id="tal-8w-qKU"/>
+                    <tabBarItem key="tabBarItem" title="捷運" image="Tab_Bar_Item_Subway" selectedImage="Tab_Bar_Item_Subway-Selected" id="tal-8w-qKU"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="iBZ-EW-G7L">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
@@ -507,10 +547,31 @@
             </objects>
             <point key="canvasLocation" x="1097" y="3209"/>
         </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="aaR-I1-wyb">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="WDX-0F-Qbd" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="QoH-ZR-6JW">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="tAV-fk-eop" kind="relationship" relationship="rootViewController" id="wmL-gv-cnO"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="o9p-VB-gUd" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3004" y="3208"/>
+        </scene>
     </scenes>
     <resources>
         <image name="Button_Search" width="25" height="25"/>
         <image name="Tab_Bar_Item_Bus" width="25" height="25"/>
-        <image name="Tab_Bar_Item_Subway" width="25" height="25"/>
+        <image name="Tab_Bar_Item_Bus-Selected" width="25" height="25"/>
+        <image name="Tab_Bar_Item_Map" width="25" height="25"/>
+        <image name="Tab_Bar_Item_Subway" width="28" height="28"/>
+        <image name="Tab_Bar_Item_Subway-Selected" width="28" height="28"/>
     </resources>
 </document>

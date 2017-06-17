@@ -20,6 +20,8 @@
 		29526A931ED6F6000002096E /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29526A921ED6F6000002096E /* SystemConfiguration.framework */; };
 		297FFE4E1EE0384B00B62030 /* BusDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 297FFE4D1EE0384B00B62030 /* BusDetailViewController.m */; };
 		29E8D4B71ECD994E001D0645 /* CityBus.m in Sources */ = {isa = PBXBuildFile; fileRef = 29E8D4B61ECD994E001D0645 /* CityBus.m */; };
+		2D32BB121EF5411B0077AAE4 /* MetroTaipeiMap.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 2D32BB111EF5411B0077AAE4 /* MetroTaipeiMap.jpg */; };
+		2D32BB151EF57AF40077AAE4 /* SubwayMapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D32BB141EF57AF40077AAE4 /* SubwayMapViewController.m */; };
 		2DC6A9141EF3010200F6B631 /* TaipeiSubway.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC6A9131EF3010200F6B631 /* TaipeiSubway.m */; };
 		7CDD1D81A21D9178C1B7F551 /* libPods-Project_BTM.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 710E513E11F14F79028887FD /* libPods-Project_BTM.a */; };
 /* End PBXBuildFile section */
@@ -47,6 +49,9 @@
 		297FFE4D1EE0384B00B62030 /* BusDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BusDetailViewController.m; sourceTree = "<group>"; };
 		29E8D4B51ECD994E001D0645 /* CityBus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CityBus.h; sourceTree = "<group>"; };
 		29E8D4B61ECD994E001D0645 /* CityBus.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CityBus.m; sourceTree = "<group>"; };
+		2D32BB111EF5411B0077AAE4 /* MetroTaipeiMap.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = MetroTaipeiMap.jpg; sourceTree = "<group>"; };
+		2D32BB131EF57AF40077AAE4 /* SubwayMapViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubwayMapViewController.h; sourceTree = "<group>"; };
+		2D32BB141EF57AF40077AAE4 /* SubwayMapViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SubwayMapViewController.m; sourceTree = "<group>"; };
 		2DC6A9121EF3010200F6B631 /* TaipeiSubway.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TaipeiSubway.h; sourceTree = "<group>"; };
 		2DC6A9131EF3010200F6B631 /* TaipeiSubway.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TaipeiSubway.m; sourceTree = "<group>"; };
 		35AD9445A1795C1BF2100AF0 /* Pods-Project_BTM.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Project_BTM.release.xcconfig"; path = "Pods/Target Support Files/Pods-Project_BTM/Pods-Project_BTM.release.xcconfig"; sourceTree = "<group>"; };
@@ -116,6 +121,7 @@
 		292124B51EC47A0A00D5C526 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				2D32BB111EF5411B0077AAE4 /* MetroTaipeiMap.jpg */,
 				292124B61EC47A0A00D5C526 /* main.m */,
 				29E8D4B51ECD994E001D0645 /* CityBus.h */,
 				29E8D4B61ECD994E001D0645 /* CityBus.m */,
@@ -143,6 +149,8 @@
 				290D64071ED577D7009E81E3 /* SearchSubwayViewController.m */,
 				29367DE01EF3C0AD00941432 /* SubwayDetailViewController.h */,
 				29367DE11EF3C0AD00941432 /* SubwayDetailViewController.m */,
+				2D32BB131EF57AF40077AAE4 /* SubwayMapViewController.h */,
+				2D32BB141EF57AF40077AAE4 /* SubwayMapViewController.m */,
 			);
 			name = Subway;
 			sourceTree = "<group>";
@@ -220,6 +228,7 @@
 			files = (
 				292124C81EC47A0A00D5C526 /* LaunchScreen.storyboard in Resources */,
 				292124C51EC47A0A00D5C526 /* Assets.xcassets in Resources */,
+				2D32BB121EF5411B0077AAE4 /* MetroTaipeiMap.jpg in Resources */,
 				292124C01EC47A0A00D5C526 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -289,6 +298,7 @@
 				290D64081ED577D7009E81E3 /* SearchSubwayViewController.m in Sources */,
 				29367DE21EF3C0AD00941432 /* SubwayDetailViewController.m in Sources */,
 				292124B71EC47A0A00D5C526 /* main.m in Sources */,
+				2D32BB151EF57AF40077AAE4 /* SubwayMapViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

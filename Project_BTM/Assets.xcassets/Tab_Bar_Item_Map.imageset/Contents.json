@@ -6,12 +6,12 @@
     },
     {
       "idiom" : "universal",
-      "filename" : "Tab_Bar_Item_Subway@2x.png",
+      "filename" : "Tab_Bar_Item_Maps@2x.png",
       "scale" : "2x"
     },
     {
       "idiom" : "universal",
-      "filename" : "Tab_Bar_Item_Subway@3x.png",
+      "filename" : "Tab_Bar_Item_Map@3x.png",
       "scale" : "3x"
     }
   ],
