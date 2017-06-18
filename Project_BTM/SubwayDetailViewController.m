@@ -40,7 +40,6 @@
     [_tableViewSubwayDetailList setDelegate:self];
     [_tableViewSubwayDetailList setDataSource:self];
     
-    /*
     // Remove objects from mutable array before search.
      [subwayLists removeAllObjects];
      [destinationLists removeAllObjects];
@@ -61,15 +60,20 @@
          NSString *tempDestination = [dictionary objectForKey:@"Destination"];
          NSString *destination = [NSString stringWithFormat:@"終點站：%@", tempDestination];
          
-         NSString *editedStation = [self editStringFromHalfWidthToFullWidth:station];
-         NSString *editedDestination = [self editStringFromHalfWidthToFullWidth:destination];
+         station = [self editStringFromHalfWidthToFullWidth:station];
+         destination = [self editStringFromHalfWidthToFullWidth:destination];
          
-         [subwayLists addObject:editedStation];
-         [destinationLists addObject:editedDestination];
+         if ([tempDestination isEqualToString:@"南港展覽館站"]) {
+            
+             [subwayLists addObject:station];
+             [destinationLists addObject:destination];
+         }
+         
+         
+         
          
      }
          [_tableViewSubwayDetailList reloadData];
-     */
 }
 
 - (void)didReceiveMemoryWarning {
@@ -108,6 +112,7 @@
     
     UITableViewCell *tableViewCell = [tableView dequeueReusableCellWithIdentifier:@"Right Detail Cell" forIndexPath:indexPath];
     [[tableViewCell textLabel] setText:[subwayLists objectAtIndex:[indexPath row]]];
+    [[tableViewCell detailTextLabel] setText:[destinationLists objectAtIndex:[indexPath row]]];
     
     return tableViewCell;
 }

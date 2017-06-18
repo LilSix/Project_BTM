@@ -399,7 +399,7 @@ numberOfRowsInComponent:(NSInteger)component {
     
     NSString *stringWithURL = @"http://data.taipei/opendata/datalist/apiAccess?scope=resourceAquire&rid=7f5d3c69-1fdc-44a2-a5ef-13cffe323bd6";
     
-    // BR 文湖線
+    // BR 文湖線（動物園－南港展覽館）
     if ([routeName isEqualToString:_routeNameDataSource[0]]) {
         
         NSURL *URL = [NSURL URLWithString:stringWithURL];
@@ -414,6 +414,7 @@ numberOfRowsInComponent:(NSInteger)component {
                                                     NSDictionary *dictionaryInResult = [dictionary objectForKey:@"result"];
                                                     NSArray *array = [dictionaryInResult objectForKey:@"results"];
                                                     
+                                                    // "_id" for array index.
                                                     for (int i = 114; i <= 136; i++) {
                                                         
                                                         NSDictionary *dictionaryWithArray = [array objectAtIndex:i];
@@ -491,7 +492,6 @@ numberOfRowsInComponent:(NSInteger)component {
                                                         [[_taipeiSubway routeID] setObject:stringWithID forKey:object];
                                                         i++;
                                                     }
-                                                    
                                                     
                                                     [[NSOperationQueue mainQueue] addOperationWithBlock:^{
                                                         
@@ -616,7 +616,6 @@ numberOfRowsInComponent:(NSInteger)component {
                                                         i++;
                                                     }
                                                     
-                                                    
                                                     [[NSOperationQueue mainQueue] addOperationWithBlock:^{
                                                         
                                                         [_tableViewSubwayList reloadData];
@@ -676,6 +675,50 @@ numberOfRowsInComponent:(NSInteger)component {
         [dataTask resume];
     }
 }
+
+- (void)fetchSubwayArrivedAtStation {
+    
+    // Remove objects from mutable array before search.
+    [subwayLists removeAllObjects];
+    [destinationLists removeAllObjects];
+    [[self view] isFirstResponder];
+    
+    NSURL *URL = [NSURL URLWithString:@"http://data.taipei/opendata/datalist/apiAccess?scope=resourceAquire&rid=55ec6d6e-dc5c-4268-a725-d04cc262172b"];
+    NSURLSessionDataTask *dataTask = [session dataTaskWithURL:URL
+                                            completionHandler:^(NSData *data,
+                                                                NSURLResponse *response,
+                                                                NSError *error) {
+                                                
+                                                NSDictionary *subwayListsJSON = [NSJSONSerialization JSONObjectWithData:data
+                                                                                                                options:NSJSONReadingMutableContainers
+                                                                                                                  error:&error];
+                                                NSDictionary *result = [subwayListsJSON objectForKey:@"result"];
+                                                NSArray *results = [result objectForKey:@"results"];
+                                                
+                                                for (NSDictionary *dictionary in results) {
+                                                    NSString *station = [dictionary objectForKey:@"Station"];
+                                                    NSString *tempDestination = [dictionary objectForKey:@"Destination"];
+                                                    NSString *destination = [NSString stringWithFormat:@"終點站：%@", tempDestination];
+                                                    
+                                                    station = [self editStringFromHalfWidthToFullWidth:station];
+                                                    destination = [self editStringFromHalfWidthToFullWidth:destination];
+                                                    
+                                                    if ([tempDestination isEqualToString:@"動物園站"]) {
+                                                        
+                                                        [subwayLists addObject:station];
+                                                        [destinationLists addObject:destination];
+                                                    }
+                                                }
+                                                
+                                                [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                                                    
+                                                    [_tableViewSubwayList reloadData];
+                                                    [MBProgressHUD hideHUDForView:[self view] animated:YES];
+                                                }];
+                                            }];
+    [dataTask resume];
+}
+
 
 
 /*
