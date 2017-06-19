@@ -6,9 +6,11 @@
 
 #pragma mark - .h Files
 
+#import "AppDelegate.h"
 #import "BusDetailViewController.h"
 #import "CityBus.h"
 #import "MBProgressHUD.h"
+#import "CityBusData.h"
 
 
 #pragma mark - Frameworks
@@ -17,6 +19,7 @@
 @import Foundation;
 @import UIKit;
 @import CoreGraphics;
+@import CoreData;
 
 
 #pragma mark -
@@ -157,13 +160,13 @@ NSURLSessionTaskDelegate, NSURLSessionDataDelegate> {
     self = [super initWithCoder:coder];
     if (self) {
         
+        
+        
         _cityBus = [[CityBus alloc] init];
         [_cityBus setStopIDGo:[NSMutableArray array]];
         [_cityBus setStopIDBack:[NSMutableArray array]];
         [_cityBus setStopNameGo:[NSMutableArray array]];
         [_cityBus setStopNameBack:[NSMutableArray array]];
-        [_cityBus setStopStatus:[NSMutableArray array]];
-        [_cityBus setKeyPattern:[NSMutableArray array]];
         [_cityBus setEstimateTimeGo:[NSMutableArray array]];
         [_cityBus setEstimateTimeBack:[NSMutableArray array]];
         [_cityBus setEstimateTime:[NSMutableDictionary dictionary]];
@@ -576,6 +579,102 @@ didFinishDownloadingToURL:(NSURL *)location {
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    
+    
+    if ([_goBackControl selectedSegmentIndex] == 0) {
+        
+        AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+        NSManagedObjectContext *managedObjectContext = [appDelegate managedObjectContext];
+        
+        NSString *stringWithStopID = [[_cityBus stopIDGo] objectAtIndex:[indexPath row]];
+        NSString *stringWithStopName = [[_cityBus stopNameGo] objectAtIndex:[indexPath row]];
+        stringWithStopName = [self editStringFromHalfWidthToFullWidth:stringWithStopName];
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:stringWithStopName
+                                                                                 message:@"確定將此車站加入至喜好項目中嗎？"
+                                                                          preferredStyle:UIAlertControllerStyleActionSheet];
+        UIAlertAction *alertActionWithDone = [UIAlertAction actionWithTitle:@"確定"
+                                                                      style:UIAlertActionStyleDestructive
+                                                                    handler:^(UIAlertAction *action) {
+
+                                                                        CityBusData *cityBusData;
+                                                                        cityBusData = [NSEntityDescription insertNewObjectForEntityForName:@"CityBus" inManagedObjectContext:managedObjectContext];
+                                                                        
+                                                                        [cityBusData setRouteID:_routeID];
+                                                                        [cityBusData setRouteName:_routeName];
+                                                                        [cityBusData setStopName:stringWithStopName];
+                                                                        [cityBusData setStopID:stringWithStopID];
+                                                                        
+                                                                        [managedObjectContext save:nil];
+                                                                        
+                                                                        MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.navigationController.view animated:YES];
+                                                                        
+                                                                        // Set the custom view mode to show any view.
+                                                                        hud.mode = MBProgressHUDModeCustomView;
+                                                                        // Set an image view with a checkmark.
+                                                                        UIImage *image = [[UIImage imageNamed:@"Checkmark"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+                                                                        hud.customView = [[UIImageView alloc] initWithImage:image];
+                                                                        // Looks a bit nicer if we make it square.
+                                                                        hud.square = YES;
+                                                                        // Optional label text.
+                                                                        hud.label.text = NSLocalizedString(@"完成", @"HUD done title");
+                                                                        
+                                                                        [hud hideAnimated:YES afterDelay:.8f];
+                                                                    }];
+        UIAlertAction *alertActionWithCancel = [UIAlertAction actionWithTitle:@"取消"
+                                                                        style:UIAlertActionStyleCancel
+                                                                      handler:nil];
+        [alertController addAction:alertActionWithDone];
+        [alertController addAction:alertActionWithCancel];
+        [self presentViewController:alertController animated:YES completion:nil];
+
+    } else {
+        
+        AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+        NSManagedObjectContext *managedObjectContext = [appDelegate managedObjectContext];
+        
+        NSString *stringWithStopID = [[_cityBus stopIDBack] objectAtIndex:[indexPath row]];
+        NSString *stringWithStopName = [[_cityBus stopNameBack] objectAtIndex:[indexPath row]];
+        stringWithStopName = [self editStringFromHalfWidthToFullWidth:stringWithStopName];
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:stringWithStopName
+                                                                                 message:@"確定將此車站加入至喜好項目中嗎？"
+                                                                          preferredStyle:UIAlertControllerStyleActionSheet];
+        UIAlertAction *alertActionWithDone = [UIAlertAction actionWithTitle:@"確定"
+                                                                      style:UIAlertActionStyleDestructive
+                                                                    handler:^(UIAlertAction *action) {
+                                                                        
+                                                                        CityBusData *cityBusData;
+                                                                        cityBusData = [NSEntityDescription insertNewObjectForEntityForName:@"CityBus" inManagedObjectContext:managedObjectContext];
+                                                                        
+                                                                        [cityBusData setRouteID:_routeID];
+                                                                        [cityBusData setRouteName:_routeName];
+                                                                        [cityBusData setStopName:stringWithStopName];
+                                                                        [cityBusData setStopID:stringWithStopID];
+                                                                        
+                                                                        [managedObjectContext save:nil];
+                                                                        
+                                                                        MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.navigationController.view animated:YES];
+                                                                        
+                                                                        // Set the custom view mode to show any view.
+                                                                        hud.mode = MBProgressHUDModeCustomView;
+                                                                        // Set an image view with a checkmark.
+                                                                        UIImage *image = [[UIImage imageNamed:@"Checkmark"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+                                                                        hud.customView = [[UIImageView alloc] initWithImage:image];
+                                                                        // Looks a bit nicer if we make it square.
+                                                                        hud.square = YES;
+                                                                        // Optional label text.
+                                                                        hud.label.text = NSLocalizedString(@"完成", @"HUD done title");
+                                                                        
+                                                                        [hud hideAnimated:YES afterDelay:.8f];
+                                                                    }];
+        UIAlertAction *alertActionWithCancel = [UIAlertAction actionWithTitle:@"取消"
+                                                                        style:UIAlertActionStyleCancel
+                                                                      handler:nil];
+        [alertController addAction:alertActionWithDone];
+        [alertController addAction:alertActionWithCancel];
+        [self presentViewController:alertController animated:YES completion:nil];
+    }
+    
+
 }
 
 

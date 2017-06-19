@@ -2,6 +2,10 @@
   "images" : [
     {
       "idiom" : "universal",
+      "scale" : "1x"
+    },
+    {
+      "idiom" : "universal",
       "filename" : "Tab_Bar_Item_Bus-Selected@2x.png",
       "scale" : "2x"
     },

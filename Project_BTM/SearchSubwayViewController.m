@@ -378,6 +378,7 @@ numberOfRowsInComponent:(NSInteger)component {
 
 - (void)barButtonItemCancelTouch {
     
+    [_textFieldRouteName setText:@""];
     [[self view] endEditing:YES];
     [[self view] resignFirstResponder];
 }
