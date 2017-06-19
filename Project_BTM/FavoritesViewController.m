@@ -102,7 +102,7 @@
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     NSString *stringWithStopName = [favoritesStopName objectAtIndex:[indexPath row]];
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:[self editStringFromHalfWidthToFullWidth:stringWithStopName]
-                                                                             message:@"確定將此車站至喜好項目中移除嗎？"
+                                                                             message:@"確定將此車站自常用車站中移除嗎？"
                                                                       preferredStyle:UIAlertControllerStyleActionSheet];
     UIAlertAction *alertActionWithDone = [UIAlertAction actionWithTitle:@"確定"
                                                                   style:UIAlertActionStyleDestructive
@@ -158,6 +158,7 @@
 - (void)fetchCoreData {
     
     [favoritesStopName removeAllObjects];
+    [favoritesRouteName removeAllObjects];
     
     AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     NSManagedObjectContext *managedObjectContext = [appDelegate managedObjectContext];

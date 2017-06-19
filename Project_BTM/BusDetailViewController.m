@@ -590,7 +590,7 @@ didFinishDownloadingToURL:(NSURL *)location {
         NSString *stringWithStopName = [[_cityBus stopNameGo] objectAtIndex:[indexPath row]];
         stringWithStopName = [self editStringFromHalfWidthToFullWidth:stringWithStopName];
         UIAlertController *alertController = [UIAlertController alertControllerWithTitle:stringWithStopName
-                                                                                 message:@"確定將此車站加入至喜好項目中嗎？"
+                                                                                 message:@"確定將此車站加入至常用車站中嗎？"
                                                                           preferredStyle:UIAlertControllerStyleActionSheet];
         UIAlertAction *alertActionWithDone = [UIAlertAction actionWithTitle:@"確定"
                                                                       style:UIAlertActionStyleDestructive
@@ -636,7 +636,7 @@ didFinishDownloadingToURL:(NSURL *)location {
         NSString *stringWithStopName = [[_cityBus stopNameBack] objectAtIndex:[indexPath row]];
         stringWithStopName = [self editStringFromHalfWidthToFullWidth:stringWithStopName];
         UIAlertController *alertController = [UIAlertController alertControllerWithTitle:stringWithStopName
-                                                                                 message:@"確定將此車站加入至喜好項目中嗎？"
+                                                                                 message:@"確定將此車站加入至常用車站中嗎？"
                                                                           preferredStyle:UIAlertControllerStyleActionSheet];
         UIAlertAction *alertActionWithDone = [UIAlertAction actionWithTitle:@"確定"
                                                                       style:UIAlertActionStyleDestructive
