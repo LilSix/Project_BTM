@@ -96,7 +96,7 @@ NSURLSessionTaskDelegate, NSURLSessionDataDelegate> {
                                                                   if (updateTime < 1) {
                                                                       
                                                                       [_labelUpdateTime setText:@"更新中⋯⋯"];
-                                                                      updateTime = 16;
+                                                                      updateTime = 21;
                                                                       [self updateEstimateTime];
                                                                   } else {
                                                                       
@@ -176,7 +176,7 @@ NSURLSessionTaskDelegate, NSURLSessionDataDelegate> {
         session = [NSURLSession sessionWithConfiguration:configuration];
         
 //        timerWithEstimateTime = [[NSTimer alloc] init];
-        updateTime = 16;
+        updateTime = 21;
     }
     
     return self;
