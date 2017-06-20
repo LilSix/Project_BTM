@@ -35,7 +35,6 @@
     // Do any additional setup after loading the view.
     
     [_imageViewRouteBackground setBackgroundColor:_colorWithSelectedRoute];
-    NSLog(@"colorWithSelectedRoute = %@", _colorWithSelectedRoute);
     
     [_tableViewSubwayDetailList setDelegate:self];
     [_tableViewSubwayDetailList setDataSource:self];

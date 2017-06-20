@@ -11,13 +11,11 @@
 @interface TaipeiSubway : NSObject
 
 @property (strong, nonatomic) NSMutableArray *route;
-@property (strong, nonatomic) NSMutableDictionary *routeID;
+@property (strong, nonatomic) NSMutableDictionary *stopID;
 @property (strong, nonatomic) NSMutableArray *routeBR;
 @property (strong, nonatomic) NSMutableArray *routeR;
 @property (strong, nonatomic) NSMutableArray *routeG;
 @property (strong, nonatomic) NSMutableArray *routeO;
 @property (strong, nonatomic) NSMutableArray *routeBL;
-
-
 
 @end

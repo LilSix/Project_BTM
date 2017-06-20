@@ -10,4 +10,6 @@
 
 @interface SearchSubwayViewController : UIViewController
 
+- (NSMutableDictionary *)fetchSubwayArrivedAtStation;
+
 @end

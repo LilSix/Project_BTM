@@ -17,10 +17,13 @@
 		29367DE21EF3C0AD00941432 /* SubwayDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 29367DE11EF3C0AD00941432 /* SubwayDetailViewController.m */; };
 		294459CB1EC55FF600883264 /* SearchBusViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 294459CA1EC55FF600883264 /* SearchBusViewController.m */; };
 		29526A931ED6F6000002096E /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29526A921ED6F6000002096E /* SystemConfiguration.framework */; };
+		296266C61EF8EDCB005B9F9C /* TaipeiSubwayData.m in Sources */ = {isa = PBXBuildFile; fileRef = 296266C51EF8EDCB005B9F9C /* TaipeiSubwayData.m */; };
+		296266CB1EF94845005B9F9C /* MoreViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 296266CA1EF94845005B9F9C /* MoreViewController.m */; };
+		296266CE1EF94A41005B9F9C /* MoreDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 296266CD1EF94A41005B9F9C /* MoreDetailViewController.m */; };
+		296266D01EF95353005B9F9C /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 296266CF1EF95353005B9F9C /* WebKit.framework */; };
 		297FFE4E1EE0384B00B62030 /* BusDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 297FFE4D1EE0384B00B62030 /* BusDetailViewController.m */; };
 		29E8D4B71ECD994E001D0645 /* CityBus.m in Sources */ = {isa = PBXBuildFile; fileRef = 29E8D4B61ECD994E001D0645 /* CityBus.m */; };
 		2D20238A1EF7C63C00BDC074 /* CityBusData.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D2023891EF7C63C00BDC074 /* CityBusData.m */; };
-		2D2023901EF7F52900BDC074 /* Project_BTM.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 2D20238E1EF7F52900BDC074 /* Project_BTM.xcdatamodeld */; };
 		2D2023931EF814C800BDC074 /* CityBusDataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 2D2023911EF814C800BDC074 /* CityBusDataModel.xcdatamodeld */; };
 		2D32BB121EF5411B0077AAE4 /* MetroTaipeiMap.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 2D32BB111EF5411B0077AAE4 /* MetroTaipeiMap.jpg */; };
 		2D32BB151EF57AF40077AAE4 /* SubwayMapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D32BB141EF57AF40077AAE4 /* SubwayMapViewController.m */; };
@@ -47,13 +50,20 @@
 		294459C91EC55FF600883264 /* SearchBusViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchBusViewController.h; sourceTree = "<group>"; };
 		294459CA1EC55FF600883264 /* SearchBusViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchBusViewController.m; sourceTree = "<group>"; };
 		29526A921ED6F6000002096E /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		296266C41EF8EDCB005B9F9C /* TaipeiSubwayData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TaipeiSubwayData.h; sourceTree = "<group>"; };
+		296266C51EF8EDCB005B9F9C /* TaipeiSubwayData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TaipeiSubwayData.m; sourceTree = "<group>"; };
+		296266C71EF8FEE5005B9F9C /* CityBusDataModel 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "CityBusDataModel 2.xcdatamodel"; sourceTree = "<group>"; };
+		296266C91EF94845005B9F9C /* MoreViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MoreViewController.h; sourceTree = "<group>"; };
+		296266CA1EF94845005B9F9C /* MoreViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MoreViewController.m; sourceTree = "<group>"; };
+		296266CC1EF94A41005B9F9C /* MoreDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MoreDetailViewController.h; sourceTree = "<group>"; };
+		296266CD1EF94A41005B9F9C /* MoreDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MoreDetailViewController.m; sourceTree = "<group>"; };
+		296266CF1EF95353005B9F9C /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		297FFE4C1EE0384B00B62030 /* BusDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BusDetailViewController.h; sourceTree = "<group>"; };
 		297FFE4D1EE0384B00B62030 /* BusDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BusDetailViewController.m; sourceTree = "<group>"; };
 		29E8D4B51ECD994E001D0645 /* CityBus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CityBus.h; sourceTree = "<group>"; };
 		29E8D4B61ECD994E001D0645 /* CityBus.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CityBus.m; sourceTree = "<group>"; };
 		2D2023881EF7C63C00BDC074 /* CityBusData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CityBusData.h; sourceTree = "<group>"; };
 		2D2023891EF7C63C00BDC074 /* CityBusData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CityBusData.m; sourceTree = "<group>"; };
-		2D20238F1EF7F52900BDC074 /* Project_BTM.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Project_BTM.xcdatamodel; sourceTree = "<group>"; };
 		2D2023921EF814C800BDC074 /* CityBusDataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = CityBusDataModel.xcdatamodel; sourceTree = "<group>"; };
 		2D32BB111EF5411B0077AAE4 /* MetroTaipeiMap.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = MetroTaipeiMap.jpg; sourceTree = "<group>"; };
 		2D32BB131EF57AF40077AAE4 /* SubwayMapViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubwayMapViewController.h; sourceTree = "<group>"; };
@@ -71,6 +81,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				296266D01EF95353005B9F9C /* WebKit.framework in Frameworks */,
 				2D8B27A71EF7B109005964D5 /* CoreData.framework in Frameworks */,
 				29526A931ED6F6000002096E /* SystemConfiguration.framework in Frameworks */,
 				7CDD1D81A21D9178C1B7F551 /* libPods-Project_BTM.a in Frameworks */,
@@ -110,11 +121,12 @@
 		292124B41EC47A0A00D5C526 /* Project_BTM */ = {
 			isa = PBXGroup;
 			children = (
+				292124B81EC47A0A00D5C526 /* AppDelegate.h */,
+				292124B91EC47A0A00D5C526 /* AppDelegate.m */,
 				2DD274371EF850D0009C9CC3 /* Favorites */,
 				29367DDE1EF3C02F00941432 /* Bus */,
 				29367DDF1EF3C04200941432 /* Subway */,
-				292124B81EC47A0A00D5C526 /* AppDelegate.h */,
-				292124B91EC47A0A00D5C526 /* AppDelegate.m */,
+				296266C81EF9481D005B9F9C /* More */,
 				292124C41EC47A0A00D5C526 /* Assets.xcassets */,
 				292124C61EC47A0A00D5C526 /* LaunchScreen.storyboard */,
 				292124BE1EC47A0A00D5C526 /* Main.storyboard */,
@@ -131,11 +143,12 @@
 				292124B61EC47A0A00D5C526 /* main.m */,
 				29E8D4B51ECD994E001D0645 /* CityBus.h */,
 				29E8D4B61ECD994E001D0645 /* CityBus.m */,
-				2DC6A9121EF3010200F6B631 /* TaipeiSubway.h */,
-				2DC6A9131EF3010200F6B631 /* TaipeiSubway.m */,
 				2D2023881EF7C63C00BDC074 /* CityBusData.h */,
 				2D2023891EF7C63C00BDC074 /* CityBusData.m */,
-				2D20238E1EF7F52900BDC074 /* Project_BTM.xcdatamodeld */,
+				2DC6A9121EF3010200F6B631 /* TaipeiSubway.h */,
+				2DC6A9131EF3010200F6B631 /* TaipeiSubway.m */,
+				296266C41EF8EDCB005B9F9C /* TaipeiSubwayData.h */,
+				296266C51EF8EDCB005B9F9C /* TaipeiSubwayData.m */,
 				2D2023911EF814C800BDC074 /* CityBusDataModel.xcdatamodeld */,
 			);
 			name = "Supporting Files";
@@ -168,11 +181,23 @@
 		29526A911ED6F6000002096E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				296266CF1EF95353005B9F9C /* WebKit.framework */,
 				2D8B27A51EF7AEF9005964D5 /* CoreData.framework */,
 				29526A921ED6F6000002096E /* SystemConfiguration.framework */,
 				710E513E11F14F79028887FD /* libPods-Project_BTM.a */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		296266C81EF9481D005B9F9C /* More */ = {
+			isa = PBXGroup;
+			children = (
+				296266C91EF94845005B9F9C /* MoreViewController.h */,
+				296266CA1EF94845005B9F9C /* MoreViewController.m */,
+				296266CC1EF94A41005B9F9C /* MoreDetailViewController.h */,
+				296266CD1EF94A41005B9F9C /* MoreDetailViewController.m */,
+			);
+			name = More;
 			sourceTree = "<group>";
 		};
 		2DD274371EF850D0009C9CC3 /* Favorites */ = {
@@ -312,8 +337,10 @@
 				29E8D4B71ECD994E001D0645 /* CityBus.m in Sources */,
 				294459CB1EC55FF600883264 /* SearchBusViewController.m in Sources */,
 				297FFE4E1EE0384B00B62030 /* BusDetailViewController.m in Sources */,
+				296266CE1EF94A41005B9F9C /* MoreDetailViewController.m in Sources */,
+				296266C61EF8EDCB005B9F9C /* TaipeiSubwayData.m in Sources */,
+				296266CB1EF94845005B9F9C /* MoreViewController.m in Sources */,
 				292124BA1EC47A0A00D5C526 /* AppDelegate.m in Sources */,
-				2D2023901EF7F52900BDC074 /* Project_BTM.xcdatamodeld in Sources */,
 				2DC6A9141EF3010200F6B631 /* TaipeiSubway.m in Sources */,
 				290D64081ED577D7009E81E3 /* SearchSubwayViewController.m in Sources */,
 				29367DE21EF3C0AD00941432 /* SubwayDetailViewController.m in Sources */,
@@ -492,22 +519,13 @@
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
-		2D20238E1EF7F52900BDC074 /* Project_BTM.xcdatamodeld */ = {
-			isa = XCVersionGroup;
-			children = (
-				2D20238F1EF7F52900BDC074 /* Project_BTM.xcdatamodel */,
-			);
-			currentVersion = 2D20238F1EF7F52900BDC074 /* Project_BTM.xcdatamodel */;
-			path = Project_BTM.xcdatamodeld;
-			sourceTree = "<group>";
-			versionGroupType = wrapper.xcdatamodel;
-		};
 		2D2023911EF814C800BDC074 /* CityBusDataModel.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				296266C71EF8FEE5005B9F9C /* CityBusDataModel 2.xcdatamodel */,
 				2D2023921EF814C800BDC074 /* CityBusDataModel.xcdatamodel */,
 			);
-			currentVersion = 2D2023921EF814C800BDC074 /* CityBusDataModel.xcdatamodel */;
+			currentVersion = 296266C71EF8FEE5005B9F9C /* CityBusDataModel 2.xcdatamodel */;
 			path = CityBusDataModel.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

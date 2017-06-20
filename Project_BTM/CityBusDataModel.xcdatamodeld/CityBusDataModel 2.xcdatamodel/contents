@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="12141" systemVersion="16D32" minimumToolsVersion="Automatic" sourceLanguage="Objective-C" userDefinedModelVersionIdentifier="">
     <entity name="CityBus" representedClassName="CityBusData" syncable="YES">
+        <attribute name="authorityID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="departureStopName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="destinationStopName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="routeID" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="routeName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="stopID" optional="YES" attributeType="String" syncable="YES"/>
@@ -12,7 +15,7 @@
         <attribute name="stopName" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <elements>
-        <element name="CityBus" positionX="-209" positionY="39" width="128" height="105"/>
+        <element name="CityBus" positionX="-209" positionY="39" width="128" height="150"/>
         <element name="TaipeiSubway" positionX="-54" positionY="54" width="128" height="88"/>
     </elements>
 </model>

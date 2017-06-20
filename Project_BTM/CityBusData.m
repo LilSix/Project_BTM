@@ -10,9 +10,12 @@
 
 @implementation CityBusData
 
+@dynamic authorityID;
 @dynamic routeID;
 @dynamic routeName;
 @dynamic stopID;
 @dynamic stopName;
+@dynamic departureStopName;
+@dynamic destinationStopName;
 
 @end

@@ -9,6 +9,8 @@
 #import "SubwayDetailViewController.h"
 #import "TaipeiSubway.h"
 #import "MBProgressHUD.h"
+#import "TaipeiSubwayData.h"
+#import "AppDelegate.h"
 
 
 #pragma mark - Frameworks
@@ -25,7 +27,7 @@
 UIPickerViewDataSource, UITextFieldDelegate, UITextFieldDelegate> {
     
     NSMutableArray *subwayLists;
-    NSMutableArray *destinationLists;
+    NSMutableDictionary *destinationLists;
     UIPickerView *pickerViewRouteName;
     NSString *stringWithSelectedRouteName;
     
@@ -39,7 +41,12 @@ UIPickerViewDataSource, UITextFieldDelegate, UITextFieldDelegate> {
 }
 
 @property (strong, nonatomic) TaipeiSubway *taipeiSubway;
+
 @property (strong, nonatomic) NSArray *routeNameDataSource;
+@property (strong, nonatomic) NSString *departureStopName;
+@property (strong, nonatomic) NSString *destinationStopName;
+@property (strong, nonatomic) NSString *destinationStopName2;
+
 @property (weak, nonatomic) IBOutlet UITableView *tableViewSubwayList;
 @property (weak, nonatomic) IBOutlet UITextField *textFieldRouteName;
 @property (weak, nonatomic) IBOutlet UIImageView *imageViewRouteBackground;
@@ -98,14 +105,14 @@ UIPickerViewDataSource, UITextFieldDelegate, UITextFieldDelegate> {
     if (self) {
         
         subwayLists = [NSMutableArray array];
-        destinationLists = [NSMutableArray array];
+        destinationLists = [NSMutableDictionary dictionary];
         
         configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
         session = [NSURLSession sessionWithConfiguration:configuration];
         
         _taipeiSubway = [[TaipeiSubway alloc] init];
         [_taipeiSubway setRoute:[NSMutableArray array]];
-        [_taipeiSubway setRouteID:[NSMutableDictionary dictionary]];
+        [_taipeiSubway setStopID:[NSMutableDictionary dictionary]];
         [_taipeiSubway setRouteBR:[NSMutableArray array]];
         [_taipeiSubway setRouteR:[NSMutableArray array]];
         [_taipeiSubway setRouteG:[NSMutableArray array]];
@@ -182,9 +189,24 @@ UIPickerViewDataSource, UITextFieldDelegate, UITextFieldDelegate> {
     
     NSMutableArray *mutableArray = [NSMutableArray array];
     for (id object in [_taipeiSubway route]) {
-        
-        NSString *stringWithID = [[_taipeiSubway routeID] objectForKey:object];
-        [mutableArray addObject:stringWithID];
+
+        NSString *stringWithSubwayStatus = [destinationLists objectForKey:object];
+//        NSString *firstObject = [[_taipeiSubway route] firstObject];
+//        NSString *lastObject = [[_taipeiSubway route] lastObject];
+        if ([stringWithSubwayStatus isEqualToString:_departureStopName]) {
+            
+            stringWithSubwayStatus = @"▲ 列車停靠中";
+            [mutableArray addObject:stringWithSubwayStatus];
+        } else if ([stringWithSubwayStatus isEqualToString:_destinationStopName] ||
+                   [stringWithSubwayStatus isEqualToString:_destinationStopName2]) {
+            
+            stringWithSubwayStatus = @"▼ 列車停靠中";
+            [mutableArray addObject:stringWithSubwayStatus];
+        } else {
+            
+            stringWithSubwayStatus = @"";
+            [mutableArray addObject:stringWithSubwayStatus];
+        }
     }
     [[tableViewCell detailTextLabel] setText:[mutableArray objectAtIndex:[indexPath row]]];
     [[tableViewCell detailTextLabel] setTextColor:[UIColor grayColor]];
@@ -198,6 +220,50 @@ UIPickerViewDataSource, UITextFieldDelegate, UITextFieldDelegate> {
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    
+    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    NSManagedObjectContext *managedObjectContext = [appDelegate managedObjectContext];
+    
+    NSString *stringWithStopName = [[_taipeiSubway route] objectAtIndex:[indexPath row]];
+    
+    UIAlertController *alertController = [UIAlertController
+                                              alertControllerWithTitle:[self editStringFromHalfWidthToFullWidth:stringWithStopName]
+                                                               message:@"確定將此車站加入至常用車站中嗎？"
+                                                        preferredStyle:UIAlertControllerStyleActionSheet];
+    UIAlertAction *alertActionWithDone = [UIAlertAction actionWithTitle:@"確定"
+                                                                  style:UIAlertActionStyleDestructive
+                                                                handler:^(UIAlertAction *action) {
+                                                                    
+                                                                    TaipeiSubwayData *taipeiSubwayData;
+                                                                    taipeiSubwayData = [NSEntityDescription
+                                                                                            insertNewObjectForEntityForName:@"TaipeiSubway"
+                                                                                                     inManagedObjectContext:managedObjectContext];
+                                                                    
+                                                                    [taipeiSubwayData setRouteName:[_textFieldRouteName text]];
+                                                                    taipeiSubwayData.stopID = [_taipeiSubway.stopID objectForKey:stringWithStopName];
+                                                                    [taipeiSubwayData setStopName:stringWithStopName];
+                                                                    [managedObjectContext save:nil];
+                                                                    
+                                                                    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.navigationController.view animated:YES];
+                                                                    
+                                                                    // Set the custom view mode to show any view.
+                                                                    hud.mode = MBProgressHUDModeCustomView;
+                                                                    // Set an image view with a checkmark.
+                                                                    UIImage *image = [[UIImage imageNamed:@"Checkmark"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+                                                                    hud.customView = [[UIImageView alloc] initWithImage:image];
+                                                                    // Looks a bit nicer if we make it square.
+                                                                    hud.square = YES;
+                                                                    // Optional label text.
+                                                                    hud.label.text = NSLocalizedString(@"完成", @"HUD done title");
+                                                                    
+                                                                    [hud hideAnimated:YES afterDelay:.8f];
+                                                                }];
+    UIAlertAction *alertActionWithCancel = [UIAlertAction actionWithTitle:@"取消"
+                                                                    style:UIAlertActionStyleCancel
+                                                                  handler:nil];
+    [alertController addAction:alertActionWithDone];
+    [alertController addAction:alertActionWithCancel];
+    [self presentViewController:alertController animated:YES completion:nil];
 }
 
 
@@ -279,6 +345,7 @@ numberOfRowsInComponent:(NSInteger)component {
     
     [[self view] endEditing:YES];
     [[self view] resignFirstResponder];
+    [self fetchSubwayArrivedAtStation];
     
     if (![[_textFieldRouteName text] isEqualToString:@""]) {
         
@@ -396,7 +463,7 @@ numberOfRowsInComponent:(NSInteger)component {
 - (void)fetchSubwayDetail:(NSString *)routeName {
     
     [[_taipeiSubway route] removeAllObjects];
-    [[_taipeiSubway routeID] removeAllObjects];
+    [[_taipeiSubway stopID] removeAllObjects];
     
     NSString *stringWithURL = @"http://data.taipei/opendata/datalist/apiAccess?scope=resourceAquire&rid=7f5d3c69-1fdc-44a2-a5ef-13cffe323bd6";
     
@@ -440,9 +507,13 @@ numberOfRowsInComponent:(NSInteger)component {
                                                         } else {
                                                             stringWithID = [NSString stringWithFormat:@"BR%d", i];
                                                         }
-                                                        [[_taipeiSubway routeID] setObject:stringWithID forKey:object];
+                                                        [[_taipeiSubway stopID] setObject:stringWithID forKey:object];
                                                         i++;
                                                     }
+                                                    
+                                                    _departureStopName = [[_taipeiSubway route] firstObject];
+                                                    _destinationStopName = [[_taipeiSubway route] lastObject];
+//                                                    [self fetchSubwayArrivedAtStation];
                                                     
                                                     [[NSOperationQueue mainQueue] addOperationWithBlock:^{
                                                         
@@ -490,9 +561,13 @@ numberOfRowsInComponent:(NSInteger)component {
                                                         } else {
                                                             stringWithID = [NSString stringWithFormat:@"R%d", i];
                                                         }
-                                                        [[_taipeiSubway routeID] setObject:stringWithID forKey:object];
+                                                        [[_taipeiSubway stopID] setObject:stringWithID forKey:object];
                                                         i++;
                                                     }
+                                                    
+                                                    _departureStopName = [[_taipeiSubway route] firstObject];
+                                                    _destinationStopName = [[_taipeiSubway route] lastObject];
+//                                                    [self fetchSubwayArrivedAtStation];
                                                     
                                                     [[NSOperationQueue mainQueue] addOperationWithBlock:^{
                                                         
@@ -540,9 +615,13 @@ numberOfRowsInComponent:(NSInteger)component {
                                                         } else {
                                                             stringWithID = [NSString stringWithFormat:@"G%d", i];
                                                         }
-                                                        [[_taipeiSubway routeID] setObject:stringWithID forKey:object];
+                                                        [[_taipeiSubway stopID] setObject:stringWithID forKey:object];
                                                         i++;
                                                     }
+                                                    
+                                                    _departureStopName = [[_taipeiSubway route] firstObject];
+                                                    _destinationStopName = [[_taipeiSubway route] lastObject];
+//                                                    [self fetchSubwayArrivedAtStation];
                                                     
                                                     [[NSOperationQueue mainQueue] addOperationWithBlock:^{
                                                         
@@ -583,6 +662,10 @@ numberOfRowsInComponent:(NSInteger)component {
                                                     }
                                                     [_taipeiSubway setRoute:[[[[_taipeiSubway route] reverseObjectEnumerator] allObjects] mutableCopy]];
                                                     
+                                                    _departureStopName = [[_taipeiSubway route] firstObject];
+                                                    _destinationStopName = [[_taipeiSubway route] lastObject];
+//                                                    [self fetchSubwayArrivedAtStation];
+                                                    
                                                     // 三重國小－蘆洲
                                                     NSMutableArray *mutableArray = [NSMutableArray array];
                                                     for (int j = 137; j <=141; j++) {
@@ -613,9 +696,12 @@ numberOfRowsInComponent:(NSInteger)component {
                                                             
                                                             stringWithID = [NSString stringWithFormat:@"O%d", i];
                                                         }
-                                                        [[_taipeiSubway routeID] setObject:stringWithID forKey:object];
+                                                        [[_taipeiSubway stopID] setObject:stringWithID forKey:object];
                                                         i++;
                                                     }
+                                                    
+                                                    _destinationStopName2 = [[_taipeiSubway route] lastObject];
+//                                                    [self fetchSubwayArrivedAtStation];
                                                     
                                                     [[NSOperationQueue mainQueue] addOperationWithBlock:^{
                                                         
@@ -663,9 +749,13 @@ numberOfRowsInComponent:(NSInteger)component {
                                                         } else {
                                                             stringWithID = [NSString stringWithFormat:@"BL%d", i];
                                                         }
-                                                        [[_taipeiSubway routeID] setObject:stringWithID forKey:object];
+                                                        [[_taipeiSubway stopID] setObject:stringWithID forKey:object];
                                                         i++;
                                                     }
+                                                    
+                                                    _departureStopName = [[_taipeiSubway route] firstObject];
+                                                    _destinationStopName = [[_taipeiSubway route] lastObject];
+//                                                    [self fetchSubwayArrivedAtStation];
                                                     
                                                     [[NSOperationQueue mainQueue] addOperationWithBlock:^{
                                                         
@@ -677,7 +767,7 @@ numberOfRowsInComponent:(NSInteger)component {
     }
 }
 
-- (void)fetchSubwayArrivedAtStation {
+- (NSMutableDictionary *)fetchSubwayArrivedAtStation {
     
     // Remove objects from mutable array before search.
     [subwayLists removeAllObjects];
@@ -698,26 +788,44 @@ numberOfRowsInComponent:(NSInteger)component {
                                                 
                                                 for (NSDictionary *dictionary in results) {
                                                     NSString *station = [dictionary objectForKey:@"Station"];
-                                                    NSString *tempDestination = [dictionary objectForKey:@"Destination"];
-                                                    NSString *destination = [NSString stringWithFormat:@"終點站：%@", tempDestination];
+                                                    NSString *destination = [dictionary objectForKey:@"Destination"];
+//                                                    NSString *destination = [NSString stringWithFormat:@"終點站：%@", tempDestination];
                                                     
-                                                    station = [self editStringFromHalfWidthToFullWidth:station];
-                                                    destination = [self editStringFromHalfWidthToFullWidth:destination];
+                                                    station = [NSString stringWithFormat:@"捷運%@", station];
+                                                    destination = [NSString stringWithFormat:@"捷運%@", destination];
                                                     
-                                                    if ([tempDestination isEqualToString:@"動物園站"]) {
-                                                        
-                                                        [subwayLists addObject:station];
-                                                        [destinationLists addObject:destination];
-                                                    }
+                                                    [destinationLists setObject:destination forKey:station];
+//                                                    _destinationStopName = [NSString stringWithFormat:@"捷運%@", _destinationStopName];
+//                                                    _destinationStopName2 = [NSString stringWithFormat:@"捷運%@", _destinationStopName2];
+                                                    
+//                                                    if ([destination isEqualToString:_departureStopName]) {
+//                                                        
+//                                                        NSString *stringWithSuwayStatus = @"▲ 列車到站中";
+//                                                        [destinationLists setObject:stringWithSuwayStatus forKey:station];
+//                                                    }
+//                                                    
+//                                                    if ([destination isEqualToString:_destinationStopName]) {
+//                                                        
+//                                                        NSString *stringWithSuwayStatus = @"▼ 列車到站中";
+//                                                        [destinationLists setObject:stringWithSuwayStatus forKey:station];
+//                                                    }
+//                                                    
+//                                                    if ([destination isEqualToString:_destinationStopName2]) {
+//                                                        
+//                                                        NSString *stringWithSuwayStatus = @"▼ 列車到站中";
+//                                                        [destinationLists setObject:stringWithSuwayStatus forKey:station];
+//                                                    }
                                                 }
-                                                
-                                                [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-                                                    
-                                                    [_tableViewSubwayList reloadData];
-                                                    [MBProgressHUD hideHUDForView:[self view] animated:YES];
-                                                }];
+//                                                
+//                                                [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+//                                                    
+//                                                    [_tableViewSubwayList reloadData];
+//                                                    [MBProgressHUD hideHUDForView:[self view] animated:YES];
+//                                                }];
                                             }];
     [dataTask resume];
+    
+    return destinationLists;
 }
 
 

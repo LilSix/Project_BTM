@@ -26,37 +26,22 @@
 UIPickerViewDelegate, UIPickerViewDataSource, NSURLSessionDelegate, NSURLSessionDownloadDelegate> {
     
     NSMutableArray *cityBusList;
-    //    NSMutableArray *departureStopName;
-    //    NSMutableArray *destinationStopName;
-    
     NSMutableArray *busStopStartToEnd;
-    
     NSArray *searchResults;
-    
     UIPickerView *pickerViewRouteName;
-    
     NSString *cityBusRouteTitle;
-    
-    
     NSString *searchRouteName;
     NSString *searchRouteNumber;
     NSInteger saveDidSelectRow;
 }
 
-
 @property (strong, nonatomic) CityBus *cityBus;
+@property (strong, nonatomic) NSArray *routeNameDataSource;
+
 @property (weak, nonatomic) IBOutlet UITableView *tableViewBusList;
-
-//@property (weak, nonatomic) IBOutlet UISearchBar *searchBar;
-//@property (weak, nonatomic) IBOutlet UISearchBar *searchBar;
-//@property (strong, nonatomic) IBOutlet UISearchController *searchDisplayController;
-
 @property (weak, nonatomic) IBOutlet UIButton *buttonSearch;
 @property (weak, nonatomic) IBOutlet UITextField *textFieldRouteName;
 @property (weak, nonatomic) IBOutlet UITextField *textFieldRouteNumber;
-//@property (weak, nonatomic) IBOutlet UIPickerView *pickerViewRouteName;
-
-@property (strong, nonatomic) NSArray *routeNameDataSource;
 
 @end
 
@@ -92,18 +77,6 @@ UIPickerViewDelegate, UIPickerViewDataSource, NSURLSessionDelegate, NSURLSession
     UIToolbar* toolBar = [[UIToolbar alloc] init];
     [toolBar setBarStyle:UIBarStyleDefault];
     
-    //    // Create toolbar left arrow bar button item.
-    //    barButtonItemLeftArrow = [[UIBarButtonItem alloc]  initWithTitle:@"＜"
-    //                                                                                style:UIBarButtonItemStylePlain
-    //                                                                               target:self
-    //                                                                               action:@selector(barButtonItemLeftArrowTouch:)];
-    //
-    //    // Create toolbar right arrow bar button item.
-    //    barButtonItemRightArrow = [[UIBarButtonItem alloc]  initWithTitle:@"＞"
-    //                                                                                 style:UIBarButtonItemStylePlain
-    //                                                                                target:self
-    //                                                                                action:@selector(barButtonItemRightArrowTouch:)];
-    
     // Create toolbar cancel bar button item.
     UIBarButtonItem *barButtonItemCancel = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
                                                                                          target:self
@@ -131,6 +104,7 @@ UIPickerViewDelegate, UIPickerViewDataSource, NSURLSessionDelegate, NSURLSession
 }
 
 - (void)didReceiveMemoryWarning {
+    
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
@@ -204,40 +178,9 @@ UIPickerViewDelegate, UIPickerViewDataSource, NSURLSessionDelegate, NSURLSession
 #pragma mark - UITextFieldDelegate
 
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField {
-    //    NSLog(@"%@", routeNameList);
     
-    //    [_routeNamePicker setDelegate:self];
-    //    [_routeNamePicker setDataSource:self];
-    
-    NSLog(@"textFieldShouldBeginEditing");
-    
-    //    [routeNamePicker setHidden:NO];
-    
-    //    if ([_routeNameTextField ]) {
-    //
-    ////        UIPickerView *tempPickerView = [[self view] viewWithTag:11];
-    ////        [tempPickerView setHidden:YES];
-    //        NSLog(@"[_routeNameTextField isEditing]");
-    //        [_routeNamePicker setHidden:NO];
-    //    } else if ([_routeNumberTextField isTouchInside]){
-    //        [_routeNamePicker setHidden:YES];
-    //    }
+    NSLog(@"textFieldShouldBeginEditing:");
     [textField setText:[_routeNameDataSource objectAtIndex:saveDidSelectRow]];
-    return YES;
-}
-
-
-- (void)textFieldDidEndEditing:(UITextField *)textField {
-}
-
-- (BOOL)textFieldShouldEndEditing:(UITextField *)textField {
-    
-    
-    return YES;
-}
-
-- (BOOL)textFieldShouldReturn:(UITextField *)textField {
-    
     return YES;
 }
 
@@ -276,34 +219,6 @@ numberOfRowsInComponent:(NSInteger)component {
     [_textFieldRouteName setText:[_routeNameDataSource objectAtIndex:row]];
     saveDidSelectRow = row;
 }
-
-
-#pragma mark - prepareForDownloadJSONData
-
-///TODO: Create method to prepare download JSON data.
-//- (NSURLSessionDownloadTask *)prepareForDownloadJSONData {
-//
-//    NSString *stringName = [_routeNameTextField text];
-//    NSString *stringNumber = [_routeNumberTextField text];
-//
-//    // Use NSOperationQueue to background download JSON data.
-//    NSURLSessionConfiguration *URLSessionConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
-//    NSURLSession *session = [NSURLSession sessionWithConfiguration:URLSessionConfiguration
-//                                                          delegate:self
-//                                                     delegateQueue:[NSOperationQueue mainQueue]];
-//
-//    NSString *stringTaipei = [NSString stringWithFormat:@"http://ptx.transportdata.tw/MOTC/v2/Bus/Route/City/Taipei/%@%@?$format=JSON", stringName, stringNumber];
-//    NSURL *URLTaipei = [NSURL URLWithString:stringTaipei];
-//    NSURLSessionDownloadTask *taipeiDownloadTask = [session downloadTaskWithURL:URLTaipei];
-//
-//    NSString *stringNewTaipei = [NSString stringWithFormat:@"http://ptx.transportdata.tw/MOTC/v2/Bus/Route/City/NewTaipei/%@%@?$format=JSON", stringName, stringNumber];
-//    NSURL *URLNewTiapei = [NSURL URLWithString:stringNewTaipei];
-//    NSURLSessionDownloadTask *newTaipeiDownloadtask = [session downloadTaskWithURL:URLNewTiapei];
-//
-//    return nil;
-//}
-
-
 
 
 #pragma mark - IBAction
@@ -468,13 +383,13 @@ didFinishDownloadingToURL:(NSURL *)location {
         NSLog(@"[cityBus routeID]: %@", [_cityBus routeID]);
         NSLog(@"[cityBus routeName]: %@", [_cityBus routeName]);
         NSLog(@"Download compeleted.");
-    }
-    
-    [[NSOperationQueue mainQueue] addOperationWithBlock:^{
         
-        [_tableViewBusList reloadData];
-        [MBProgressHUD hideHUDForView:[self view] animated:YES];
-    }];
+        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+            
+            [_tableViewBusList reloadData];
+            [MBProgressHUD hideHUDForView:[self view] animated:YES];
+        }];
+    }
 }
 
 
@@ -552,7 +467,7 @@ didFinishDownloadingToURL:(NSURL *)location {
             NSLog(@"downloadTaskNewTaipei 在第 %@ 幾個執行緒。", [NSThread currentThread]);
         }];
 //        [queue addOperation:operationNewTaipei];
-        [queue addOperations:@[operationTaipei, operationNewTaipei] waitUntilFinished:NO];
+        [queue addOperations:@[operationTaipei, operationNewTaipei] waitUntilFinished:YES];
         
         NSLog(@"Start download JSON data...");
     }
