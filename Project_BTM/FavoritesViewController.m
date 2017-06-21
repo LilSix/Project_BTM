@@ -76,16 +76,20 @@
     [_segmentedControlBusSubway setSelectedSegmentIndex:0];
     
     
-    _destinationLists = [self fetchSubwayArrivedAtStation];
+//    _destinationLists = [self fetchSubwayArrivedAtStation];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     
     NSLog(@"FavoritesViewController viewWillAppear:");
-    [MBProgressHUD hideHUDForView:[self view] animated:YES];
     [self fetchBusCoreData];
     [self fetchSubwayCoreData];
     [_tableViewFavoritesList reloadData];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    
+//    [MBProgressHUD hideHUDForView:[self view] animated:NO];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -418,6 +422,8 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 
 - (NSMutableDictionary *)fetchSubwayArrivedAtStation {
     
+    NSLog(@"fetchSubwayArrivedAtStation");
+    
     [MBProgressHUD showHUDAddedTo:[self view] animated:YES];
     
     NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
@@ -445,9 +451,12 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
                                                     [_destinationLists setObject:destination forKey:station];
                                                 }
                                                 
+                                                NSLog(@"Thread: %@", [NSThread currentThread]);
+                                                
                                                 [[NSOperationQueue mainQueue] addOperationWithBlock:^{
                                                     
-                                                    [MBProgressHUD hideHUDForView:[self view] animated:YES];
+                                                    [MBProgressHUD hideHUDForView:[self view] animated:NO];
+                                                    NSLog(@"hideHUDForView:");
                                                 }];
                                             }];
     [dataTask resume];

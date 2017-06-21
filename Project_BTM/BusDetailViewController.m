@@ -76,16 +76,21 @@ NSURLSessionTaskDelegate, NSURLSessionDataDelegate> {
     
     // Fetch JSON Data
     [MBProgressHUD showHUDAddedTo:[self view] animated:YES];
+        
     [self fetchBusStopsGoWithAuthorityID:_authorityID routeID:_routeID];
     [self fetchBusStopsBackWithAuthorityID:_authorityID routeID:_routeID];
     
     if ([_authorityID isEqualToString:@"Taipei"]) {
-     
+        
         [self fetchTaipeiEstimateTimeWithrouteID:_routeID];
     } else {
-    
+        
         [self fetchNewTaipeiEstimateTimeWithrouteID:_routeID];
     }
+
+
+    
+    
     
     // Auto Refresh Data
     timerWithEstimateTime = [NSTimer scheduledTimerWithTimeInterval:1
@@ -108,15 +113,15 @@ NSURLSessionTaskDelegate, NSURLSessionDataDelegate> {
 
 - (void)viewWillAppear:(BOOL)animated {
     
-    [_tableViewBusDetailList reloadData];
+    [self performSelector:@selector(delayReloadData) withObject:nil afterDelay:1];
     NSLog(@"viewWillAppear.");
 }
 
 
 - (void)viewDidAppear:(BOOL)animated {
     
-    [_tableViewBusDetailList reloadData];
-    [MBProgressHUD hideHUDForView:[self view] animated:YES];
+//    [_tableViewBusDetailList reloadData];
+    
     NSLog(@"viewDidAppear.");
 }
 
@@ -130,6 +135,12 @@ NSURLSessionTaskDelegate, NSURLSessionDataDelegate> {
     
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)delayReloadData {
+    
+    [_tableViewBusDetailList reloadData];
+    [MBProgressHUD hideHUDForView:[self view] animated:NO];
 }
 
 /*
@@ -160,8 +171,6 @@ NSURLSessionTaskDelegate, NSURLSessionDataDelegate> {
     
     self = [super initWithCoder:coder];
     if (self) {
-        
-        
         
         _cityBus = [[CityBus alloc] init];
         [_cityBus setStopIDGo:[NSMutableArray array]];
@@ -425,7 +434,7 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
                                             completionHandler:^(NSData *data,
                                                                 NSURLResponse *response,
                                                                 NSError *error) {
-                                                NSLog(@"fetchBusStopsGo Thread: %@", [NSThread currentThread]);
+                                                
                                                 if (!error) {
                                                     
                                                     NSArray *array = [NSJSONSerialization JSONObjectWithData:data
@@ -461,7 +470,7 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
                                             completionHandler:^(NSData *data,
                                                                 NSURLResponse *response,
                                                                 NSError *error) {
-                                                NSLog(@"fetchBusStopsBack Thread: %@", [NSThread currentThread]);
+                                                
                                                 if (!error) {
                                                     
                                                     NSArray *array = [NSJSONSerialization JSONObjectWithData:data
@@ -496,7 +505,7 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
                                             completionHandler:^(NSData *data,
                                                                 NSURLResponse *response,
                                                                 NSError *error) {
-                                                NSLog(@"fetchTaipeiEstimateTime Thread: %@", [NSThread currentThread]);
+                                               
                                                 NSArray *array = [NSJSONSerialization JSONObjectWithData:data
                                                                                                  options:NSJSONReadingMutableContainers
                                                                                                    error:&error];

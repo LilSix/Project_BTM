@@ -517,7 +517,7 @@ numberOfRowsInComponent:(NSInteger)component {
                                                     [[NSOperationQueue mainQueue] addOperationWithBlock:^{
                                                         
                                                         [_tableViewSubwayList reloadData];
-                                                        [MBProgressHUD hideHUDForView:[self view] animated:YES];
+                                                        [MBProgressHUD hideHUDForView:[self view] animated:NO];
                                                     }];
                                                 }];
         [dataTask resume];
@@ -571,7 +571,7 @@ numberOfRowsInComponent:(NSInteger)component {
                                                     [[NSOperationQueue mainQueue] addOperationWithBlock:^{
                                                         
                                                         [_tableViewSubwayList reloadData];
-                                                        [MBProgressHUD hideHUDForView:[self view] animated:YES];
+                                                        [MBProgressHUD hideHUDForView:[self view] animated:NO];
                                                     }];
                                                 }];
         [dataTask resume];
@@ -625,7 +625,7 @@ numberOfRowsInComponent:(NSInteger)component {
                                                     [[NSOperationQueue mainQueue] addOperationWithBlock:^{
                                                         
                                                         [_tableViewSubwayList reloadData];
-                                                        [MBProgressHUD hideHUDForView:[self view] animated:YES];
+                                                        [MBProgressHUD hideHUDForView:[self view] animated:NO];
                                                     }];
                                                 }];
         [dataTask resume];
@@ -705,7 +705,7 @@ numberOfRowsInComponent:(NSInteger)component {
                                                     [[NSOperationQueue mainQueue] addOperationWithBlock:^{
                                                         
                                                         [_tableViewSubwayList reloadData];
-                                                        [MBProgressHUD hideHUDForView:[self view] animated:YES];
+                                                        [MBProgressHUD hideHUDForView:[self view] animated:NO];
                                                     }];
                                                 }];
         [dataTask resume];
@@ -759,7 +759,7 @@ numberOfRowsInComponent:(NSInteger)component {
                                                     [[NSOperationQueue mainQueue] addOperationWithBlock:^{
                                                         
                                                         [_tableViewSubwayList reloadData];
-                                                        [MBProgressHUD hideHUDForView:[self view] animated:YES];
+                                                        [MBProgressHUD hideHUDForView:[self view] animated:NO];
                                                     }];
                                                 }];
         [dataTask resume];
@@ -819,7 +819,7 @@ numberOfRowsInComponent:(NSInteger)component {
 //                                                [[NSOperationQueue mainQueue] addOperationWithBlock:^{
 //                                                    
 //                                                    [_tableViewSubwayList reloadData];
-//                                                    [MBProgressHUD hideHUDForView:[self view] animated:YES];
+//                                                    [MBProgressHUD hideHUDForView:[self view] animated:NO];
 //                                                }];
                                             }];
     [dataTask resume];

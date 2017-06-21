@@ -387,7 +387,7 @@ didFinishDownloadingToURL:(NSURL *)location {
         [[NSOperationQueue mainQueue] addOperationWithBlock:^{
             
             [_tableViewBusList reloadData];
-            [MBProgressHUD hideHUDForView:[self view] animated:YES];
+            [MBProgressHUD hideHUDForView:[self view] animated:NO];
         }];
     }
 }
