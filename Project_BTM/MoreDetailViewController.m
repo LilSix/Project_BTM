@@ -35,7 +35,7 @@
     NSLog(@"_stringLWithURLForWeb = %@", _stringWithURLForWeb);
     NSLog(@"_stringWithNavigationBarTitle = %@", _stringWithNavigationBarTitle);
     
-    self.navigationController.title = _stringWithNavigationBarTitle;
+//    self.navigationController.title = _stringWithNavigationBarTitle;
     
     WKWebView *webView = [[WKWebView alloc] initWithFrame:[self view].bounds];
     [[self view] addSubview:webView];
