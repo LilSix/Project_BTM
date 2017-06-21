@@ -450,8 +450,6 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [dataTask resume];
 }
 
-
-
 - (void)fetchBusStopsBackWithAuthorityID:(NSString *)authorityID
                                  routeID:(NSString *)routeID {
     

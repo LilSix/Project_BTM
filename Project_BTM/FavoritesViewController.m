@@ -29,6 +29,7 @@
 @interface FavoritesViewController ()<UITableViewDelegate, UITableViewDataSource> {
     
     CityBusData *cityBusData;
+    SearchSubwayViewController *searchSubwayVC;
     TaipeiSubwayData *taipeiSubwayData;
     
     NSMutableArray *favoritesBusStopID;
@@ -48,6 +49,7 @@
     NSString *selectedDestinationStopName;
     
     NSIndexPath *indexPathSelected;
+//    NSMutableDictionary *destinationLists;
 }
 
 @property (strong, nonatomic) NSMutableDictionary *destinationLists;
@@ -73,12 +75,14 @@
     
     [_segmentedControlBusSubway setSelectedSegmentIndex:0];
     
-//    destinationLists = [searchSubwayViewController fetchSubwayArrivedAtStation];
+    
+    _destinationLists = [self fetchSubwayArrivedAtStation];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     
     NSLog(@"FavoritesViewController viewWillAppear:");
+    [MBProgressHUD hideHUDForView:[self view] animated:YES];
     [self fetchBusCoreData];
     [self fetchSubwayCoreData];
     [_tableViewFavoritesList reloadData];
@@ -122,6 +126,7 @@
         favoritesSubwayRouteName = [NSMutableArray array];
         
         _destinationLists = [NSMutableDictionary dictionary];
+        searchSubwayVC = [[SearchSubwayViewController alloc] init];
     }
     
     return self;
@@ -150,6 +155,7 @@
     
     if ([_segmentedControlBusSubway selectedSegmentIndex] == 0) {
         
+        [tableViewCell setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
         [[tableViewCell textLabel] setText:[favoritesBusStopName objectAtIndex:[indexPath row]]];
         
         NSString *departureStopName = [favoritesBusDepartureStopName objectAtIndex:[indexPath row]];
@@ -161,8 +167,27 @@
         [[tableViewCell detailTextLabel] setTextColor:[UIColor grayColor]];
     } else {
         
+        [tableViewCell setAccessoryType:UITableViewCellAccessoryNone];
+        
+        NSString *stationStatus;
+        NSMutableArray *mutableArray = [NSMutableArray array];
+        _destinationLists = [self fetchSubwayArrivedAtStation];
+        for (id object in favoritesSubwayStopName) {
+            
+            stationStatus = [_destinationLists objectForKey:object];
+            if (stationStatus != nil) {
+                
+                stationStatus = [NSString stringWithFormat:@"列車停靠中（往：%@）", stationStatus];
+                [mutableArray addObject:stationStatus];
+            } else {
+                
+                stationStatus = @"列車尚未到站";
+                [mutableArray addObject:stationStatus];
+            }
+        }
+        
         [[tableViewCell textLabel] setText:[favoritesSubwayStopName objectAtIndex:[indexPath row]]];
-        [[tableViewCell detailTextLabel] setText:[favoritesSubwayRouteName objectAtIndex:[indexPath row]]];
+        [[tableViewCell detailTextLabel] setText:[mutableArray objectAtIndex:[indexPath row]]];
         [[tableViewCell detailTextLabel] setTextColor:[UIColor grayColor]];
     }
     
@@ -258,7 +283,6 @@ forRowAtIndexPath:(NSIndexPath *)indexPath {
 
 #pragma mark - UITableViewDelegate
 
-
 - (void)tableView:(UITableView *)tableView
 didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
@@ -343,9 +367,7 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 
 - (IBAction)barButtonItemRefreshTouch:(UIBarButtonItem *)sender {
     
-    SearchSubwayViewController *searchSubwayVC = [[SearchSubwayViewController alloc] init];
-    _destinationLists = [searchSubwayVC fetchSubwayArrivedAtStation];
-    
+    NSLog(@"_destinationLists = %@", _destinationLists);
     NSLog(@"[favoritesBusStopName count]): %ld", [favoritesBusStopName count]);
     NSLog(@"[favoritesSubwayStopName count]): %ld", [favoritesSubwayStopName count]);
 }
@@ -392,6 +414,48 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 }
 
 
+#pragma mark - FetchSubwayArrivedAtStation
+
+- (NSMutableDictionary *)fetchSubwayArrivedAtStation {
+    
+    [MBProgressHUD showHUDAddedTo:[self view] animated:YES];
+    
+    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
+    NSURLSession *session = [NSURLSession sessionWithConfiguration:configuration];
+    NSURL *URL = [NSURL URLWithString:@"http://data.taipei/opendata/datalist/apiAccess?scope=resourceAquire&rid=55ec6d6e-dc5c-4268-a725-d04cc262172b"];
+    NSURLSessionDataTask *dataTask = [session dataTaskWithURL:URL
+                                            completionHandler:^(NSData *data,
+                                                                NSURLResponse *response,
+                                                                NSError *error) {
+                                                
+                                                NSDictionary *subwayListsJSON = [NSJSONSerialization JSONObjectWithData:data
+                                                                                                                options:NSJSONReadingMutableContainers
+                                                                                                                  error:&error];
+                                                NSDictionary *result = [subwayListsJSON objectForKey:@"result"];
+                                                NSArray *results = [result objectForKey:@"results"];
+                                                
+                                                for (NSDictionary *dictionary in results) {
+                                                    NSString *station = [dictionary objectForKey:@"Station"];
+                                                    NSString *destination = [dictionary objectForKey:@"Destination"];
+                                                    //                                                    NSString *destination = [NSString stringWithFormat:@"終點站：%@", tempDestination];
+                                                    
+                                                    station = [NSString stringWithFormat:@"捷運%@", station];
+                                                    destination = [NSString stringWithFormat:@"捷運%@", destination];
+                                                    
+                                                    [_destinationLists setObject:destination forKey:station];
+                                                }
+                                                
+                                                [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                                                    
+                                                    [MBProgressHUD hideHUDForView:[self view] animated:YES];
+                                                }];
+                                            }];
+    [dataTask resume];
+    
+    return _destinationLists;
+}
+
+
 #pragma mark - Navigation
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation
@@ -414,9 +478,8 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
         if ([[segue identifier] isEqualToString:@"showSubwayDetail"]) {
         
-        SearchSubwayViewController *searchSubwayViewController = [[SearchSubwayViewController alloc] init];
-        searchSubwayViewController = [segue destinationViewController];
-    }
+            searchSubwayVC = [segue destinationViewController];
+        }
 }
 
 @end
