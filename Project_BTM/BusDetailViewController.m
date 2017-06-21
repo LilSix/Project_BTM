@@ -108,6 +108,7 @@ NSURLSessionTaskDelegate, NSURLSessionDataDelegate> {
 
 - (void)viewWillAppear:(BOOL)animated {
     
+    [_tableViewBusDetailList reloadData];
     NSLog(@"viewWillAppear.");
 }
 

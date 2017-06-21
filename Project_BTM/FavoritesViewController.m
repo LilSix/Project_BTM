@@ -154,7 +154,13 @@
     if ([_segmentedControlBusSubway selectedSegmentIndex] == 0) {
         
         [[tableViewCell textLabel] setText:[favoritesBusStopName objectAtIndex:[indexPath row]]];
-        [[tableViewCell detailTextLabel] setText:[favoritesBusRouteName objectAtIndex:[indexPath row]]];
+        
+        NSString *departureStopName = [favoritesBusDepartureStopName objectAtIndex:[indexPath row]];
+        NSString *destinationStopName = [favoritesBusDestinationStopName objectAtIndex:[indexPath row]];
+        NSString *routeName = [favoritesBusRouteName objectAtIndex:[indexPath row]];
+        NSString *stringWithDetailTextLabel = [NSString stringWithFormat:@"%@（%@－%@）", routeName, departureStopName, destinationStopName];
+        
+        [[tableViewCell detailTextLabel] setText:stringWithDetailTextLabel];
         [[tableViewCell detailTextLabel] setTextColor:[UIColor grayColor]];
     } else {
         

@@ -10,6 +10,7 @@
 
 @interface MoreDetailViewController : UIViewController
 
-@property (strong, nonatomic) NSString *stringLWithURLForWeb;
+@property (strong, nonatomic) NSString *stringWithURLForWeb;
+@property (strong, nonatomic) NSString *stringWithNavigationBarTitle;
 
 @end

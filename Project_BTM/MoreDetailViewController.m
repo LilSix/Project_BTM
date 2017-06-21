@@ -12,6 +12,7 @@
 #pragma mark - Frameworks
 
 @import WebKit;
+@import SafariServices;
 
 
 #pragma mark -
@@ -31,14 +32,19 @@
     // Do any additional setup after loading the view.
     
     
-    NSLog(@"_stringLWithURLForWeb = %@", _stringLWithURLForWeb);
+    NSLog(@"_stringLWithURLForWeb = %@", _stringWithURLForWeb);
+    NSLog(@"_stringWithNavigationBarTitle = %@", _stringWithNavigationBarTitle);
+    
+    self.navigationController.title = _stringWithNavigationBarTitle;
     
     WKWebView *webView = [[WKWebView alloc] initWithFrame:[self view].bounds];
     [[self view] addSubview:webView];
     [webView setNavigationDelegate:self];
     
+    NSURL *URL = [NSURL URLWithString:_stringWithURLForWeb];
+//    SFSafariViewController *safariVC = [[SFSafariViewController alloc] initWithURL:URL];
+//    [self.navigationController pushViewController:safariVC animated:YES];
     
-    NSURL *URL = [NSURL URLWithString:_stringLWithURLForWeb];
     NSURLRequest *request = [NSURLRequest requestWithURL:URL];
     
     [webView loadRequest:request];

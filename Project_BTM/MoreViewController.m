@@ -102,7 +102,11 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     if ([[segue identifier] isEqualToString:@"showMoreDetail"]) {
         
         MoreDetailViewController *moreDetailVC = [segue destinationViewController];
-        [moreDetailVC setStringLWithURLForWeb:stringWithURL];
+        NSIndexPath *indexPath = [_talbeViewMoreLists indexPathForSelectedRow];
+        NSString *string = [mutableArrayWithLinkName objectAtIndex:[indexPath row]];
+        stringWithURL = [mutableDicWithURL objectForKey:string];
+        [moreDetailVC setStringWithURLForWeb:stringWithURL];
+        [moreDetailVC setStringWithNavigationBarTitle:string];
     }
 }
 
