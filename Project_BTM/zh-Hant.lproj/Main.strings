@@ -1,0 +1,96 @@
+
+/* Class = "UILabel"; text = "Title"; ObjectID = "2Eb-0B-mWl"; */
+"2Eb-0B-mWl.text" = "Title";
+
+/* Class = "UINavigationItem"; title = "其他"; ObjectID = "3n8-Ht-HbU"; */
+"3n8-Ht-HbU.title" = "其他";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "4h7-0n-ArA"; */
+"4h7-0n-ArA.text" = "Label";
+
+/* Class = "UILabel"; text = "更新中⋯⋯"; ObjectID = "5yS-Rf-6an"; */
+"5yS-Rf-6an.text" = "更新中⋯⋯";
+
+/* Class = "UILabel"; text = "號碼"; ObjectID = "8Bq-V7-uGy"; */
+"8Bq-V7-uGy.text" = "號碼";
+
+/* Class = "UILabel"; text = "Detail"; ObjectID = "8jL-7m-hdh"; */
+"8jL-7m-hdh.text" = "Detail";
+
+/* Class = "UINavigationItem"; title = "臺北捷運路網圖"; ObjectID = "9oH-vN-T2E"; */
+"9oH-vN-T2E.title" = "臺北捷運路網圖";
+
+/* Class = "UITextField"; placeholder = "請選擇捷運路線"; ObjectID = "ApI-Q7-14s"; */
+"ApI-Q7-14s.placeholder" = "請選擇捷運路線";
+
+/* Class = "UIBarButtonItem"; title = "清除"; ObjectID = "Au9-Bl-N9I"; */
+"Au9-Bl-N9I.title" = "清除";
+
+/* Class = "UITabBarItem"; title = "常用車站"; ObjectID = "Dv4-N0-9Ad"; */
+"Dv4-N0-9Ad.title" = "常用車站";
+
+/* Class = "UINavigationItem"; title = "常用車站"; ObjectID = "HzQ-3F-P2K"; */
+"HzQ-3F-P2K.title" = "常用車站";
+
+/* Class = "UILabel"; text = "Title"; ObjectID = "Ihz-mI-we2"; */
+"Ihz-mI-we2.text" = "Title";
+
+/* Class = "UINavigationItem"; title = "捷運"; ObjectID = "O1D-dV-eS9"; */
+"O1D-dV-eS9.title" = "捷運";
+
+/* Class = "UILabel"; text = "Title"; ObjectID = "PST-6G-UbH"; */
+"PST-6G-UbH.text" = "Title";
+
+/* Class = "UISegmentedControl"; Ug6-1Z-21m.segmentTitles[0] = "去程"; ObjectID = "Ug6-1Z-21m"; */
+"Ug6-1Z-21m.segmentTitles[0]" = "去程";
+
+/* Class = "UISegmentedControl"; Ug6-1Z-21m.segmentTitles[1] = "返程"; ObjectID = "Ug6-1Z-21m"; */
+"Ug6-1Z-21m.segmentTitles[1]" = "返程";
+
+/* Class = "UINavigationItem"; title = "公車"; ObjectID = "Utv-9h-oyR"; */
+"Utv-9h-oyR.title" = "公車";
+
+/* Class = "UILabel"; text = "Title"; ObjectID = "fij-nt-0GQ"; */
+"fij-nt-0GQ.text" = "Title";
+
+/* Class = "UILabel"; text = "Subtitle"; ObjectID = "ilh-cC-1wH"; */
+"ilh-cC-1wH.text" = "Subtitle";
+
+/* Class = "UILabel"; text = "Subtitle"; ObjectID = "kNc-Zh-bHb"; */
+"kNc-Zh-bHb.text" = "Subtitle";
+
+/* Class = "UILabel"; text = "Title"; ObjectID = "kXF-5l-leP"; */
+"kXF-5l-leP.text" = "Title";
+
+/* Class = "UITabBarItem"; title = "其他"; ObjectID = "lYU-OY-KGp"; */
+"lYU-OY-KGp.title" = "其他";
+
+/* Class = "UILabel"; text = "Title"; ObjectID = "n65-ub-mUH"; */
+"n65-ub-mUH.text" = "Title";
+
+/* Class = "UILabel"; text = "Subtitle"; ObjectID = "pjC-AH-SzU"; */
+"pjC-AH-SzU.text" = "Subtitle";
+
+/* Class = "UITabBarItem"; title = "公車"; ObjectID = "qE1-K3-Kv0"; */
+"qE1-K3-Kv0.title" = "公車";
+
+/* Class = "UILabel"; text = "Detail"; ObjectID = "qLM-Z5-qlB"; */
+"qLM-Z5-qlB.text" = "Detail";
+
+/* Class = "UITabBarItem"; title = "捷運"; ObjectID = "tal-8w-qKU"; */
+"tal-8w-qKU.title" = "捷運";
+
+/* Class = "UILabel"; text = "路線"; ObjectID = "uCh-XS-J9z"; */
+"uCh-XS-J9z.text" = "路線";
+
+/* Class = "UISegmentedControl"; vRG-Iq-YsH.segmentTitles[0] = "去程"; ObjectID = "vRG-Iq-YsH"; */
+"vRG-Iq-YsH.segmentTitles[0]" = "去程";
+
+/* Class = "UISegmentedControl"; vRG-Iq-YsH.segmentTitles[1] = "返程"; ObjectID = "vRG-Iq-YsH"; */
+"vRG-Iq-YsH.segmentTitles[1]" = "返程";
+
+/* Class = "UISegmentedControl"; vkZ-bV-6zw.segmentTitles[0] = "公車"; ObjectID = "vkZ-bV-6zw"; */
+"vkZ-bV-6zw.segmentTitles[0]" = "公車";
+
+/* Class = "UISegmentedControl"; vkZ-bV-6zw.segmentTitles[1] = "捷運"; ObjectID = "vkZ-bV-6zw"; */
+"vkZ-bV-6zw.segmentTitles[1]" = "捷運";

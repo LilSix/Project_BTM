@@ -30,7 +30,6 @@
     
     CityBusData *cityBusData;
     TaipeiSubwayData *taipeiSubwayData;
-    BusDetailViewController *busDetailVC;
     
     NSMutableArray *favoritesBusStopID;
     NSMutableArray *favoritesBusStopName;
@@ -45,13 +44,13 @@
     NSMutableArray *favoritesSubwayStopName;
     NSMutableArray *favoritesSubwayRouteName;
     
-    NSMutableDictionary *destinationLists;
     NSString *selectedDepartureStopName;
     NSString *selectedDestinationStopName;
     
     NSIndexPath *indexPathSelected;
 }
 
+@property (strong, nonatomic) NSMutableDictionary *destinationLists;
 @property (weak, nonatomic) IBOutlet UITableView *tableViewFavoritesList;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *segmentedControlBusSubway;
 
@@ -70,7 +69,7 @@
     [_tableViewFavoritesList setDelegate:self];
     [_tableViewFavoritesList setDataSource:self];
     
-    [[self navigationItem] setRightBarButtonItem:[self editButtonItem]];
+    [[self navigationItem] setLeftBarButtonItem:[self editButtonItem]];
     
     [_segmentedControlBusSubway setSelectedSegmentIndex:0];
     
@@ -122,9 +121,7 @@
         favoritesSubwayStopName = [NSMutableArray array];
         favoritesSubwayRouteName = [NSMutableArray array];
         
-        destinationLists = [NSMutableDictionary dictionary];
-        
-        busDetailVC = [[BusDetailViewController alloc] init];
+        _destinationLists = [NSMutableDictionary dictionary];
     }
     
     return self;
@@ -266,140 +263,20 @@ forRowAtIndexPath:(NSIndexPath *)indexPath {
 didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    
-//    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-//    NSManagedObjectContext *managedObjectContext = [appDelegate managedObjectContext];
     if ([_segmentedControlBusSubway selectedSegmentIndex] == 0) {
         
-        
-//        [self performSegueWithIdentifier:@"showBusDetail" sender:self];
-        BusDetailViewController *bdvc = [[self storyboard] instantiateViewControllerWithIdentifier:@"BusDetailID"];
-        [bdvc setAuthorityID:[favoritesBusAuthorityID objectAtIndex:[indexPath row]]];
-        [bdvc setRouteID:[favoritesBusRouteID objectAtIndex:[indexPath row]]];
-        [bdvc setRouteName:[favoritesBusRouteName objectAtIndex:[indexPath row]]];
-        [bdvc setDepartureStopName:[favoritesBusDepartureStopName objectAtIndex:[indexPath row]]];
-        [bdvc setDestinationStopName:[favoritesBusDestinationStopName objectAtIndex:[indexPath row]]];
-        
-        
-//        indexPathSelected = indexPath;
-//        [self performSegueWithIdentifier:@"showBusDetail" sender:self];
-        [[self navigationController] pushViewController:bdvc animated:YES];
-        
-        
-//        BusDetailViewController *busDetailVC = [[BusDetailViewController alloc] init];
-//        
-//        UIStoryboardSegue *segue = [[UIStoryboardSegue alloc] initWithIdentifier:@"showBusDetail"
-//                                                                          source:self
-//                                                                     destination:busDetailVC];
-//        [self prepareForSegue:segue sender:self];
-        
-        /*
-        NSString *stringWithStopName = [favoritesBusStopName objectAtIndex:[indexPath row]];
-        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:[self editStringFromHalfWidthToFullWidth:stringWithStopName]
-                                                                                 message:@"確定將此車站自常用車站中移除嗎？"
-                                                                          preferredStyle:UIAlertControllerStyleActionSheet];
-        UIAlertAction *alertActionWithDone = [UIAlertAction actionWithTitle:@"確定"
-                                                                      style:UIAlertActionStyleDestructive
-                                                                    handler:^(UIAlertAction *action) {
-                                                                        
-                                                                        NSEntityDescription *entity = [NSEntityDescription entityForName:@"CityBus"
-                                                                                                                  inManagedObjectContext:managedObjectContext];
-                                                                        NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
-                                                                        [fetchRequest setEntity:entity];
-                                                                        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"stopName = %@", stringWithStopName];
-                                                                        [fetchRequest setPredicate:predicate];
-                                                                        
-                                                                        NSError *error;
-                                                                        NSArray *arrayWithObjects = [managedObjectContext executeFetchRequest:fetchRequest error:&error];
-                                                                        
-                                                                        for (id object in arrayWithObjects) {
-                                                                            
-                                                                            [managedObjectContext deleteObject:object];
-                                                                        }
-                                                                        [managedObjectContext save:nil];
-
-                                                                        [self fetchBusCoreData];
-                                                                        [tableView reloadData];
-                                                                        
-                                                                        MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.navigationController.view animated:YES];
-                                                                        
-                                                                        // Set the custom view mode to show any view.
-                                                                        hud.mode = MBProgressHUDModeCustomView;
-                                                                        // Set an image view with a checkmark.
-                                                                        UIImage *image = [[UIImage imageNamed:@"Checkmark"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
-                                                                        hud.customView = [[UIImageView alloc] initWithImage:image];
-                                                                        // Looks a bit nicer if we make it square.
-                                                                        hud.square = YES;
-                                                                        // Optional label text.
-                                                                        hud.label.text = NSLocalizedString(@"完成", @"HUD done title");
-                                                                        
-                                                                        [hud hideAnimated:YES afterDelay:.8f];
-                                                                    }];
-        UIAlertAction *alertActionWithCancel = [UIAlertAction actionWithTitle:@"取消"
-                                                                        style:UIAlertActionStyleCancel
-                                                                      handler:nil];
-        [alertController addAction:alertActionWithDone];
-        [alertController addAction:alertActionWithCancel];
-        [self presentViewController:alertController animated:YES completion:nil];
-        */
-
+        BusDetailViewController *busDetailVC = [[self storyboard] instantiateViewControllerWithIdentifier:@"BusDetailID"];
+        [busDetailVC setAuthorityID:[favoritesBusAuthorityID objectAtIndex:[indexPath row]]];
+        [busDetailVC setRouteID:[favoritesBusRouteID objectAtIndex:[indexPath row]]];
+        [busDetailVC setRouteName:[favoritesBusRouteName objectAtIndex:[indexPath row]]];
+        [busDetailVC setDepartureStopName:[favoritesBusDepartureStopName objectAtIndex:[indexPath row]]];
+        [busDetailVC setDestinationStopName:[favoritesBusDestinationStopName objectAtIndex:[indexPath row]]];
+        [[self navigationController] pushViewController:busDetailVC animated:YES];
     } else {
         
-//        [self performSegueWithIdentifier:@"showSubwayDetail" sender:self];
-        
-        /*
-        NSString *stringWithStopID = [favoritesSubwayStopID objectAtIndex:[indexPath row]];
-        NSString *stringWithStopName = [favoritesSubwayStopName objectAtIndex:[indexPath row]];
-        
-        UIAlertController *alertController = [UIAlertController
-                                                  alertControllerWithTitle:[self editStringFromHalfWidthToFullWidth:stringWithStopName]
-                                                                   message:@"確定將此車站自常用車站中移除嗎？"
-                                                            preferredStyle:UIAlertControllerStyleActionSheet];
-        UIAlertAction *alertActionWithDone = [UIAlertAction actionWithTitle:@"確定"
-                                                                      style:UIAlertActionStyleDestructive
-                                                                    handler:^(UIAlertAction *action) {
-                                                                        
-                                                                        NSEntityDescription *entity = [NSEntityDescription
-                                                                                                           entityForName:@"TaipeiSubway"
-                                                                                                           inManagedObjectContext:managedObjectContext];
-                                                                        NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
-                                                                        [fetchRequest setEntity:entity];
-                                                                        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"stopID = %@", stringWithStopID];
-                                                                        [fetchRequest setPredicate:predicate];
-                                                                        
-                                                                        NSError *error;
-                                                                        NSArray *arrayWithObjects = [managedObjectContext executeFetchRequest:fetchRequest error:&error];
-                                                                        
-                                                                        for (id object in arrayWithObjects) {
-                                                                            
-                                                                            [managedObjectContext deleteObject:object];
-                                                                        }
-                                                                        [managedObjectContext save:nil];
-        
-                                                                        [self fetchSubwayCoreData];
-                                                                        [tableView reloadData];
-                                                                        
-                                                                        MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.navigationController.view animated:YES];
-                                                                        
-                                                                        // Set the custom view mode to show any view.
-                                                                        hud.mode = MBProgressHUDModeCustomView;
-                                                                        // Set an image view with a checkmark.
-                                                                        UIImage *image = [[UIImage imageNamed:@"Checkmark"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
-                                                                        hud.customView = [[UIImageView alloc] initWithImage:image];
-                                                                        // Looks a bit nicer if we make it square.
-                                                                        hud.square = YES;
-                                                                        // Optional label text.
-                                                                        hud.label.text = NSLocalizedString(@"完成", @"HUD done title");
-                                                                        
-                                                                        [hud hideAnimated:YES afterDelay:.8f];
-                                                                    }];
-        UIAlertAction *alertActionWithCancel = [UIAlertAction actionWithTitle:@"取消"
-                                                                        style:UIAlertActionStyleCancel
-                                                                      handler:nil];
-        [alertController addAction:alertActionWithDone];
-        [alertController addAction:alertActionWithCancel];
-        [self presentViewController:alertController animated:YES completion:nil];
-         */
+//        SearchSubwayViewController *searchSubwayVC = [[self storyboard] instantiateViewControllerWithIdentifier:@"SearchSubwayID"];
+//        [searchSubwayVC setTextFieldRouteName:[favoritesSubwayRouteName objectAtIndex:[indexPath row]]];
+//        [[self navigationController] pushViewController:searchSubwayVC animated:YES];
     }
 }
 
@@ -466,6 +343,9 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 
 - (IBAction)barButtonItemRefreshTouch:(UIBarButtonItem *)sender {
     
+    SearchSubwayViewController *searchSubwayVC = [[SearchSubwayViewController alloc] init];
+    _destinationLists = [searchSubwayVC fetchSubwayArrivedAtStation];
+    
     NSLog(@"[favoritesBusStopName count]): %ld", [favoritesBusStopName count]);
     NSLog(@"[favoritesSubwayStopName count]): %ld", [favoritesSubwayStopName count]);
 }
@@ -475,8 +355,13 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
     if ([sender selectedSegmentIndex] == 0) {
         
+        [[self navigationItem] setRightBarButtonItem:nil];
         [_tableViewFavoritesList reloadData];
     } else {
+        
+        [[self navigationItem] setLeftBarButtonItem:[self editButtonItem]];
+        UIBarButtonItem *barButtonItemRefresh = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(fetchSubwayArrivedAtStation)];
+        [[self navigationItem] setRightBarButtonItem:barButtonItemRefresh];
         
         [_tableViewFavoritesList reloadData];
     }

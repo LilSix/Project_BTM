@@ -10,6 +10,7 @@
 
 @interface SearchSubwayViewController : UIViewController
 
+@property (weak, nonatomic) IBOutlet UITextField *textFieldRouteName;
 - (NSMutableDictionary *)fetchSubwayArrivedAtStation;
 
 @end

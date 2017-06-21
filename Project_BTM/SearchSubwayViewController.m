@@ -48,7 +48,6 @@ UIPickerViewDataSource, UITextFieldDelegate, UITextFieldDelegate> {
 @property (strong, nonatomic) NSString *destinationStopName2;
 
 @property (weak, nonatomic) IBOutlet UITableView *tableViewSubwayList;
-@property (weak, nonatomic) IBOutlet UITextField *textFieldRouteName;
 @property (weak, nonatomic) IBOutlet UIImageView *imageViewRouteBackground;
 @property (weak, nonatomic) IBOutlet UIButton *buttonSearch;
 
