@@ -572,7 +572,7 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="barTintColor" red="0.96470588235294119" green="0.80784313725490198" blue="0.36470588235294116" alpha="1" colorSpace="calibratedRGB"/>
                         <textAttributes key="titleTextAttributes">
-                            <color key="textColor" red="0.30196078431372547" green="0.30196078431372547" blue="0.30196078431372547" alpha="1" colorSpace="calibratedRGB"/>
+                            <color key="textColor" red="0.30196078430000001" green="0.30196078430000001" blue="0.30196078430000001" alpha="1" colorSpace="calibratedRGB"/>
                         </textAttributes>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -592,7 +592,6 @@
                     <tabBar key="tabBar" contentMode="scaleToFill" id="GSh-ZA-qXg">
                         <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <color key="tintColor" red="0.08235294118" green="0.5568627451" blue="0.69411764710000001" alpha="1" colorSpace="calibratedRGB"/>
                         <color key="barTintColor" red="0.96470588239999999" green="0.80784313730000001" blue="0.36470588240000001" alpha="1" colorSpace="calibratedRGB"/>
                         <color key="selectedImageTintColor" red="0.08235294118" green="0.5568627451" blue="0.69411764710000001" alpha="1" colorSpace="calibratedRGB"/>
                     </tabBar>
