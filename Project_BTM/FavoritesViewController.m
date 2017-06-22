@@ -372,8 +372,8 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 - (IBAction)barButtonItemRefreshTouch:(UIBarButtonItem *)sender {
     
     NSLog(@"_destinationLists = %@", _destinationLists);
-    NSLog(@"[favoritesBusStopName count]): %ld", [favoritesBusStopName count]);
-    NSLog(@"[favoritesSubwayStopName count]): %ld", [favoritesSubwayStopName count]);
+    NSLog(@"[favoritesBusStopName count]): %ld", (unsigned long)[favoritesBusStopName count]);
+    NSLog(@"[favoritesSubwayStopName count]): %ld", (unsigned long)[favoritesSubwayStopName count]);
 }
 
 

@@ -58,7 +58,7 @@ NSURLSessionTaskDelegate, NSURLSessionDataDelegate> {
     // Segue Parameter
     NSLog(@"viewDidload: %@, %@, %@", _authorityID, _routeName, _routeID);
     NSLog(@"_selectedStopUID: %@", _selectedStopUID);
-    NSLog(@"[[cityBus stopIDGo] count]: %ld", [[_cityBus stopIDGo] count]);
+    NSLog(@"[[cityBus stopIDGo] count]: %ld", (unsigned long)[[_cityBus stopIDGo] count]);
     
     // Segmented Control
     [_goBackControl setSelectedSegmentIndex:0];
