@@ -113,22 +113,21 @@ NSURLSessionTaskDelegate, NSURLSessionDataDelegate> {
 
 - (void)viewWillAppear:(BOOL)animated {
     
+    NSLog(@"BusDetailViewController.m viewWillAppear:");
     [self performSelector:@selector(delayReloadData) withObject:nil afterDelay:1];
-    NSLog(@"viewWillAppear.");
 }
 
 
 - (void)viewDidAppear:(BOOL)animated {
     
-//    [_tableViewBusDetailList reloadData];
-    
-    NSLog(@"viewDidAppear.");
+    NSLog(@"BusDetailViewController.m viewDidAppear:");
+    [_tableViewBusDetailList reloadData];
 }
 
 - (void)viewDidDisappear:(BOOL)animated {
     
+    NSLog(@"BusDetailViewController.m viewDidDisappear:");
     [timerWithEstimateTime invalidate];
-    NSLog(@"viewDidDisappear.");
 }
 
 - (void)didReceiveMemoryWarning {

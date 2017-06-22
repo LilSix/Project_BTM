@@ -474,21 +474,10 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.
     
-//    if ([[segue identifier] isEqualToString:@"showBusDetail"]) {
-//        
-//        busDetailVC = [segue destinationViewController];
-//        [busDetailVC setAuthorityID:[favoritesBusAuthorityID objectAtIndex:[indexPathSelected row]]];
-//        [busDetailVC setRouteID:[favoritesBusRouteID objectAtIndex:[indexPathSelected row]]];
-//        [busDetailVC setRouteName:[favoritesBusRouteName objectAtIndex:[indexPathSelected row]]];
-//        [busDetailVC setDepartureStopName:[favoritesBusDepartureStopName objectAtIndex:[indexPathSelected row]]];
-//        [busDetailVC setDestinationStopName:[favoritesBusDestinationStopName objectAtIndex:[indexPathSelected row]]];
-//        
-//    } else
+    if ([[segue identifier] isEqualToString:@"showSubwayDetail"]) {
     
-        if ([[segue identifier] isEqualToString:@"showSubwayDetail"]) {
-        
-            searchSubwayVC = [segue destinationViewController];
-        }
+        searchSubwayVC = [segue destinationViewController];
+    }
 }
 
 @end
