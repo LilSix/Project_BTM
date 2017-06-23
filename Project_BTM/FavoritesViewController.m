@@ -53,6 +53,8 @@
 }
 
 @property (strong, nonatomic) NSMutableDictionary *destinationLists;
+@property (strong, nonatomic) NSMutableArray<CityBusData *> *busData;
+@property (strong, nonatomic) NSMutableArray<TaipeiSubwayData *> *subwayData;
 @property (weak, nonatomic) IBOutlet UITableView *tableViewFavoritesList;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *segmentedControlBusSubway;
 
@@ -75,6 +77,8 @@
     
     [_segmentedControlBusSubway setSelectedSegmentIndex:0];
     
+    [self queryBusCoreData];
+    [self querySubwayCoreData];
     
 //    _destinationLists = [self fetchSubwayArrivedAtStation];
 }
@@ -82,8 +86,8 @@
 - (void)viewWillAppear:(BOOL)animated {
     
     NSLog(@"FavoritesViewController viewWillAppear:");
-    [self fetchBusCoreData];
-    [self fetchSubwayCoreData];
+    [self queryBusCoreData];
+    [self querySubwayCoreData];
     [_tableViewFavoritesList reloadData];
 }
 
@@ -131,6 +135,9 @@
         
         _destinationLists = [NSMutableDictionary dictionary];
         searchSubwayVC = [[SearchSubwayViewController alloc] init];
+        
+        [self setBusData:[NSMutableArray array]];
+        [self setSubwayData:[NSMutableArray array]];
     }
     
     return self;
@@ -216,19 +223,31 @@ forRowAtIndexPath:(NSIndexPath *)indexPath {
             NSString *stringWithStopID = [favoritesBusStopID objectAtIndex:[indexPath row]];
             NSPredicate *predicate = [NSPredicate predicateWithFormat:@"stopID = %@", stringWithStopID];
             [fetchRequest setPredicate:predicate];
+        
             
             NSError *error;
             NSArray *arrayWithObjects = [managedObjectContext executeFetchRequest:fetchRequest error:&error];
             
             for (id object in arrayWithObjects) {
-                
+            
                 [managedObjectContext deleteObject:object];
+                [managedObjectContext save:nil];
             }
-            [managedObjectContext save:nil];
             
             
-            [self fetchBusCoreData];
-            [tableView reloadData];
+            [favoritesBusStopID removeObjectAtIndex:[indexPath row]];
+            [favoritesBusStopName removeObjectAtIndex:[indexPath row]];
+            [favoritesBusRouteID removeObjectAtIndex:[indexPath row]];
+            [favoritesBusRouteName removeObjectAtIndex:[indexPath row]];
+            [favoritesBusDepartureStopName removeObjectAtIndex:[indexPath row]];
+            [favoritesBusDestinationStopName removeObjectAtIndex:[indexPath row]];
+            [favoritesBusAuthorityID removeObjectAtIndex:[indexPath row]];
+            
+        [_tableViewFavoritesList deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+            
+            
+            [self queryBusCoreData];
+//            [tableView reloadData];
             
             
             MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.navigationController.view animated:YES];
@@ -265,8 +284,8 @@ forRowAtIndexPath:(NSIndexPath *)indexPath {
         }
         [managedObjectContext save:nil];
         
-        [self fetchSubwayCoreData];
-        [tableView reloadData];
+        [self querySubwayCoreData];
+//        [tableView reloadData];
         
         MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.navigationController.view animated:YES];
         
@@ -282,6 +301,8 @@ forRowAtIndexPath:(NSIndexPath *)indexPath {
         
         [hud hideAnimated:YES afterDelay:.8f];
     }
+    
+//    [_tableViewFavoritesList reloadData];
 }
 
 
@@ -311,7 +332,7 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 
 #pragma mark - FetchCoreData
 
-- (void)fetchBusCoreData {
+- (void)queryBusCoreData {
     
     [favoritesBusStopName removeAllObjects];
     [favoritesBusRouteName removeAllObjects];
@@ -338,9 +359,11 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
         
         NSLog(@"fetchBusCoreData [arrayWithObjects count]: 0");
     }
+    
+    [_tableViewFavoritesList reloadData];
 }
 
-- (void)fetchSubwayCoreData {
+- (void)querySubwayCoreData {
     
     [favoritesSubwayStopID removeAllObjects];
     [favoritesSubwayStopName removeAllObjects];
@@ -364,6 +387,8 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
         
         NSLog(@"fetchSubwayCoreData [arrayWithObjects count]: 0");
     }
+    
+    [_tableViewFavoritesList reloadData];
 }
 
 
