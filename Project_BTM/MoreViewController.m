@@ -88,7 +88,8 @@
 
 - (void)tableView:(UITableView *)tableView
 didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-
+    
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
     stringWithURL = [mutableDicWithURL objectForKey:[mutableArrayWithLinkName objectAtIndex:[indexPath row]]];
 }
 
