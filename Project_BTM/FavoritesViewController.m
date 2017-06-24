@@ -243,26 +243,29 @@ forRowAtIndexPath:(NSIndexPath *)indexPath {
             [favoritesBusDestinationStopName removeObjectAtIndex:[indexPath row]];
             [favoritesBusAuthorityID removeObjectAtIndex:[indexPath row]];
             
+            
+            
         [_tableViewFavoritesList deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
             
             
             [self queryBusCoreData];
-//            [tableView reloadData];
+            [tableView reloadData];
             
+            NSLog(@"[favoritesBusStopID count]: %ld", [favoritesBusStopID count]);
             
-            MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.navigationController.view animated:YES];
-            
-            // Set the custom view mode to show any view.
-            hud.mode = MBProgressHUDModeCustomView;
-            // Set an image view with a checkmark.
-            UIImage *image = [[UIImage imageNamed:@"Checkmark"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
-            hud.customView = [[UIImageView alloc] initWithImage:image];
-            // Looks a bit nicer if we make it square.
-            hud.square = YES;
-            // Optional label text.
-            hud.label.text = NSLocalizedString(@"完成", @"HUD done title");
-            
-            [hud hideAnimated:YES afterDelay:.8f];
+//            MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.navigationController.view animated:YES];
+//            
+//            // Set the custom view mode to show any view.
+//            hud.mode = MBProgressHUDModeCustomView;
+//            // Set an image view with a checkmark.
+//            UIImage *image = [[UIImage imageNamed:@"Checkmark"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+//            hud.customView = [[UIImageView alloc] initWithImage:image];
+//            // Looks a bit nicer if we make it square.
+//            hud.square = YES;
+//            // Optional label text.
+//            hud.label.text = NSLocalizedString(@"完成", @"HUD done title");
+//            
+//            [hud hideAnimated:YES afterDelay:.8f];
         }
     } else {
         
@@ -285,21 +288,21 @@ forRowAtIndexPath:(NSIndexPath *)indexPath {
         [managedObjectContext save:nil];
         
         [self querySubwayCoreData];
-//        [tableView reloadData];
+        [tableView reloadData];
         
-        MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.navigationController.view animated:YES];
-        
-        // Set the custom view mode to show any view.
-        hud.mode = MBProgressHUDModeCustomView;
-        // Set an image view with a checkmark.
-        UIImage *image = [[UIImage imageNamed:@"Checkmark"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
-        hud.customView = [[UIImageView alloc] initWithImage:image];
-        // Looks a bit nicer if we make it square.
-        hud.square = YES;
-        // Optional label text.
-        hud.label.text = NSLocalizedString(@"完成", @"HUD done title");
-        
-        [hud hideAnimated:YES afterDelay:.8f];
+//        MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.navigationController.view animated:YES];
+//        
+//        // Set the custom view mode to show any view.
+//        hud.mode = MBProgressHUDModeCustomView;
+//        // Set an image view with a checkmark.
+//        UIImage *image = [[UIImage imageNamed:@"Checkmark"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+//        hud.customView = [[UIImageView alloc] initWithImage:image];
+//        // Looks a bit nicer if we make it square.
+//        hud.square = YES;
+//        // Optional label text.
+//        hud.label.text = NSLocalizedString(@"完成", @"HUD done title");
+//        
+//        [hud hideAnimated:YES afterDelay:.8f];
     }
     
 //    [_tableViewFavoritesList reloadData];
@@ -334,8 +337,13 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 
 - (void)queryBusCoreData {
     
+    [favoritesBusStopID removeAllObjects];
     [favoritesBusStopName removeAllObjects];
+    [favoritesBusRouteID removeAllObjects];
     [favoritesBusRouteName removeAllObjects];
+    [favoritesBusDepartureStopName removeAllObjects];
+    [favoritesBusDestinationStopName removeAllObjects];
+    [favoritesBusAuthorityID removeAllObjects];
     
     AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     NSManagedObjectContext *managedObjectContext = [appDelegate managedObjectContext];
