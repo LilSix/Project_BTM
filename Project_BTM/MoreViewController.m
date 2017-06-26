@@ -60,7 +60,7 @@
         
         mutableDicWithURL = [NSMutableDictionary dictionary];
         [mutableDicWithURL setObject:@"https://ebus.gov.taipei" forKey:cityBusLinkName];
-        [mutableDicWithURL setObject:@"http://www.metro.taipei/ct.asp?xItem=78479152&CtNode=70089&mp=122035" forKey:taipeiSubwayLinkName];
+        [mutableDicWithURL setObject:@"http://www.metro.taipei" forKey:taipeiSubwayLinkName];
     }
     
     return self;
